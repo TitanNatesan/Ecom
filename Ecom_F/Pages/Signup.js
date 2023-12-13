@@ -14,9 +14,9 @@ library.add(faCircleRight, faPeopleLine, faUser, faLock);
 const SignupScreen = ({ navigation }) => {
     const [isChecked, setChecked] = useState(false);
 
-    const [referralId, setReferralId] = useState('');
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
+    var [referralId, setReferralId] = useState('');
+    var [username, setUsername] = useState('');
+    var [password, setPassword] = useState('');
 
     const handleLoginPress = () => {
         navigation.navigate('Login');
