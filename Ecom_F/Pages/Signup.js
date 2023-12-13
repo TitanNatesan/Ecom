@@ -24,10 +24,10 @@ const SignupScreen = ({ navigation }) => {
     const handleSignup = async () => {
         console.log("buttonTapped")
         try {
-          const response = await axios.post('http://192.168.169.132:8000/api/signup/', { 
-            "referal_id" :"mukilan@ref",
-            "username" : "Natesan", // replace with user input
-            "password": "natesan345", // replace with user input
+          const response = await axios.post('http://10.0.2.2:8000/api/signup/', { 
+            referal_id :"mukilan@ref",
+            username : "Natesan",
+            password : "natesan345"
           }, {
             headers: {
                 'Content-Type': 'application/json',
