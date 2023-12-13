@@ -14,6 +14,10 @@ library.add(faCircleRight, faPeopleLine, faUser, faLock);
 const SignupScreen = ({ navigation }) => {
     const [isChecked, setChecked] = useState(false);
 
+    const [referralId, setReferralId] = useState('');
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+
     const handleLoginPress = () => {
         navigation.navigate('Login');
     };
@@ -22,12 +26,12 @@ const SignupScreen = ({ navigation }) => {
     };
 
     const handleSignup = async () => {
-        console.log("buttonTapped")
+        console.log("buttonTapped",referralId,username,password)
         try {
           const response = await axios.post('http://10.0.2.2:8000/api/signup/', { 
-            referal_id :"mukilan@ref",
-            username : "Natesan",
-            password : "natesan345"
+            referal_id: referralId,
+            username: username,
+            password: password
           }, {
             headers: {
                 'Content-Type': 'application/json',
@@ -50,20 +54,20 @@ const SignupScreen = ({ navigation }) => {
             <View style={styles.allsignup}>
                 <View style={styles.rowContainer}>
                     <Text style={styles.text}>Sign up</Text>
-                    <TouchableOpacity onPress={handleVerifyPress}>
+                    <TouchableOpacity onPress={handleSignup}>
                         <FontAwesomeIcon icon={faCircleRight} size={50} color="#1977F3" />
                     </TouchableOpacity>
                 </View>
                 <View style={styles.inputContainer}>
-                    <TextInput style={styles.input} placeholder="Referral ID" />
+                    <TextInput style={styles.input} placeholder="Referral ID" value={referralId} onChange={text => setReferralId(text)}/>
                     <FontAwesomeIcon icon={faPeopleLine} size={20} color="black" style={styles.icon} />
                 </View>
                 <View style={styles.inputContainer}>
-                    <TextInput style={styles.input} placeholder="Username" />
+                    <TextInput style={styles.input} placeholder="Username" value={referralId} onChange={text => setUsername(text)}/>
                     <FontAwesomeIcon icon={faUser} size={20} color="black" style={styles.icon} />
                 </View>
                 <View style={styles.inputContainer}>
-                    <TextInput style={styles.input} placeholder="Password" secureTextEntry={true} />
+                    <TextInput style={styles.input} placeholder="Password" secureTextEntry={true} value={referralId} onChange={text => setPassword(text)}/>
                     <FontAwesomeIcon icon={faLock} size={20} color="black" style={styles.icon} />
                 </View>
                 <View style={styles.checkboxContainer}>
@@ -72,7 +76,7 @@ const SignupScreen = ({ navigation }) => {
                     
                 </View>
                 <TouchableOpacity onPress={handleLoginPress} style={styles.loginButton}>
-                    <Button title="Sign Up" onPress={handleSignup}></Button>
+                    <Text style={styles.loginButtonText}>Login</Text>
                 </TouchableOpacity>
             </View>
 
