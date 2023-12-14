@@ -29,6 +29,7 @@ const SignupScreen = ({ navigation }) => {
         console.log("buttonTapped",referralId,username,password)
         try {
           const response = await axios.post('http://10.0.2.2:8000/api/signup/', { 
+
             referal_id: referralId,
             username: username,
             password: password
