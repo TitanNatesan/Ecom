@@ -14,25 +14,25 @@ library.add(faCircleRight, faPeopleLine, faUser, faLock);
 const SignupScreen = ({ navigation }) => {
     const [isChecked, setChecked] = useState(false);
 
-    var [referralId, setReferralId] = useState('');
-    var [username, setUsername] = useState('');
-    var [password, setPassword] = useState('');
-
     const handleLoginPress = () => {
         navigation.navigate('Login');
     };
     const handleVerifyPress = () => {
         navigation.navigate('CodeVerification');
     };
+    const SignupPage = () => {
+        navigation.navigate('Signup');
+    };
 
     const handleSignup = async () => {
-        console.log("buttonTapped",referralId,username,password)
+        console.log("buttonTapped")
         try {
           const response = await axios.post('http://10.0.2.2:8000/api/signup/', { 
 
-            referal_id: referralId,
-            username: username,
-            password: password
+            referalID: "Lokesh@ref",
+            username: "Lokesh02",
+            password: "lokesh123"
+
           }, {
             headers: {
                 'Content-Type': 'application/json',
@@ -41,6 +41,12 @@ const SignupScreen = ({ navigation }) => {
       
           // Handle the response, e.g., show a success message or navigate to another screen
           console.log('Signup successful:', response.data);
+          if (response.data == "1"){
+            handleLoginPress();
+          }
+          else {
+            SignupPage();
+          }
       
         } catch (error) {
           // Handle errors, e.g., display an error message to the user
@@ -60,15 +66,15 @@ const SignupScreen = ({ navigation }) => {
                     </TouchableOpacity>
                 </View>
                 <View style={styles.inputContainer}>
-                    <TextInput style={styles.input} placeholder="Referral ID" value={referralId} onChange={text => setReferralId(text)}/>
+                    <TextInput style={styles.input} placeholder="Referral ID"/>
                     <FontAwesomeIcon icon={faPeopleLine} size={20} color="black" style={styles.icon} />
                 </View>
                 <View style={styles.inputContainer}>
-                    <TextInput style={styles.input} placeholder="Username" value={referralId} onChange={text => setUsername(text)}/>
+                    <TextInput style={styles.input} placeholder="Username"/>
                     <FontAwesomeIcon icon={faUser} size={20} color="black" style={styles.icon} />
                 </View>
                 <View style={styles.inputContainer}>
-                    <TextInput style={styles.input} placeholder="Password" secureTextEntry={true} value={referralId} onChange={text => setPassword(text)}/>
+                    <TextInput style={styles.input} placeholder="Password" secureTextEntry={true}/>
                     <FontAwesomeIcon icon={faLock} size={20} color="black" style={styles.icon} />
                 </View>
                 <View style={styles.checkboxContainer}>

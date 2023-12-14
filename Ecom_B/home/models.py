@@ -1,11 +1,9 @@
 from django.db import models
-
-class Person(models.Model):
-    name = models.CharField(max_length=100)
-    age = models.IntegerField()
+class Users(models.Model):
+    name = models.CharField(max_length=100, null= True)
     username = models.CharField(max_length=100)
-
-class Login(models.Model):
-    username = models.CharField(max_length=100)
-    referal_id = models.CharField(max_length=100)
+    age = models.IntegerField( null = True)
+    number = models.CharField( null = True)
     password = models.CharField(max_length=50)
+    referalID = models.CharField(max_length=100+5)
+    doj = models.DateTimeField(auto_now_add=True)

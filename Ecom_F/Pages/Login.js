@@ -6,6 +6,7 @@ import { library } from '@fortawesome/fontawesome-svg-core';
 import { faCircleRight, faLock, faPeopleLine, faUser } from '@fortawesome/free-solid-svg-icons';
 const signInImage = require('../Streetmall/3_Login/ASSETS.png');
 const Round = require('../Streetmall/3_Login/Ellipse391.png');
+import axios from 'axios';
 
 library.add(faCircleRight, faPeopleLine, faUser, faLock);
 const SignInScreen = ({ navigation }) => {
@@ -17,6 +18,35 @@ const SignInScreen = ({ navigation }) => {
         navigation.navigate('Home');
     };
 
+    const handleLogin = async () => {
+        console.log("buttonTapped")
+        try {
+          const response = await axios.post('http://10.0.2.2:8000/api/login/', { 
+
+          username: "Lokesh02",
+            password: "lokesh13"
+          }, {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+      
+          // Handle the response, e.g., show a success message or navigate to another screen
+          console.log('Signup successful:', response.data);
+          handlehomePress;
+          if (response.data == "1"){
+            handlehomePress();
+          }
+          else{
+            handleLoginPress();
+          }
+      
+        } catch (error) {
+          // Handle errors, e.g., display an error message to the user
+          console.error('Signup failed:', error.message);
+        }
+      };
+
     return (
         <View style={styles.container}>
             <Text style={styles.welcome}>Welcome</Text>
@@ -27,8 +57,8 @@ const SignInScreen = ({ navigation }) => {
                 <View style={styles.rowContainer}>
                     <Text style={styles.text}>Login</Text>
                     <TouchableOpacity
-                        onPress={handlehomePress}>
-                        <FontAwesomeIcon icon={faCircleRight} size={50} color="#1977F3" /></TouchableOpacity>
+                        onPress={handleLogin}>
+                        <FontAwesomeIcon icon={faCircleRight} size={50} color="#1977F3"/></TouchableOpacity>
                 </View>
                 <View style={styles.inputContainer}>
                     <TextInput style={styles.input} placeholder="Username" />
