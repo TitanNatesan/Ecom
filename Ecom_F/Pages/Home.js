@@ -4,11 +4,11 @@ import { faMagnifyingGlass, faUsersViewfinder } from "@fortawesome/free-solid-sv
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 
-const giftbox = require("../Streetmall/Home/gift.gif");
-const laptop = require("../Streetmall/Home/Laptop.png");
-const mobile = require("../Streetmall/Home/Mobiles.png");
-const car = require("../Streetmall/Home/car.png");
-const watch = require("../Streetmall/Home/Watch.png");
+const giftbox = require("../Streetmall/1Home/gift.gif");
+const laptop = require("../Streetmall/1Home/Laptop.png");
+const mobile = require("../Streetmall/1Home/Mobiles.png");
+const car = require("../Streetmall/1Home/car.png");
+const watch = require("../Streetmall/1Home/Watch.png");
 
 library.add(faMagnifyingGlass, faUsersViewfinder);
 
