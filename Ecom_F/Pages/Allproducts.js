@@ -65,7 +65,7 @@ const AllProductPage = ({ navigation }) => {
   const [products, setProducts] = useState([]);
 
   
-  const fetchProducts = async () => {
+  const fetchProducts = async () => { 
     try {
       const response = await axios.get('http://10.0.2.2:8000/api/product/');
       
@@ -150,9 +150,9 @@ const AllProductPage = ({ navigation }) => {
           <View style={styles.productsContainer}>
             {products.map((product, index) => (
               <TouchableOpacity
-                key={index}
+                key={index} 
                 style={styles.productItem}
-                onPress={() => handleProductPress(product)}
+                onPress={() => handleProductPress(product,index)}
               >
                 <ProductItem product={product} />
               </TouchableOpacity>

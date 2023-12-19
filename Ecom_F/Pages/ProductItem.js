@@ -49,8 +49,8 @@ const ProductItem = ({ product }) => {
           </View>
         </View>
         <View style={styles.priOfferContainer}>
-            <Text style={styles.productPrice}>{`$${product.sellingPrice.toFixed(2)}`}</Text>
-            <Text style={styles.offerText}>{product.discount}</Text>
+            <Text style={styles.productPrice}>{`$${product.sellingPrice}`}</Text>
+            <Text style={styles.offerText}>{product.discount}%</Text>
         </View>
       </View>
     </View>

@@ -18,7 +18,7 @@ import pyotp
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-products = Products.objects.all().values()
+
 
 @api_view(["POST"])
 def login(request):
@@ -45,6 +45,7 @@ def viewProduct(request,pi):
 
 @api_view(["GET"])
 def viewProducts(request):
+    products = Products.objects.all().values()
     serializer = ProductSerial(products, many=True)
     return JsonResponse(serializer.data,safe=False)
 
