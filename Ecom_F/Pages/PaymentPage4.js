@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { StyleSheet, View, Text, StatusBar, ScrollView, TextInput, Image, TouchableOpacity } from "react-native";
 import { faMagnifyingGlass, faUsersViewfinder } from "@fortawesome/free-solid-svg-icons";
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
+import BottomBar from './BottomBar'; 
+
 
 const Trackbar = require('../Streetmall/14_Checkout_page/step3.png');
 
@@ -72,89 +74,103 @@ const PaymentPage4 = ({ navigation }) => {
   );
 
   return (
-    <ScrollView style={styles.containerw} showsVerticalScrollIndicator={false}>
-      <View style={styles.container}>
-        <View style={styles.topbarinput}>
-          <FontAwesomeIcon icon={faMagnifyingGlass} size={20} color="black" />
-          <TextInput placeholder="Search Sunlight.in" style={styles.inputBox} />
-          <FontAwesomeIcon icon={faUsersViewfinder} size={20} color="black" />
-        </View>
-        <StatusBar style="auto" />
-      </View>
-      <Text> {'\n'} </Text>
-      <Image style={styles.trackbar} source={Trackbar} />
-      <View style={styles.trackcont}>
-        <Text style={styles.tracktext}>Address</Text>
-        <Text style={styles.tracktext}>Delivery</Text>
-        <Text style={styles.tracktext}>Payment</Text>
-        <Text style={styles.tracktext}>Place Order</Text>
-      </View>
-      <Text> {'\n'} </Text>
-      <View style={styles.cont}>
-        <Text style={styles.heading}>Order Summary</Text>
-        <View style={styles.orderDetailsContainer}>
-          <View style={styles.orderDetailsLeft}>
-            <Text style={{ fontSize: 18 }}>Product:</Text>
-            <Text style={{ fontSize: 18 }}>Delivery Charge:</Text>
-            <Text style={{ fontSize: 18 }}>Discount:</Text>
-            <Text style={{ fontSize: 18 }}>Total:</Text>
+    <View style={styles.containerw}>
+      <ScrollView style={styles.containerw} showsVerticalScrollIndicator={false}>
+        <View style={styles.container}>
+          <View style={styles.topbarinput}>
+            <FontAwesomeIcon icon={faMagnifyingGlass} size={20} color="black" />
+            <TextInput placeholder="Search Sunlight.in" style={styles.inputBox} />
+            <FontAwesomeIcon icon={faUsersViewfinder} size={20} color="black" />
           </View>
-          <View style={styles.orderDetailsRight}>
-            <Text style={{ fontSize: 18 }}>{orderSummary.productTotal}₹</Text>
-            <Text style={{ fontSize: 18 }}>{orderSummary.deliveryCharge}₹</Text>
-            <Text style={{ fontSize: 18 }}>{orderSummary.discount}₹</Text>
-            <Text style={{ fontSize: 18 }}>{orderSummary.total}₹</Text>
-          </View>
+          <StatusBar style="auto" />
         </View>
         <Text> {'\n'} </Text>
-        <View style={styles.orderDetailsContainer}>
-          <View style={styles.orderDetailsLeft}>
-            <Text style={{ fontSize: 18, fontWeight: 'bold' }}>Order Value:</Text>
-          </View>
-          <View style={styles.orderDetailsRight}>
-            <Text style={{ fontSize: 18, fontWeight: 'bold' }}>{orderSummary.total}₹</Text>
-          </View>
+        <Image style={styles.trackbar} source={Trackbar} />
+        <View style={styles.trackcont}>
+          <Text style={styles.tracktext}>Address</Text>
+          <Text style={styles.tracktext}>Delivery</Text>
+          <Text style={styles.tracktext}>Payment</Text>
+          <Text style={styles.tracktext}>Place Order</Text>
         </View>
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.proceedButton} onPress={goToConfirmedPage}>
-            <Text style={styles.buttonText}>Proceed</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-      <View style={styles.cont2}>
-        {products.map((product) => (
-          <View key={product.id} style={styles.productContainer}>
-            <View style={styles.leftContainer}>
-              <Image source={require('../Streetmall/Orderstatement/imagebike.png')} style={styles.productImage} />
-              <View style={styles.productCountContainer}>
-                <TouchableOpacity onPress={() => handleDelete(product.id)} style={styles.deleteButton}>
-                  <FontAwesomeIcon name="trash-o" size={15} color="black" />
-                </TouchableOpacity>
-                <Text style={styles.productCountText}>{productCounts[product.id] || 0}</Text>
-                <TouchableOpacity onPress={() => handleAdd(product.id)} style={styles.countButton}>
-                  <Text style={styles.sbuttonText}>+</Text>
-                </TouchableOpacity>
-              </View>
+        <Text> {'\n'} </Text>
+        <View style={styles.cont}>
+          <Text style={styles.heading}>Order Summary</Text>
+          <View style={styles.orderDetailsContainer}>
+            <View style={styles.orderDetailsLeft}>
+              <Text style={{ fontSize: 18 }}>Product:</Text>
+              <Text style={{ fontSize: 18 }}>Delivery Charge:</Text>
+              <Text style={{ fontSize: 18 }}>Discount:</Text>
+              <Text style={{ fontSize: 18 }}>Total:</Text>
             </View>
-            <View style={styles.rightContainer}>
-              <Text style={styles.productName}>{product.name}</Text>
-              <View style={styles.productDetailoffcont}>
-                <Text style={styles.productDetailoff}>{product.discount}% off</Text>
-              </View>
-              <Text style={styles.productDetailpri}>₹{product.total}</Text>
-              {product.freeDelivery && <Text style={styles.productDetaildel}>Eligible for FREE Delivery</Text>}
-              {product.freestock && <Text style={styles.productDetailst}>In Stock</Text>}
+            <View style={styles.orderDetailsRight}>
+              <Text style={{ fontSize: 18 }}>{orderSummary.productTotal}₹</Text>
+              <Text style={{ fontSize: 18 }}>{orderSummary.deliveryCharge}₹</Text>
+              <Text style={{ fontSize: 18 }}>{orderSummary.discount}₹</Text>
+              <Text style={{ fontSize: 18 }}>{orderSummary.total}₹</Text>
             </View>
           </View>
-        ))}
-      </View>
-    </ScrollView>
+          <Text> {'\n'} </Text>
+          <View style={styles.orderDetailsContainer}>
+            <View style={styles.orderDetailsLeft}>
+              <Text style={{ fontSize: 18, fontWeight: 'bold' }}>Order Value:</Text>
+            </View>
+            <View style={styles.orderDetailsRight}>
+              <Text style={{ fontSize: 18, fontWeight: 'bold' }}>{orderSummary.total}₹</Text>
+            </View>
+          </View>
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity style={styles.proceedButton} onPress={goToConfirmedPage}>
+              <Text style={styles.buttonText}>Proceed</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+        <View style={styles.cont2}>
+          {products.map((product) => (
+            <View key={product.id} style={styles.productContainer}>
+              <View style={styles.leftContainer}>
+                <Image source={require('../Streetmall/Orderstatement/imagebike.png')} style={styles.productImage} />
+                <View style={styles.productCountContainer}>
+                  <TouchableOpacity onPress={() => handleDelete(product.id)} style={styles.deleteButton}>
+                    <FontAwesomeIcon name="trash-o" size={15} color="black" />
+                  </TouchableOpacity>
+                  <Text style={styles.productCountText}>{productCounts[product.id] || 0}</Text>
+                  <TouchableOpacity onPress={() => handleAdd(product.id)} style={styles.countButton}>
+                    <Text style={styles.sbuttonText}>+</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+              <View style={styles.rightContainer}>
+                <Text style={styles.productName}>{product.name}</Text>
+                <View style={styles.productDetailoffcont}>
+                  <Text style={styles.productDetailoff}>{product.discount}% off</Text>
+                </View>
+                <Text style={styles.productDetailpri}>₹{product.total}</Text>
+                {product.freeDelivery && <Text style={styles.productDetaildel}>Eligible for FREE Delivery</Text>}
+                {product.freestock && <Text style={styles.productDetailst}>In Stock</Text>}
+              </View>
+            </View>
+          ))}
+        </View>
+        <Text> {'\n'} </Text><Text> {'\n'} </Text><Text> {'\n'} </Text>
+      </ScrollView>
+      <BottomBar navigation={navigation} />
+      <View style={styles.blueBar}></View>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  containerw: {
+  containerw:{
+    flex: 1,
     backgroundColor: '#ffffff',
+  },
+  blueBar: {
+    backgroundColor: '#1977F3',
+    height: 15,
+    position: 'absolute',
+    bottom: 60,
+    left: 0,
+    right: 0,
   },
   container: {
     flex: 1,

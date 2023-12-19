@@ -3,6 +3,8 @@ import { StyleSheet, View, Text, StatusBar, ScrollView, TextInput, Image, Toucha
 import { faMagnifyingGlass, faUsersViewfinder } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 const Trackbar = require('../Streetmall/14_Checkout_page/step1.png');
+import BottomBar from './BottomBar'; 
+
 
 const PaymentPage2 = ({navigation}) => {
   
@@ -34,47 +36,60 @@ const PaymentPage2 = ({navigation}) => {
     );
 
   return (
-    <ScrollView style={styles.containerw} showsVerticalScrollIndicator={false}> 
-      <View style={styles.container}>
-        <View style={styles.topbarinput}>
-          <FontAwesomeIcon icon={faMagnifyingGlass} size={20} color="black" />
-          <TextInput placeholder="Search Sunlight.in" style={styles.inputBox} />
-          <FontAwesomeIcon icon={faUsersViewfinder} size={20} color="black" />
+    <View style={styles.containerw}>
+      <ScrollView style={styles.containerw} showsVerticalScrollIndicator={false}> 
+        <View style={styles.container}>
+          <View style={styles.topbarinput}>
+            <FontAwesomeIcon icon={faMagnifyingGlass} size={20} color="black" />
+            <TextInput placeholder="Search Sunlight.in" style={styles.inputBox} />
+            <FontAwesomeIcon icon={faUsersViewfinder} size={20} color="black" />
+          </View>
+          <StatusBar style="auto" />
         </View>
-        <StatusBar style="auto" />
-      </View>
-      <View>
-        <Text> {'\n'} </Text>
-        <Image style={styles.trackbar} source={Trackbar} />
-        <View style={styles.trackcont}>
-          <Text style={styles.tracktext}>Address</Text>
-          <Text style={styles.tracktext}>Delivery</Text>
-          <Text style={styles.tracktext}>Payment</Text>
-          <Text style={styles.tracktext}>Place Order</Text>
+        <View>
+          <Text> {'\n'} </Text>
+          <Image style={styles.trackbar} source={Trackbar} />
+          <View style={styles.trackcont}>
+            <Text style={styles.tracktext}>Address</Text>
+            <Text style={styles.tracktext}>Delivery</Text>
+            <Text style={styles.tracktext}>Payment</Text>
+            <Text style={styles.tracktext}>Place Order</Text>
+          </View>
+          <Text> {'\n'} </Text>
+          <View style={styles.cont}>
+              <Text style={styles.title}>Choose your delivery option:</Text>
+              {renderOption('Regular delivery', 'Saturday, 30 September - Free Delivery')}
+              {renderOption('Instant delivery', 'Tomorrow by 10 AM ₹100.00')}
+          </View>
+          <View style={styles.buttonContainer}>
+          <TouchableOpacity
+              style={[styles.proceedButton, !selectedDeliveryOption && styles.disabledButton]}
+              disabled={!selectedDeliveryOption} onPress={goToPaymentPage3}
+          >
+              <Text style={styles.proceedButtonText}>Proceed</Text>
+          </TouchableOpacity>
+          </View>
         </View>
-        <Text> {'\n'} </Text>
-        <View style={styles.cont}>
-            <Text style={styles.title}>Choose your delivery option:</Text>
-            {renderOption('Regular delivery', 'Saturday, 30 September - Free Delivery')}
-            {renderOption('Instant delivery', 'Tomorrow by 10 AM ₹100.00')}
-        </View>
-        <View style={styles.buttonContainer}>
-        <TouchableOpacity
-            style={[styles.proceedButton, !selectedDeliveryOption && styles.disabledButton]}
-            disabled={!selectedDeliveryOption} onPress={goToPaymentPage3}
-        >
-            <Text style={styles.proceedButtonText}>Proceed</Text>
-        </TouchableOpacity>
-        </View>
-      </View>
-      
-    </ScrollView>
+        
+      </ScrollView>
+      <BottomBar navigation={navigation} />
+      <View style={styles.blueBar}></View>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   containerw:{
+    flex: 1,
     backgroundColor: '#ffffff',
+  },
+  blueBar: {
+    backgroundColor: '#1977F3',
+    height: 15,
+    position: 'absolute',
+    bottom: 60,
+    left: 0,
+    right: 0,
   },
   container: {
     flex: 1,

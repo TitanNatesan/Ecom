@@ -3,6 +3,8 @@ import { StyleSheet, View, Image, Text, TextInput, StatusBar, ScrollView, Toucha
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faMagnifyingGlass, faUsersViewfinder } from '@fortawesome/free-solid-svg-icons';
 import { library } from '@fortawesome/fontawesome-svg-core';
+import BottomBar from './BottomBar'; 
+
 
 const giftbox = require('../Streetmall/1Home/gift.gif');
 const laptop = require('../Streetmall/1Home/Laptop.png');
@@ -44,46 +46,51 @@ const Groceries = ({ navigation }) => {
 
 
     return (
-        <ScrollView style={styles.all} vertical showsVerticalScrollIndicator={false}>
-            <View style={styles.container}>
-                <View style={styles.topbarinput}>
-                    <FontAwesomeIcon icon={faMagnifyingGlass} size={20} color="black" />
-                    <TextInput placeholder="Search Sunlight.in" style={styles.inputBox} />
-                    <FontAwesomeIcon icon={faUsersViewfinder} size={20} color="black" />
+        <View style={styles.containerw}>
+            <ScrollView style={styles.all} vertical showsVerticalScrollIndicator={false}>
+                <View style={styles.container}>
+                    <View style={styles.topbarinput}>
+                        <FontAwesomeIcon icon={faMagnifyingGlass} size={20} color="black" />
+                        <TextInput placeholder="Search Sunlight.in" style={styles.inputBox} />
+                        <FontAwesomeIcon icon={faUsersViewfinder} size={20} color="black" />
+                    </View>
+                    <StatusBar barStyle="auto" />
                 </View>
-                <StatusBar barStyle="auto" />
-            </View>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                <View style={styles.productsbar}>
-                    {carouselItems.map((item, index) => {
-                        console.log('Carousel Item:', item);
-                        return (
-                            <View key={index} style={styles.product}>
-                                <Image style={styles.productImage} source={item.image} />
-                                <Text>{item.text}</Text>
-                            </View>
-                        );
-                    })}
+                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                    <View style={styles.productsbar}>
+                        {carouselItems.map((item, index) => {
+                            console.log('Carousel Item:', item);
+                            return (
+                                <View key={index} style={styles.product}>
+                                    <Image style={styles.productImage} source={item.image} />
+                                    <Text>{item.text}</Text>
+                                </View>
+                            );
+                        })}
+                    </View>
+                </ScrollView>
+                <Text style={styles.categoryLabel1}>Groceries</Text>
+                <View>
+                    <View style={styles.categoryContainer}>
+                        {mensWearItems.map((item, index) => (
+                            <TouchableOpacity onPress={handlepaymentPress}>
+                                <View key={index} style={styles.categoryItem}>
+                                    <Image source={item.image} style={styles.productImage2} />
+                                    <Text style={styles.categoryLabel}>{item.text}</Text>
+                                </View>
+                            </TouchableOpacity>
+                        ))}
+                    </View>
                 </View>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', }}>
+                    <Image source={banner} style={styles.bannerImage} />
+                    <Image source={banner1} style={styles.bannerImage} />
+                </View>
+                <Text>{'\n'}</Text><Text>{'\n'}</Text><Text>{'\n'}</Text>
             </ScrollView>
-            <Text style={styles.categoryLabel1}>Groceries</Text>
-            <View>
-                <View style={styles.categoryContainer}>
-                    {mensWearItems.map((item, index) => (
-                        <TouchableOpacity onPress={handlepaymentPress}>
-                            <View key={index} style={styles.categoryItem}>
-                                <Image source={item.image} style={styles.productImage2} />
-                                <Text style={styles.categoryLabel}>{item.text}</Text>
-                            </View>
-                        </TouchableOpacity>
-                    ))}
-                </View>
-            </View>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', }}>
-                <Image source={banner} style={styles.bannerImage} />
-                <Image source={banner1} style={styles.bannerImage} />
-            </View>
-        </ScrollView>
+            <BottomBar navigation={navigation} />
+            <View style={styles.blueBar}></View>
+        </View>
     );
 };
 
@@ -93,6 +100,18 @@ const styles = StyleSheet.create({
         backgroundColor: '#1977F3',
         paddingBottom: 15,
     },
+    containerw:{
+        flex: 1,
+        backgroundColor: '#ffffff',
+    },
+    blueBar: {
+        backgroundColor: '#1977F3',
+        height: 15,
+        position: 'absolute',
+        bottom: 60,
+        left: 0,
+        right: 0,
+      },
     bannerImage: {
         width: '70%',
         height: 170,
@@ -148,16 +167,25 @@ const styles = StyleSheet.create({
         flexWrap: 'wrap',
         justifyContent: 'space-around',
         alignItems: 'center',
-        marginHorizontal: 20,
+        marginHorizontal: 5,
+        paddingBottom: 20,
         marginTop: 10,
+        justifyContent: 'space-around',
     },
     categoryItem: {
         flexDirection: 'column',
         alignItems: 'center',
+        paddingBottom: 30,
+    },
+    categoryLabel: {
+        marginLeft: 3,
+        fontSize: 14,
     },
     categoryLabel1: {
-        marginLeft: 10,
         fontSize: 20,
-    },
+        fontWeight: 'bold',
+        alignSelf: 'center',
+        paddingBottom: 10,
+    }
 });
 export default Groceries;

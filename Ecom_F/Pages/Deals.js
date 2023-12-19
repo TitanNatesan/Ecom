@@ -3,6 +3,8 @@ import { StyleSheet, View, Image, Text, TextInput, StatusBar, ScrollView } from 
 import { faMagnifyingGlass, faUsersViewfinder } from "@fortawesome/free-solid-svg-icons";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import BottomBar from './BottomBar'; 
+
 
 const giftbox = require("../Streetmall/1Home/gift.gif");
 const laptop = require("../Streetmall/1Home/Laptop.png");
@@ -16,7 +18,7 @@ const shoe = require("../assets/shoe799.jpg");
 
 library.add(faMagnifyingGlass, faUsersViewfinder);
 
-const Deals = () => {
+const Deals = ({navigation}) => {
 
     const carouselItems = [
         { image: giftbox, text: "Gifts" },
@@ -26,31 +28,36 @@ const Deals = () => {
         { image: car, text: "Car" },
     ];
     return (
-        <ScrollView vertical showsVerticalScrollIndicator={false}>
-            <View style={styles.container}>
-                <View style={styles.topbarinput}>
-                    <FontAwesomeIcon icon={faMagnifyingGlass} size={20} color="black" />
-                    <TextInput placeholder="Search Sunlight.in" style={styles.inputBox} />
-                    <FontAwesomeIcon icon={faUsersViewfinder} size={20} color="black" />
+        <View style={styles.containerw}>
+            <ScrollView vertical showsVerticalScrollIndicator={false}>
+                <View style={styles.container}>
+                    <View style={styles.topbarinput}>
+                        <FontAwesomeIcon icon={faMagnifyingGlass} size={20} color="black" />
+                        <TextInput placeholder="Search Sunlight.in" style={styles.inputBox} />
+                        <FontAwesomeIcon icon={faUsersViewfinder} size={20} color="black" />
+                    </View>
+                    <StatusBar style="dark-content" />
                 </View>
-                <StatusBar style="dark-content" />
-            </View>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                <View style={styles.productsbar}>
-                    {carouselItems.map((item, index) => (
-                        <View key={index} style={styles.product}>
-                            <Image style={styles.productImage} source={item.image} />
-                            <Text>{item.text}</Text>
-                        </View>
-                    ))}
+                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                    <View style={styles.productsbar}>
+                        {carouselItems.map((item, index) => (
+                            <View key={index} style={styles.product}>
+                                <Image style={styles.productImage} source={item.image} />
+                                <Text>{item.text}</Text>
+                            </View>
+                        ))}
+                    </View>
+                </ScrollView>
+                <View style={styles.deals}>
+                    <Image style={styles.pic} source={dress} />
+                    <Image style={styles.pic} source={Offer} />
+                    <Image style={styles.pic} source={shoe} />
                 </View>
             </ScrollView>
-            <View style={styles.deals}>
-                <Image style={styles.pic} source={dress} />
-                <Image style={styles.pic} source={Offer} />
-                <Image style={styles.pic} source={shoe} />
-            </View>
-        </ScrollView>
+            <BottomBar navigation={navigation} />
+            <View style={styles.blueBar}></View>
+        </View>
+    
     )
 }
 const styles = StyleSheet.create({
@@ -59,6 +66,18 @@ const styles = StyleSheet.create({
         backgroundColor: "#1977F3",
         paddingBottom: 15,
     },
+    containerw: {
+        flex:1,
+        backgroundColor: "#ffffff",
+    },
+    blueBar: {
+        backgroundColor: '#1977F3',
+        height: 15,
+        position: 'absolute',
+        bottom: 60,
+        left: 0,
+        right: 0,
+      },
     deals: {
         flexDirection: 'column',
         justifyContent: 'center',

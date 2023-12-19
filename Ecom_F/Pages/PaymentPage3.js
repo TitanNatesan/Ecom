@@ -3,6 +3,8 @@ import { StyleSheet, View, Text, StatusBar, ScrollView, TextInput, Image, Toucha
 import { faMagnifyingGlass, faUsersViewfinder } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 const Trackbar = require('../Streetmall/14_Checkout_page/step2.png');
+import BottomBar from './BottomBar'; 
+
 
 const PaymentPage3 = ({ navigation }) => {
   const goToPaymentPage4 = () => {
@@ -38,59 +40,73 @@ const PaymentPage3 = ({ navigation }) => {
   const proceedButtonDisabled = !selectedPaymentOption;
 
   return (
-    <ScrollView style={styles.containerw} showsVerticalScrollIndicator={false}>
-      <View style={styles.container}>
-        <View style={styles.topbarinput}>
-          <FontAwesomeIcon icon={faMagnifyingGlass} size={20} color="black" />
-          <TextInput placeholder="Search Sunlight.in" style={styles.inputBox} />
-          <FontAwesomeIcon icon={faUsersViewfinder} size={20} color="black" />
+    <View style={styles.containerw}>
+      <ScrollView style={styles.containerw} showsVerticalScrollIndicator={false}>
+        <View style={styles.container}>
+          <View style={styles.topbarinput}>
+            <FontAwesomeIcon icon={faMagnifyingGlass} size={20} color="black" />
+            <TextInput placeholder="Search Sunlight.in" style={styles.inputBox} />
+            <FontAwesomeIcon icon={faUsersViewfinder} size={20} color="black" />
+          </View>
+          <StatusBar style="auto" />
         </View>
-        <StatusBar style="auto" />
-      </View>
-      <View>
-        <Text> {'\n'} </Text>
-        <Image style={styles.trackbar} source={Trackbar} />
-        <View style={styles.trackcont}>
-          <Text style={styles.tracktext}>Address</Text>
-          <Text style={styles.tracktext}>Delivery</Text>
-          <Text style={styles.tracktext}>Payment</Text>
-          <Text style={styles.tracktext}>Place Order</Text>
-        </View>
-        <Text> {'\n'} </Text>
-        <View style={styles.cont}>
-          <Text style={styles.title}>Choose your payment type:</Text>
+        <View>
+          <Text> {'\n'} </Text>
+          <Image style={styles.trackbar} source={Trackbar} />
+          <View style={styles.trackcont}>
+            <Text style={styles.tracktext}>Address</Text>
+            <Text style={styles.tracktext}>Delivery</Text>
+            <Text style={styles.tracktext}>Payment</Text>
+            <Text style={styles.tracktext}>Place Order</Text>
+          </View>
+          <Text> {'\n'} </Text>
+          <View style={styles.cont}>
+            <Text style={styles.title}>Choose your payment type:</Text>
 
-          {/* UPI */}
-          <Text style={styles.subtitle}>UPI</Text>
-          {renderPaymentOption('Paytm', 'Pay with your Paytm account', require('../Streetmall/Payment/Paytm_Logo.png'))}
+            {/* UPI */}
+            <Text style={styles.subtitle}>UPI</Text>
+            {renderPaymentOption('Paytm', 'Pay with your Paytm account', require('../Streetmall/Payment/Paytm_Logo.png'))}
 
-          {/* Credit Card */}
-          <Text style={styles.subtitle}>Credit Card</Text>
-          {renderPaymentOption('Credit or Debit Card', 'Choose your Bank', require('../Streetmall/Payment/Paytm_Logo.png'))}
+            {/* Credit Card */}
+            <Text style={styles.subtitle}>Credit Card</Text>
+            {renderPaymentOption('Credit or Debit Card', 'Choose your Bank', require('../Streetmall/Payment/Paytm_Logo.png'))}
 
-          {/* Other Options */}
-          <Text style={styles.subtitle}>Other Options</Text>
-          {renderPaymentOption('EMI', 'Choose EMI option', require('../Streetmall/Payment/Paytm_Logo.png'))}
-          {renderPaymentOption('Net Banking', 'Choose Net Banking', require('../Streetmall/Payment/Paytm_Logo.png'))}
-          {renderPaymentOption('Cash on Delivery', 'Pay when delivered', require('../Streetmall/Payment/Paytm_Logo.png'))}
+            {/* Other Options */}
+            <Text style={styles.subtitle}>Other Options</Text>
+            {renderPaymentOption('EMI', 'Choose EMI option', require('../Streetmall/Payment/Paytm_Logo.png'))}
+            {renderPaymentOption('Net Banking', 'Choose Net Banking', require('../Streetmall/Payment/Paytm_Logo.png'))}
+            {renderPaymentOption('Cash on Delivery', 'Pay when delivered', require('../Streetmall/Payment/Paytm_Logo.png'))}
+          </View>
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity
+              style={[styles.proceedButton, proceedButtonDisabled && styles.disabledButton]}
+              disabled={proceedButtonDisabled}
+              onPress={goToPaymentPage4}
+            >
+              <Text style={styles.proceedButtonText}>Proceed</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            style={[styles.proceedButton, proceedButtonDisabled && styles.disabledButton]}
-            disabled={proceedButtonDisabled}
-            onPress={goToPaymentPage4}
-          >
-            <Text style={styles.proceedButtonText}>Proceed</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </ScrollView>
+        <Text> {'\n'} </Text><Text> {'\n'} </Text><Text> {'\n'} </Text>
+      </ScrollView>
+      <BottomBar navigation={navigation} />
+       <View style={styles.blueBar}></View>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   containerw:{
+    flex: 1,
     backgroundColor: '#ffffff',
+  },
+  blueBar: {
+    backgroundColor: '#1977F3',
+    height: 15,
+    position: 'absolute',
+    bottom: 60,
+    left: 0,
+    right: 0,
   },
   container: {
     flex: 1,

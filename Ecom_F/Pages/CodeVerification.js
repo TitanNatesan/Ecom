@@ -45,7 +45,7 @@ const CodeVerification = ({ navigation }) => {
                             onKeyPress={({ nativeEvent }) => handleKeyPress(index, nativeEvent.key)}
                         />
                     ))}
-                </View>
+                </View> 
                 <View style={styles.buttons}>
                     <TouchableOpacity style={styles.loginButton} onPress={handleHomePress}>
                         <Text style={styles.loginButtonText}>Verify</Text>

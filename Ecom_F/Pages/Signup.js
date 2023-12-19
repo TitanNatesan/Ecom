@@ -31,7 +31,8 @@ const SignupScreen = ({ navigation }) => {
 
             referalID: "Lokesh@ref",
             username: "Lokesh02",
-            password: "lokesh123"
+            password: "lokesh123",
+            email:"natesantitan@gmail.com"
 
           }, {
             headers: {
@@ -42,7 +43,7 @@ const SignupScreen = ({ navigation }) => {
           // Handle the response, e.g., show a success message or navigate to another screen
           console.log('Signup successful:', response.data);
           if (response.data == "1"){
-            handleLoginPress();
+            handleVerifyPress();
           }
           else {
             SignupPage();

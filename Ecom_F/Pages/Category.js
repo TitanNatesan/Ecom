@@ -4,6 +4,8 @@ import { faMagnifyingGlass, faUsersViewfinder, faShirt, faChildDress, faChild, f
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import BottomBar from './BottomBar'; 
+
 
 const giftbox = require('../Streetmall/1Home/gift.gif');
 const laptop = require('../Streetmall/1Home/Laptop.png');
@@ -59,78 +61,98 @@ const Category = ({ navigation }) => {
     ];
 
     return (
-        <ScrollView style={styles.all} vertical showsVerticalScrollIndicator={false}>
-            <View style={styles.container}>
-                <View style={styles.topbarinput}>
-                    <FontAwesomeIcon icon={faMagnifyingGlass} size={20} color="black" />
-                    <TextInput placeholder="Search Sunlight.in" style={styles.inputBox} />
-                    <FontAwesomeIcon icon={faUsersViewfinder} size={20} color="black" />
+        <View style={styles.containerw}>
+            <ScrollView style={styles.all} vertical showsVerticalScrollIndicator={false}>
+                <View style={styles.container}>
+                    <View style={styles.topbarinput}>
+                        <FontAwesomeIcon icon={faMagnifyingGlass} size={20} color="black" />
+                        <TextInput placeholder="Search Sunlight.in" style={styles.inputBox} />
+                        <FontAwesomeIcon icon={faUsersViewfinder} size={20} color="black" />
+                    </View>
+                    <StatusBar barStyle="dark-content" />
                 </View>
-                <StatusBar barStyle="dark-content" />
-            </View>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                <View style={styles.productsbar}>
-                    {carouselItems.map((item, index) => (
-                        <View key={index} style={styles.product}>
-                            <Image style={styles.productImage} source={item.image} />
-                            <Text>{item.text}</Text>
-                        </View>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                    <View style={styles.productsbar}>
+                        {carouselItems.map((item, index) => (
+                            <View key={index} style={styles.product}>
+                                <Image style={styles.productImage} source={item.image} />
+                                <Text>{item.text}</Text>
+                            </View>
+                        ))}
+                    </View>
+                </ScrollView>
+                <Text style={styles.category}>Shop by Category</Text>
+                <View style={styles.categoryContainer}>
+                    {data.map((item, index) => (
+                        <TouchableOpacity
+                            key={index}
+                            style={styles.categoryItem}
+                            onPress={() => {
+                                switch (item.label) {
+                                    case "Men's Wear":
+                                        handleMenswearPress();
+                                        break;
+                                    case "Women's Wear":
+                                        handleWomenswearPress();
+                                        break;
+                                    case "Kids Wear":
+                                        handleKidswearPress();
+                                        break;
+                                    case "Home Appliances":
+                                        handleHomeAppPress();
+                                        break;
+                                    case "Shoes":
+                                        handleShoesPress();
+                                        break;
+                                    case "Cars":
+                                        handleCarsPress();
+                                        break;
+                                    case "Bike":
+                                        handleBikesPress();
+                                        break;
+                                    case "Groceries":
+                                        handleGroceriesPress();
+                                        break;
+                                    default:
+                                        console.log(`Pressed ${item.label}`);
+                                }
+                            }}
+                        >
+                            <FontAwesomeIcon icon={item.icon} size={20} color="black" />
+                            <Text style={styles.categoryLabel}>{item.label}</Text>
+                            <FontAwesomeIcon icon={faChevronRight} size={20} color="black" />
+                        </TouchableOpacity>
                     ))}
                 </View>
+                <Text> {'\n'} </Text><Text> {'\n'} </Text><Text> {'\n'} </Text>
             </ScrollView>
-            <Text style={styles.category}>Shop by Category</Text>
-            <View style={styles.categoryContainer}>
-                {data.map((item, index) => (
-                    <TouchableOpacity
-                        key={index}
-                        style={styles.categoryItem}
-                        onPress={() => {
-                            switch (item.label) {
-                                case "Men's Wear":
-                                    handleMenswearPress();
-                                    break;
-                                case "Women's Wear":
-                                    handleWomenswearPress();
-                                    break;
-                                case "Kids Wear":
-                                    handleKidswearPress();
-                                    break;
-                                case "Home Appliances":
-                                    handleHomeAppPress();
-                                    break;
-                                case "Shoes":
-                                    handleShoesPress();
-                                    break;
-                                case "Cars":
-                                    handleCarsPress();
-                                    break;
-                                case "Bike":
-                                    handleBikesPress();
-                                    break;
-                                case "Groceries":
-                                    handleGroceriesPress();
-                                    break;
-                                default:
-                                    console.log(`Pressed ${item.label}`);
-                            }
-                        }}
-                    >
-                        <FontAwesomeIcon icon={item.icon} size={20} color="black" />
-                        <Text style={styles.categoryLabel}>{item.label}</Text>
-                        <FontAwesomeIcon icon={faChevronRight} size={20} color="black" />
-                    </TouchableOpacity>
-                ))}
-            </View>
-        </ScrollView>
+            {/* Bottom Bar */}
+            <BottomBar navigation={navigation} initialPage="Category" />
+
+            {/* Blue Bar */}
+            <View style={styles.blueBar}></View>
+        </View>
     );
 };
 
 const styles = StyleSheet.create({
+    containerw: {
+        flex: 1,
+        backgroundColor: '#ffffff',
+      },
     container: {
         paddingTop: 120,
         backgroundColor: '#1977F3',
         paddingBottom: 15,
     },
+    blueBar: {
+        backgroundColor: '#1977F3',
+        height: 15,
+        position: 'absolute',
+        bottom: 60,
+        left: 0,
+        right: 0,
+      },
     all: {
         backgroundColor: '#D3E6FD',
     },

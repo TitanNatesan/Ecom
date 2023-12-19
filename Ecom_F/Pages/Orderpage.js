@@ -4,6 +4,8 @@ import rect from '../Streetmall/Orderstatement/rect.png';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import { faMagnifyingGlass, faUsersViewfinder } from "@fortawesome/free-solid-svg-icons";
 import Trackbar from '../Streetmall/Orderstatement/trackbar.png';
+import BottomBar from './BottomBar'; 
+
 
 
 const products = [
@@ -58,94 +60,109 @@ const OrderTrackingPage = ({navigation}) => {
   };
 
   return (
-    <ScrollView style={styles.containerw} showsVerticalScrollIndicator={false}>
-      <View style={styles.container}>
-        <View style={styles.topbarinput}>
-          <FontAwesomeIcon icon={faMagnifyingGlass} size={20} color="black" />
-          <TextInput placeholder="Search Sunlight.in" style={styles.inputBox} />
-          <FontAwesomeIcon icon={faUsersViewfinder} size={20} color="black" />
+    <View style={styles.containerw}>
+      <ScrollView style={styles.containerw} showsVerticalScrollIndicator={false}>
+        <View style={styles.container}>
+          <View style={styles.topbarinput}>
+            <FontAwesomeIcon icon={faMagnifyingGlass} size={20} color="black" />
+            <TextInput placeholder="Search Sunlight.in" style={styles.inputBox} />
+            <FontAwesomeIcon icon={faUsersViewfinder} size={20} color="black" />
+          </View>
         </View>
-      </View>
 
-      <Text> {'\n'} </Text>
-      <Image style={styles.trackbar} source={Trackbar} />
-      <View style={styles.trackcont}>
-        <Text style={styles.tracktext}>Address</Text>
-        <Text style={styles.tracktext}>Delivery</Text>
-        <Text style={styles.tracktext}>Payment</Text>
-        <Text style={styles.tracktext}>Place Order</Text>
-      </View>
-      <Text> {'\n'} </Text>
+        <Text> {'\n'} </Text>
+        <Image style={styles.trackbar} source={Trackbar} />
+        <View style={styles.trackcont}>
+          <Text style={styles.tracktext}>Address</Text>
+          <Text style={styles.tracktext}>Delivery</Text>
+          <Text style={styles.tracktext}>Payment</Text>
+          <Text style={styles.tracktext}>Place Order</Text>
+        </View>
+        <Text> {'\n'} </Text>
 
-      <Text style={styles.chtext} >*Check your registered email & Mobile number for Invoice</Text>
-      <Image source={rect} style={styles.claimimg} />
-      <Text style={styles.heading}>{'\n'}</Text>
-      <Text style={styles.heading}>Track Order Details</Text>
-      <View style={styles.orderStatusContainer}>
-        {orderStatus.map((item, index) => (
-          <View key={index} style={styles.statusItem}>
-            <View style={styles.statusIconContainer}>
-              {item.finished ? (  
-                <Image
-                  source={require('../Streetmall/Orderstatement/finish.png')}
-                  style={styles.statusIcon}
-                />
-              ) : (
-                <Image
-                  source={require('../Streetmall/Orderstatement/pending.png')}
-                  style={styles.statusIcon}
-                />
-              )}
-            </View>
-            <View style={styles.statusTextContainer}>
-              <Text style={styles.statusText}>{item.status}</Text>
-              <Text style={styles.statusDate}>{item.date}</Text>
-            </View>
-          </View>
-        ))}
-      </View>
-      <View style={styles.cont}>
-        {products.map((product) => (
-          <View key={product.id} style={styles.productContainer}>
-            <View style={styles.leftContainer}>
-              <Image source={require('../Streetmall/Orderstatement/imagebike.png')} style={styles.productImage} />
-              <View style={styles.productCountContainer}>
-                <TouchableOpacity onPress={() => handleDelete(product.id)} style={styles.deleteButton}>
-                  <FontAwesomeIcon name="trash-o" size={15} color="black" />
-                </TouchableOpacity>
-                <Text style={styles.productCountText}>{productCounts[product.id] || 0}</Text>
-                <TouchableOpacity onPress={() => handleAdd(product.id)} style={styles.countButton}>
-                  <Text style={styles.sbuttonText}>+</Text>
-                </TouchableOpacity>
+        <Text style={styles.chtext} >*Check your registered email & Mobile number for Invoice</Text>
+        <Image source={rect} style={styles.claimimg} />
+        <Text style={styles.heading}>{'\n'}</Text>
+        <Text style={styles.heading}>Track Order Details</Text>
+        <View style={styles.orderStatusContainer}>
+          {orderStatus.map((item, index) => (
+            <View key={index} style={styles.statusItem}>
+              <View style={styles.statusIconContainer}>
+                {item.finished ? (  
+                  <Image
+                    source={require('../Streetmall/Orderstatement/finish.png')}
+                    style={styles.statusIcon}
+                  />
+                ) : (
+                  <Image
+                    source={require('../Streetmall/Orderstatement/pending.png')}
+                    style={styles.statusIcon}
+                  />
+                )}
+              </View>
+              <View style={styles.statusTextContainer}>
+                <Text style={styles.statusText}>{item.status}</Text>
+                <Text style={styles.statusDate}>{item.date}</Text>
               </View>
             </View>
-            <View style={styles.rightContainer}>
-              <Text style={styles.productName}>{product.name}</Text>
-              <View style={styles.productDetailoffcont}>
-                <Text style={styles.productDetailoff}>{product.discount}% off</Text>
+          ))}
+        </View>
+        <View style={styles.cont}>
+          {products.map((product) => (
+            <View key={product.id} style={styles.productContainer}>
+              <View style={styles.leftContainer}>
+                <Image source={require('../Streetmall/Orderstatement/imagebike.png')} style={styles.productImage} />
+                <View style={styles.productCountContainer}>
+                  <TouchableOpacity onPress={() => handleDelete(product.id)} style={styles.deleteButton}>
+                    <FontAwesomeIcon name="trash-o" size={15} color="black" />
+                  </TouchableOpacity>
+                  <Text style={styles.productCountText}>{productCounts[product.id] || 0}</Text>
+                  <TouchableOpacity onPress={() => handleAdd(product.id)} style={styles.countButton}>
+                    <Text style={styles.sbuttonText}>+</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
-              <Text style={styles.productDetailpri}>₹{product.total}</Text>
-              {product.freeDelivery && <Text style={styles.productDetaildel}>Eligible for FREE Delivery</Text>}
-              {product.freestock && <Text style={styles.productDetailst}>In Stock</Text>}
+              <View style={styles.rightContainer}>
+                <Text style={styles.productName}>{product.name}</Text>
+                <View style={styles.productDetailoffcont}>
+                  <Text style={styles.productDetailoff}>{product.discount}% off</Text>
+                </View>
+                <Text style={styles.productDetailpri}>₹{product.total}</Text>
+                {product.freeDelivery && <Text style={styles.productDetaildel}>Eligible for FREE Delivery</Text>}
+                {product.freestock && <Text style={styles.productDetailst}>In Stock</Text>}
+              </View>
             </View>
-          </View>
-        ))}
-      </View>
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.proceedButton} onPress={goToHomePage}>
-          <Text style={styles.buttonText}>Home</Text>
-        </TouchableOpacity>
-      </View>
-      <Text style={styles.heading}>{'\n'}</Text>
-      <Text style={styles.heading}>{'\n'}</Text>
+          ))}
+        </View>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity style={styles.proceedButton} onPress={goToHomePage}>
+            <Text style={styles.buttonText}>Home</Text>
+          </TouchableOpacity>
+        </View>
+        <Text style={styles.heading}>{'\n'}</Text>
+        <Text style={styles.heading}>{'\n'}</Text>
+        <Text> {'\n'} </Text>
+        <Text> {'\n'} </Text>
 
-    </ScrollView>
+      </ScrollView>
+      <BottomBar navigation={navigation} />
+      <View style={styles.blueBar}></View>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  containerw: {
+  containerw:{
+    flex: 1,
     backgroundColor: '#ffffff',
+},
+blueBar: {
+    backgroundColor: '#1977F3',
+    height: 15,
+    position: 'absolute',
+    bottom: 60,
+    left: 0,
+    right: 0,
   },
   container: {
     paddingTop: 100,

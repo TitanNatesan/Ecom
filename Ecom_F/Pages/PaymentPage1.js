@@ -3,6 +3,8 @@ import { StyleSheet, View, Text, StatusBar, ScrollView, TextInput, Image, Toucha
 import { faMagnifyingGlass, faUsersViewfinder } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 const Trackbar = require('../Streetmall/14_Checkout_page/step.png');
+import BottomBar from './BottomBar'; 
+
 
 const PaymentPage = ({navigation}) => {
   
@@ -38,80 +40,93 @@ const PaymentPage = ({navigation}) => {
   };
 
   return (
-    <ScrollView style={styles.containerw} showsVerticalScrollIndicator={false}>
-      <View style={styles.container}>
-        <View style={styles.topbarinput}>
-          <FontAwesomeIcon icon={faMagnifyingGlass} size={20} color="black" />
-          <TextInput placeholder="Search Sunlight.in" style={styles.inputBox} />
-          <FontAwesomeIcon icon={faUsersViewfinder} size={20} color="black" />
+    <View style={styles.containerw}>
+      <ScrollView style={styles.containerw} showsVerticalScrollIndicator={false}>
+        <View style={styles.container}>
+          <View style={styles.topbarinput}>
+            <FontAwesomeIcon icon={faMagnifyingGlass} size={20} color="black" />
+            <TextInput placeholder="Search Sunlight.in" style={styles.inputBox} />
+            <FontAwesomeIcon icon={faUsersViewfinder} size={20} color="black" />
+          </View>
+          <StatusBar style="auto" />
         </View>
-        <StatusBar style="auto" />
-      </View>
-      <View>
-        <Text> {'\n'} </Text>
-        <Image style={styles.trackbar} source={Trackbar} />
-        <View style={styles.trackcont}>
-          <Text style={styles.tracktext}>Address</Text>
-          <Text style={styles.tracktext}>Delivery</Text>
-          <Text style={styles.tracktext}>Payment</Text>
-          <Text style={styles.tracktext}>Place Order</Text>
-        </View>
-        <Text> {'\n'} </Text>
-        <View style={styles.cont}>
-          <Text style={styles.heading}>Customer</Text>
-          {isEditing ? (
-            <View>
-              <TextInput
-                style={styles.editInput}
-                placeholder="Enter address"
-                value={editedAddress}
-                onChangeText={(text) => setEditedAddress(text)}
-              />
-              <TextInput
-                style={styles.editInput}
-                placeholder="Enter pin code"
-                value={editedPinCode}
-                onChangeText={(text) => setEditedPinCode(text)}
-              />
-              <TextInput
-                style={styles.editInput}
-                placeholder="Enter phone number"
-                value={editedPhone}
-                onChangeText={(text) => setEditedPhone(text)}
-              />
-            </View>
-          ) : (
-            addressLines.map((line, index) => (
-              <Text key={index} style={styles.addressLine}>
-                {line}
-              </Text>
-            ))
-          )}
-          <View style={styles.buttonContainer}>
+        <View>
+          <Text> {'\n'} </Text>
+          <Image style={styles.trackbar} source={Trackbar} />
+          <View style={styles.trackcont}>
+            <Text style={styles.tracktext}>Address</Text>
+            <Text style={styles.tracktext}>Delivery</Text>
+            <Text style={styles.tracktext}>Payment</Text>
+            <Text style={styles.tracktext}>Place Order</Text>
+          </View>
+          <Text> {'\n'} </Text>
+          <View style={styles.cont}>
+            <Text style={styles.heading}>Customer</Text>
             {isEditing ? (
-              <TouchableOpacity style={styles.saveButton} onPress={handleSavePress}>
-                <Text style={styles.buttonText}>Save</Text>
-              </TouchableOpacity>
-            ) : (
               <View>
-                <TouchableOpacity style={styles.editButton} onPress={handleEditPress}>
-                  <Text style={styles.buttonText}>Edit Address</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.proceedButton} onPress={goToPaymentPage2}>
-                  <Text style={styles.buttonText}>Proceed</Text>
-                </TouchableOpacity>
+                <TextInput
+                  style={styles.editInput}
+                  placeholder="Enter address"
+                  value={editedAddress}
+                  onChangeText={(text) => setEditedAddress(text)}
+                />
+                <TextInput
+                  style={styles.editInput}
+                  placeholder="Enter pin code"
+                  value={editedPinCode}
+                  onChangeText={(text) => setEditedPinCode(text)}
+                />
+                <TextInput
+                  style={styles.editInput}
+                  placeholder="Enter phone number"
+                  value={editedPhone}
+                  onChangeText={(text) => setEditedPhone(text)}
+                />
               </View>
+            ) : (
+              addressLines.map((line, index) => (
+                <Text key={index} style={styles.addressLine}>
+                  {line}
+                </Text>
+              ))
             )}
+            <View style={styles.buttonContainer}>
+              {isEditing ? (
+                <TouchableOpacity style={styles.saveButton} onPress={handleSavePress}>
+                  <Text style={styles.buttonText}>Save</Text>
+                </TouchableOpacity>
+              ) : (
+                <View>
+                  <TouchableOpacity style={styles.editButton} onPress={handleEditPress}>
+                    <Text style={styles.buttonText}>Edit Address</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.proceedButton} onPress={goToPaymentPage2}>
+                    <Text style={styles.buttonText}>Proceed</Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+            </View>
           </View>
         </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+      <BottomBar navigation={navigation} />
+      <View style={styles.blueBar}></View>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   containerw:{
+    flex: 1,
     backgroundColor: '#ffffff',
+  },
+  blueBar: {
+    backgroundColor: '#1977F3',
+    height: 15,
+    position: 'absolute',
+    bottom: 60,
+    left: 0,
+    right: 0,
   },
   container: {
     flex: 1,
