@@ -7,3 +7,4 @@ urlpatterns = [
     path("product/<str:pi>/",views.viewProduct, name='ViewProducts'),
     path("product/",views.viewProducts, name="allProducts"),
 ]
+ 
