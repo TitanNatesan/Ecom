@@ -39,7 +39,7 @@ const ProductItem = ({ product }) => {
 
   return (
     <View style={styles.productContainer}>
-      <Image style={styles.productImage} source={product.images} />
+      <Image style={styles.productImage} source={{ uri: product.images }} />
       <View style={styles.productDetails}>
         <Text style={styles.productName}>{product.name}</Text>
         <View style={styles.productHeader}>

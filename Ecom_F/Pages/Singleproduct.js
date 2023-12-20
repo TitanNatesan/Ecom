@@ -139,7 +139,7 @@ const SingleProductPage = ({ navigation }) => {
               <Text style={styles.ratingText}>{product.rating}</Text>
             </View>
           </View>
-          <Image style={styles.productImage} source={productDetails.image} />
+          <Image style={styles.productImage} source={{ uri: product.images }} />
           <View style={styles.priOfferContainer}>
             <Text style={styles.productPrice}>{`$${product.sellingPrice}`}</Text>
             <Text style={styles.offerText}>{product.discount}%</Text>

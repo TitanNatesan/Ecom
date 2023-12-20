@@ -16,7 +16,6 @@ const mobile = require("../Streetmall/1Home/Mobiles.png");
 const car = require("../Streetmall/1Home/car.png");
 const watch = require("../Streetmall/1Home/Watch.png");
 const backl = require("../Streetmall/1Home/lg.png");
-
 const brand1 = require("../Streetmall/brands/brand1.png");
 const brand2 = require("../Streetmall/brands/brand2.png");
 const brand3 = require("../Streetmall/brands/brand3.png");
@@ -60,21 +59,11 @@ const AllProductPage = ({ navigation }) => {
     setFilterModalVisible(false);
   };
 
-
-
   const [products, setProducts] = useState([]);
-
-  
   const fetchProducts = async () => { 
     try {
       const response = await axios.get('http://10.0.2.2:8000/api/product/');
-      
-      const updatedProducts = response.data.map(product => ({
-        ...product,
-        images: 'https://source.unsplash.com/random/200x200/?gift', // Update this URL as needed
-      }));
-
-      setProducts(updatedProducts);
+      setProducts(response.data);
     } catch (error) {
       console.log("Failed to load data");
       console.error('Error fetching products:', error);

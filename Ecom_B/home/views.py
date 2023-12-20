@@ -6,7 +6,7 @@ from rest_framework.views import APIView
 from rest_framework import status
 import base64
 from django.http import JsonResponse
-import random
+import random,os
 from django.core.files.base import ContentFile
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.utils import timezone
@@ -15,9 +15,9 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from pathlib import Path
 import pyotp
-BASE_DIR = Path(__file__).resolve().parent.parent
+from django.conf import settings
 
-
+BASE_DIR = settings.BASE_DIR 
 
 
 @api_view(["POST"])
@@ -35,6 +35,7 @@ def login(request):
 
 @api_view(["GET"])
 def viewProduct(request,pi):
+    products = Products.objects.all().values()
 
     if request.method == "GET":
         for product in products:
@@ -43,11 +44,21 @@ def viewProduct(request,pi):
                 break
         return Response("Product Not Found")
 
+def get_base64_encoded_image(img_path):
+    with open(img_path, 'rb') as image_file:
+        encoded_image = base64.b64encode(image_file.read()).decode('utf-8')
+    return f"data:image/jpeg;base64,{encoded_image}"
+
 @api_view(["GET"])
 def viewProducts(request):
     products = Products.objects.all().values()
+    for pro in products:
+        img = "media/"+pro['images']
+        imgPath = os.path.join(BASE_DIR/img)
+        pro["images"]= str(get_base64_encoded_image(imgPath))
+
     serializer = ProductSerial(products, many=True)
-    return JsonResponse(serializer.data,safe=False)
+    return JsonResponse(list(products),safe=False)
 
 @api_view(["POST"])
 def signup(request): # test JSON input->->->->{"username":"natesan","password":"12345678","referalID":"mukilan@ref"}<-<-<-<-
@@ -89,12 +100,3 @@ def generate_and_send_otp(request):
         request.session['otp'] = otp
         return Response("OTP sent successfully. Check your email.")
     return Response(0)
-
-def get_image_base64(image_path):
-    with open(image_path, "rb") as image_file:
-        encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
-    return encoded_string
-
-def get_image_as_file(encoded_string):
-    decoded_data = base64.b64decode(encoded_string)
-    return SimpleUploadedFile("image.jpg", decoded_data)
