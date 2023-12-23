@@ -1,5 +1,4 @@
 import React, { useRef } from 'react';
-import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { library } from '@fortawesome/fontawesome-svg-core';
@@ -31,7 +30,9 @@ const CodeVerification = ({ navigation }) => {
             <View style={styles.allsignIn}>
                 <View style={styles.rowContainer}>
                     <Text style={styles.text}>Code Verification</Text>
-                    <FontAwesomeIcon icon={faCircleRight} size={50} color="#1977F3" />
+                    <TouchableOpacity onPress={handleHomePress}>
+                        <FontAwesomeIcon icon={faCircleRight} size={50} color="#1977F3" />
+                    </TouchableOpacity>
                 </View>
                 <Text style={styles.description}>Enter Verification code here</Text>
                 <View style={styles.allinput}>
@@ -45,14 +46,14 @@ const CodeVerification = ({ navigation }) => {
                             onKeyPress={({ nativeEvent }) => handleKeyPress(index, nativeEvent.key)}
                         />
                     ))}
-                </View> 
+                </View>
                 <View style={styles.buttons}>
                     <TouchableOpacity style={styles.loginButton} onPress={handleHomePress}>
                         <Text style={styles.loginButtonText}>Verify</Text>
                     </TouchableOpacity>
                 </View>
             </View>
-            <StatusBar style="auto" />
+            {/* <StatusBar style="auto" /> */}
         </View>
     );
 };
@@ -104,7 +105,7 @@ const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
-        backgroundColor: '#00ADEF',
+        backgroundColor: '#1977F3',
         justifyContent: 'center',
     },
     rowContainer: {

@@ -6,7 +6,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import BottomBar from '../Pages/BottomBar';
 import ProductItem from '../Pages/ProductItem';
 import FilterPage from '../Pages/Filter';
-import SingleProductPage from '../Pages/Singleproduct';
 import axios from 'axios';
 import { useEffect } from "react";
 
@@ -62,7 +61,7 @@ const AllProductPage = ({ navigation }) => {
   const [products, setProducts] = useState([]);
   const fetchProducts = async () => { 
     try {
-      const response = await axios.get('http://10.0.2.2:8000/api/product/');
+      const response = await axios.get('http://192.168.1.117:8000/api/product/');
       setProducts(response.data);
     } catch (error) {
       console.log("Failed to load data");

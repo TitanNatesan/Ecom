@@ -188,4 +188,4 @@ const styles = StyleSheet.create({
         paddingBottom: 10,
     }
 });
-export default Menswear
+export default Menswear 

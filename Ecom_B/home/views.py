@@ -20,6 +20,59 @@ from django.conf import settings
 BASE_DIR = settings.BASE_DIR 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 @api_view(["POST"])
 def login(request):
 
@@ -72,7 +125,7 @@ def signup(request): # test JSON input->->->->{"username":"natesan","password":"
             # otp = generate_otp()
             # x = Users.objects.get(username=request.data["username"])
             # x.lastOTP = otp 
-            # print(x.otpSent)
+            # print(x.otpSent) 
             # x.save()
             # print(x.otpSent)
             # #send_otp_email(email, otp)

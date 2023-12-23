@@ -3,7 +3,7 @@ import { StyleSheet, View, Image, Text, TextInput, StatusBar, ScrollView, Toucha
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faMagnifyingGlass, faUsersViewfinder } from '@fortawesome/free-solid-svg-icons';
 import { library } from '@fortawesome/fontawesome-svg-core';
-import BottomBar from '../Pages/BottomBar'; 
+import BottomBar from './BottomBar'; 
 
 
 const giftbox = require('../Streetmall/1Home/gift.gif');

@@ -2,46 +2,55 @@ from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.contrib.postgres.fields import JSONField, ArrayField
 from django.utils import timezone
+from phonenumber_field.modelfields import PhoneNumberField
 
 class Users(models.Model):
-    name = models.CharField(max_length=100, null= True)
-    username = models.CharField(max_length=100,unique=True)
-    age = models.IntegerField( null = True)
-    number = models.CharField( null = True,unique=True)
-    email = models.EmailField(max_length=254,null=True)
+    name = models.CharField(max_length=100, blank = True)
+    username = models.CharField(max_length=100,primary_key=True)
+    referal = models.CharField(max_length=100)
+    age = models.IntegerField( blank= True)
+    phone = PhoneNumberField()
+    email = models.EmailField(max_length=254,blank=True)
+    profile_pic = models.ImageField(upload_to='profilePic/') 
+    dob = models.DateField()
     password = models.CharField(max_length=50)
-    referalID = models.CharField(max_length=100+5)
     doj = models.DateTimeField(auto_now_add=True)
-    slug = models.SlugField(default="", null=True,unique=True)
-    lastOTP = models.IntegerField(null=True)
-    otpSent = models.DateTimeField(auto_now_add=True, null = True)
+    wishlist = models.ManyToManyField("home.Products",blank=True)
+    address = models.ForeignKey('home.Address', verbose_name="Address", on_delete=models.CASCADE, blank=True, null=True)
+    cart = models.ForeignKey("home.Cart", on_delete=models.CASCADE,blank = True, null=True)
+    payment_details = models.ForeignKey("home.PaymentDetails",on_delete=models.PROTECT, blank=True, null=True)
+
 
     def __str__(self):
-        return self.username
-    
-    def save(self, *args, **kwargs):
-        # Check if lastOTP has changed
-        if self.pk is not None:
-            old_instance = Users.objects.get(pk=self.pk)
-            if self.lastOTP != old_instance.lastOTP:
-                # Update otpSent to the current date and time
-                self.otpSent = timezone.now()
+        return f"Username: {self.name}| Name: {self.username}"
 
+class Address(models.Model):
+    user = models.ForeignKey(Users, verbose_name="User_Address", on_delete=models.CASCADE, related_name='addresses')
+    door_number = models.CharField(max_length=15)
+    address_line1 = models.CharField(max_length=255)
+    address_line2 = models.CharField(max_length=255, blank=True)
+    city = models.CharField(max_length=255)
+    state = models.CharField(max_length=255)
+    postal_code = models.CharField(max_length=20)
+    country = models.CharField(max_length=255)
+    landmark = models.CharField(max_length=255)
+
+    def __str__(self):
+        return f"{self.street_line1}, {self.city}, {self.state}, {self.country}"
 
 class Products(models.Model):
     name = models.CharField(max_length=200)
     description = models.TextField()
-    productID = models.CharField(unique=True)
-    images = models.ImageField(upload_to="media/")
+    product_id = models.CharField(max_length=100, primary_key=True)
+    images = models.ImageField(upload_to="product/")
     mrp = models.DecimalField( max_digits=10, decimal_places=2, validators=[MinValueValidator(1)])
     discount = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(100)])
     sellingPrice = models.DecimalField( max_digits=10, decimal_places=2, validators=[MinValueValidator(1)])
     stock = models.IntegerField()
     rating = models.DecimalField(validators=[MaxValueValidator(5),MinValueValidator(0)], max_digits=3,decimal_places= 2)
     freeDelivery = models.BooleanField(default=True)
-    specifications = models.JSONField(null=True) # [{"label": "Case Diameter", "value": "4.4 Millimeters"}, {"label": "Brand Colour", "value": "Brown"}, {"label": "Brand Material Type", "value": "Plastic"}]
-    specificationsList = ArrayField(models.CharField(max_length=100), null = True) #JSONfield ah change panniru maybe results better ah irukalam [just try]
-    slug = models.SlugField(default="", null=True,unique=True)
+    specification = models.JSONField(blank=True) # [{"label": "Case Diameter", "value": "4.4 Millimeters"}, {"label": "Brand Colour", "value": "Brown"}, {"label": "Brand Material Type", "value": "Plastic"}]
+    specification_list = ArrayField(models.CharField(max_length=100),blank=True) #JSONfield ah change panniru maybe results better ah irukalam [just try]
 
     @property
     def inStock(self)->bool: 
@@ -49,3 +58,65 @@ class Products(models.Model):
 
     def __str__(self):
         return self.name
+
+class DeliveryPartner(models.Model):
+    name = models.CharField(max_length=200)
+    location = models.ForeignKey("home.Address", on_delete=models.CASCADE)
+    phone = models.CharField(max_length=15)
+    email = models.EmailField(max_length=254)
+    orders_handling = models.ManyToManyField("home.Orders", related_name='order_handling_partners')
+
+class EachItem(models.Model):
+    user = models.ForeignKey(Users, on_delete=models.CASCADE)
+    product = models.ForeignKey(Products, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField()
+    total = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+
+    def save(self, *args, **kwargs):
+        if self.product:
+            self.total = self.quantity * self.product.price
+        super().save(*args, **kwargs)
+
+class Cart(models.Model):
+    user = models.ForeignKey(Users, on_delete=models.CASCADE, related_name='carts')
+    ordered_products = models.ManyToManyField(EachItem)
+    total = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+
+    def save(self, *args, **kwargs):
+        self.total = sum(items.total for items in self.ordered_products.all())
+        super().save(*args, **kwargs)
+
+class PaymentDetails(models.Model):
+    user = models.ForeignKey(Users, on_delete=models.CASCADE)
+    card_number = models.CharField(max_length=16,unique=True)  # Assuming a 16-digit card number
+    cardholder_name = models.CharField(max_length=255)
+    expiration_date = models.CharField(max_length=7)  # MM/YYYY format
+    cvv = models.CharField(max_length=4)  # 3 or 4-digit CVV/CVC
+    billing_address = models.TextField()
+    card_type = models.CharField(max_length=20)  # Visa, MasterCard, etc.
+    zip_code = models.CharField(max_length=10)
+ 
+class Orders(models.Model):
+    user = models.ForeignKey(Users, on_delete=models.PROTECT)
+    order_id = models.CharField(max_length=50, unique=True, primary_key=True)
+    delivery_partner = models.ForeignKey(DeliveryPartner, on_delete=models.PROTECT)
+    ordered_date = models.DateTimeField(auto_now_add=True)
+    status_opt = [
+        ("Out for Delivery","Out for Delivery"),
+        ("Pending","Pending"),
+        ("Dispatched","Dispatched"),
+        ("Cancelled","Cancelled"),
+        ("Refunded","Refunded"),
+        ("Processing","Processing"),
+        ("On Hold","On Hold"),
+        ("Returned","Returned"),
+        ("Completed","Completed"),
+    ]
+    status = models.CharField(choices=status_opt)
+    pay_opt = [
+        ("COD","Cash on Delivery"),
+        ("UPI","Online Payment"),
+        ("Card","Credit/Debit Card"),
+    ]
+    payment_method = models.CharField(choices=pay_opt)
+    expected_delivery = models.DateField()
