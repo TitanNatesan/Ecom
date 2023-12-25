@@ -1,7 +1,7 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .serializer import UsersSerial,ProductSerial
-from .models import Users, Products
+from .serializer import Signup,ProductSerial, AddressSerial
+from .models import Users, Products, Address
 from rest_framework.views import APIView
 from rest_framework import status
 import base64
@@ -19,72 +19,97 @@ from django.conf import settings
 
 BASE_DIR = settings.BASE_DIR 
 
+@api_view(["POST"])
+def login(request):   # {"username":"TitanNatesan","password":"1234567890"}
+    if request.method == "POST":
+        username = request.data.get('username')
+        password = request.data.get('password')
+        print(username,password)
+        user = Users.objects.filter(username=username, password=password).first()
+        print(user)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        if user:
+            return Response(1)
+        else:
+            return Response({'message': 'Login failed'}, status=status.HTTP_401_UNAUTHORIZED)
 
 @api_view(["POST"])
-def login(request):
+def signup1(request):   # {"username":"natesan","password":"12345678","referal":"mukilan@ref"}
+    if request.method == "POST":
+        data = request.data
+        
+        if data.get('username') and data.get('password') and data.get('referal'):
+            return Response(1)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
 
-    users = Users.objects.all()
-    if request.method == "POST": #
-        userName = request.data['username']
-        passWord = request.data['password']
-        for user in users:
-            if userName == user.username and passWord == user.password:
-                return Response("1")                                        #login success
-            
-        return Response("Username or Password is Invalid")                  #login fail 
+@api_view(['POST'])
+def signup(request):
+    if request.method == 'POST':
+        data = request.data
+        address = data.pop("address")
+
+        # Use Signup serializer for Users
+        user_serializer = Signup(data=data)
+        address_serializer = AddressSerial(data=address)
+
+        if user_serializer.is_valid() and address_serializer.is_valid():
+            # Save the user instance
+            user_instance = user_serializer.save()
+
+            # Save the address instance with the user reference
+            address_data = address_serializer.validated_data
+            address_data['user'] = user_instance
+            address_instance = Address(**address_data)
+            address_instance.save()
+
+            return Response(1)
+
+        return Response({"error": "Invalid data provided."}, status=400)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 @api_view(["GET"])
 def viewProduct(request,pi):
@@ -113,27 +138,6 @@ def viewProducts(request):
     serializer = ProductSerial(products, many=True)
     return JsonResponse(list(products),safe=False)
 
-@api_view(["POST"])
-def signup(request): # test JSON input->->->->{"username":"natesan","password":"12345678","referalID":"mukilan@ref"}<-<-<-<-
-    if request.method == "POST":   
-        id = request.data
-        print(id)
-        email = request.data["email"]
-        serial = UsersSerial(data=id)   
-        if serial.is_valid(): 
-            serial.save()
-            # otp = generate_otp()
-            # x = Users.objects.get(username=request.data["username"])
-            # x.lastOTP = otp 
-            # print(x.otpSent) 
-            # x.save()
-            # print(x.otpSent)
-            # #send_otp_email(email, otp)
-            # print("otp sent",otp)
-            # request.session['otp'] = otp
-            # print("valid")
-            return Response("1")           #signup success
-        return Response(serial.errors)       #signup fail 
 
 def generate_otp():
     return ''.join(random.choices('0123456789', k=4))

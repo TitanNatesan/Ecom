@@ -8,6 +8,7 @@ import ProductItem from '../Pages/ProductItem';
 import FilterPage from '../Pages/Filter';
 import axios from 'axios';
 import { useEffect } from "react";
+import { BASE_URL } from "../App";
 
 const giftbox = require("../Streetmall/1Home/gift.gif");
 const laptop = require("../Streetmall/1Home/Laptop.png");
@@ -59,9 +60,9 @@ const AllProductPage = ({ navigation }) => {
   };
 
   const [products, setProducts] = useState([]);
-  const fetchProducts = async () => { 
+  const fetchProducts = async () => {
     try {
-      const response = await axios.get('http://192.168.1.117:8000/api/product/');
+      const response = await axios.get(`${BASE_URL}/api/product/`);
       setProducts(response.data);
     } catch (error) {
       console.log("Failed to load data");
@@ -73,12 +74,12 @@ const AllProductPage = ({ navigation }) => {
     fetchProducts();
   }, []);
 
-//   for (var i = 0; i < alP.length; i++) {
-//     // Update the value of the 'images' property for each object
-//     // For example, set it to a new value or an empty array
-//     alP[i].images = "https://source.unsplash.com/random/200x200/?gift"; // Replace "new_value" with your desired value
-//     alP[i].description = "No Comments Simply Waste"; 
-// }
+  //   for (var i = 0; i < alP.length; i++) {
+  //     // Update the value of the 'images' property for each object
+  //     // For example, set it to a new value or an empty array
+  //     alP[i].images = "https://source.unsplash.com/random/200x200/?gift"; // Replace "new_value" with your desired value
+  //     alP[i].description = "No Comments Simply Waste"; 
+  // }
 
   // const products = [
   //   {
@@ -138,9 +139,9 @@ const AllProductPage = ({ navigation }) => {
           <View style={styles.productsContainer}>
             {products.map((product, index) => (
               <TouchableOpacity
-                key={index} 
+                key={index}
                 style={styles.productItem}
-                onPress={() => handleProductPress(product,index)}
+                onPress={() => handleProductPress(product, index)}
               >
                 <ProductItem product={product} />
               </TouchableOpacity>

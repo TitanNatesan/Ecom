@@ -1,11 +1,25 @@
 from rest_framework import serializers
-from .models import Users, Products
+from .models import Users, Products, Address
 
-  
-class UsersSerial(serializers.ModelSerializer):
+class AddressSerial(serializers.ModelSerializer):
+    class Meta:
+        model= Address
+        fields=[
+            'door_number',
+            'address_line1',
+            'address_line2',
+            'city',
+            'state',
+            'postal_code',
+            'country',
+            'landmark',
+        ]
+    
+class Signup(serializers.ModelSerializer):
+
     class Meta:
         model = Users
-        fields = ['password','username','referalID'] 
+        fields = ['name', 'email', 'phone', 'address', 'password', 'referal', 'username']
 
 class ProductSerial(serializers.ModelSerializer):
     class Meta:

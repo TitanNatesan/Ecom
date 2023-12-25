@@ -31,14 +31,16 @@ import Manager2 from './Pages/Manager2';
 import { AppRegistry } from 'react-native';
 import { name as appName } from './app.json';
 
+
 const Stack = createStackNavigator();
+export const BASE_URL = 'http://10.0.2.2:8000';
 
 export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Login">
-      <Stack.Screen name="Signup" component={SignUpScreen} options={{ headerShown: false }} />
-      <Stack.Screen name="Sign2up" component={SignUp2Screen} options={{ headerShown: false }} />
+        <Stack.Screen name="Signup" component={SignUpScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="Signup2" component={SignUp2Screen} options={{ headerShown: false }} />
         <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
         <Stack.Screen name="CodeVerification" component={CodeVerification} options={{ headerShown: false }} />
         <Stack.Screen name="Home" component={Home} options={{ headerShown: false }} />

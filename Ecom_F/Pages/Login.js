@@ -2,43 +2,45 @@ import React, { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Image, Button, TextInput, TouchableOpacity } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { library } from '@fortawesome/fontawesome-svg-core';
+import { library, text } from '@fortawesome/fontawesome-svg-core';
 import { faCircleRight, faLock, faPeopleLine, faUser } from '@fortawesome/free-solid-svg-icons';
 const signInImage = require('../Streetmall/3_Login/ASSETS.png');
 const Round = require('../Streetmall/3_Login/Ellipse391.png');
 import axios from 'axios';
+import { BASE_URL } from '../App';
+
 
 library.add(faCircleRight, faPeopleLine, faUser, faLock);
 const SignInScreen = ({ navigation }) => {
-
-    const handleLoginPress = () => {
-        navigation.navigate('Signup');
+ 
+    const navLogin = () => {
+        navigation.navigate('Login');
     };
-    const handlehomePress = () => {
+    const navHome = () => {
         navigation.navigate('Home');
     };
-
-    const handleLogin = async () => {
+    const navsignup=()=>{
+        navigation.navigate("Signup");
+    };
+    const [password, setPassword] = useState('');
+    const [username, setUserName] = useState('');
+    const LoginReq = async () => {
         console.log("buttonTapped")
         try {
-          const response = await axios.post('http://10.0.2.2:8000/api/login/', { 
-
-          username: "Lokesh02",
-            password: "lokesh13"
+          const response = await axios.post(`${BASE_URL}/api/login/`, { 
+          username: username,
+            password: password,
           }, {
             headers: {
                 'Content-Type': 'application/json',
             },
-        });
-      
-          // Handle the response, e.g., show a success message or navigate to another screen
-          console.log('Signup successful:', response.data);
-          handlehomePress;
-          if (response.data == "1"){
-            handlehomePress();
+        });      
+          console.log('Request Sent:', response.data);
+          if (response.data == 1){
+            navHome();
           }
           else{
-            handleLoginPress();
+            navLogin();
           }
       
         } catch (error) {
@@ -53,30 +55,27 @@ const SignInScreen = ({ navigation }) => {
             <Text style={styles.back}>back!</Text>
             <Image style={styles.round} source={Round} />
             <Image style={styles.tinyLogo} source={signInImage} />
-            <View style={styles.allsignIn}>
+            <View style={styles.allsignIn}> 
                 <View style={styles.rowContainer}>
                     <Text style={styles.text}>Login</Text>
                     <TouchableOpacity
-                        onPress={handleLogin}>
+                        onPress={LoginReq}>
                         <FontAwesomeIcon icon={faCircleRight} size={50} color="#1977F3"/></TouchableOpacity>
                 </View>
                 <View style={styles.inputContainer}>
-                    <TextInput style={styles.input} placeholder="Username" />
+                    <TextInput style={styles.input} placeholder="Username" onChangeText={text=>setUserName(text)}/>
                     <FontAwesomeIcon icon={faUser} size={20} color="black" style={styles.icon} />
                 </View>
                 <View style={styles.inputContainer}>
-                    <TextInput style={styles.input} placeholder="Password" secureTextEntry={true} />
+                    <TextInput style={styles.input} placeholder="Password" secureTextEntry={true} onChangeText={text=>setPassword(text)}/>
                     <FontAwesomeIcon icon={faLock} size={20} color="black" style={styles.icon} />
                 </View>
                 <View>
                     <Text style={styles.forget}>Forget Password</Text>
                 </View>
                 <View style={styles.buttons}>
-                    <TouchableOpacity style={styles.loginButton} onPress={handlehomePress}>
-                        <Text style={styles.loginButtonText}>Signin</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={handleLoginPress} style={styles.loginButton}>
-                        <Text style={styles.loginButtonText}>New Account</Text>
+                    <TouchableOpacity onPress={navsignup} style={styles.loginButton}>
+                        <Text style={styles.loginButtonText}>Create New Account</Text>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -127,13 +126,13 @@ const styles = StyleSheet.create({
         backgroundColor: '#1977F3',
         padding: 10,
         borderRadius: 10,
-        width: 120,
+        width: 150,
         alignSelf: 'center',
-        marginTop: 10,
+        marginTop: 15,
     },
     loginButtonText: {
         color: 'white',
-        fontSize: 16,
+        fontSize: 12,
         fontWeight: 'bold',
         textAlign: 'center',
     },

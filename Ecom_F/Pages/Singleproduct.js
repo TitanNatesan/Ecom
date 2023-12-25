@@ -8,9 +8,10 @@ import {
   TextInput,
   Image,
   TouchableOpacity,
-} from "react-native";
+} from "react-native"; 
 import {
   faMagnifyingGlass,
+  faStrikethrough,
   faUsersViewfinder,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -18,19 +19,20 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import BottomBar from "./BottomBar";
 import { faStar, faStarHalf, faLock } from "@fortawesome/free-solid-svg-icons";
 import { useRoute } from "@react-navigation/native";
+import { BASE_URL } from '../App';
 import axios from "axios";
 
 library.add(faMagnifyingGlass, faUsersViewfinder);
 
 const SingleProductPage = ({ navigation }) => {
-
+ 
   const route = useRoute();
   const { product } = route.params;
 
   const fetchProduct = async () => {
     try {
       console.log(product)
-      // const response = await axios.get(`http://10.0.2.2:8000/api/product/${product['productID']}/`);
+      // const response = await axios.get(`${BASE_URL}/api/product/${product['productID']}/`);
       // console.log(response.data);
       console.log("Success")
       //return response.data; 
@@ -333,11 +335,16 @@ const styles = StyleSheet.create({
       color: 'white',
       fontSize: 12,
       paddingLeft: 5,
+      textAlign:"center",
     },
     productPrice: {
       fontSize: 35,
       color: 'black',
       padding: 10,
+    },
+    RealPrice:{
+      fontSize:17,
+      textDecorationLine:"line-through",
     },
     deliveryInfoContainer: {
       flexDirection: 'row',
@@ -347,6 +354,7 @@ const styles = StyleSheet.create({
     deliveryInfoText: {
       fontSize: 17,
       color: '#1977F3',
+      paddingLeft:10,
     },
     DateInfoText: {
       fontSize: 17,

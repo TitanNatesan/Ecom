@@ -7,32 +7,34 @@ import { faCircleRight, faLock, faPeopleLine, faUser } from '@fortawesome/free-s
 import { Button, CheckBox } from 'react-native-elements';
 const signupImage = require('../Streetmall/1_SignUp/back_asset.png');
 import axios from 'axios';
+import { useNavigation } from '@react-navigation/native';
+import { BASE_URL } from '../App';
+
 
 
 axios.defaults.debug = true;
 library.add(faCircleRight, faPeopleLine, faUser, faLock);
 const SignupScreen = ({ navigation }) => {
     const [isChecked, setChecked] = useState(false);
-
+    const [referal, setReferal] = useState('');
+    const [username, setUserName] = useState('');
+    const [password, setPass] = useState('');
+    const change = useNavigation();
     const handleLoginPress = () => {
         navigation.navigate('Login');
     };
-    const handleVerifyPress = () => {
-        navigation.navigate('CodeVerification');
-    };
-    const SignupPage = () => {
-        navigation.navigate('Signup');
-    };
+    const handleSignup2 =(referal,username,password)=>{
+        navigation.navigate('Signup2',{referal,username,password});
+    }
 
     const handleSignup = async () => {
         console.log("buttonTapped")
         try {
-          const response = await axios.post('http://10.0.2.2:8000/api/signup/', { 
+          const response = await axios.post(`${BASE_URL}/api/signup1/`, { 
 
-            referalID: "Lokesh@ref",
-            username: "Lokesh02",
-            password: "lokesh123",
-            email:"natesantitan@gmail.com"
+            referal: referal,
+            username: username,
+            password: password
 
           }, {
             headers: {
@@ -41,14 +43,13 @@ const SignupScreen = ({ navigation }) => {
         });
       
           // Handle the response, e.g., show a success message or navigate to another screen
-          console.log('Signup successful:', response.data);
-          if (response.data == "1"){
-            handleVerifyPress();
+          console.log('Signup1 successful:', response.data);
+          if (response.data == 1){
+            handleSignup2(referal,username,password);
           }
           else {
-            SignupPage();
+            navigation.navigate('Signup');
           }
-      
         } catch (error) {
           // Handle errors, e.g., display an error message to the user
           console.error('Signup failed:', error.message);
@@ -67,15 +68,15 @@ const SignupScreen = ({ navigation }) => {
                     </TouchableOpacity>
                 </View>
                 <View style={styles.inputContainer}>
-                    <TextInput style={styles.input} placeholder="Referral ID"/>
+                    <TextInput style={styles.input} placeholder="Referral ID" onChangeText={text => setReferal(text)}/>
                     <FontAwesomeIcon icon={faPeopleLine} size={20} color="black" style={styles.icon} />
                 </View>
                 <View style={styles.inputContainer}>
-                    <TextInput style={styles.input} placeholder="Username"/>
-                    <FontAwesomeIcon icon={faUser} size={20} color="black" style={styles.icon} />
+                    <TextInput style={styles.input} placeholder="Username"  onChangeText={text=>setUserName(text)}/>
+                    <FontAwesomeIcon icon={faUser} size={20} color="black" style={styles.icon}/>
                 </View>
                 <View style={styles.inputContainer}>
-                    <TextInput style={styles.input} placeholder="Password" secureTextEntry={true}/>
+                    <TextInput style={styles.input} placeholder="Password" secureTextEntry={true} onChangeText={text=>setPass(text)}/>
                     <FontAwesomeIcon icon={faLock} size={20} color="black" style={styles.icon} />
                 </View>
                 <View style={styles.checkboxContainer}>

@@ -37,7 +37,7 @@ const Home = ({ navigation }) => {
     navigation.navigate('Deals');
   };
   const handleGiftsPress = () => {
-    navigation.navigate('Gifts');
+    navigation.navigate('AProduct');
   };
   const [activeSlide, setActiveSlide] = useState(0);
 

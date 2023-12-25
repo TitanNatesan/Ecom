@@ -1,28 +1,41 @@
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.contrib.postgres.fields import JSONField, ArrayField
-from django.utils import timezone
 from phonenumber_field.modelfields import PhoneNumberField
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
+from django.utils import timezone
 
-class Users(models.Model):
-    name = models.CharField(max_length=100, blank = True)
+class Users(models.Model): 
+    name = models.CharField(max_length=100, blank = True, null= True)
     username = models.CharField(max_length=100,primary_key=True)
     referal = models.CharField(max_length=100)
-    age = models.IntegerField( blank= True)
+    age = models.IntegerField(blank= True, null=True)
     phone = PhoneNumberField()
     email = models.EmailField(max_length=254,blank=True)
-    profile_pic = models.ImageField(upload_to='profilePic/') 
-    dob = models.DateField()
+    profile_pic = models.ImageField(upload_to='profilePic/', blank=True, null=True) 
+    dob = models.DateField(blank=True,null=True)
     password = models.CharField(max_length=50)
     doj = models.DateTimeField(auto_now_add=True)
     wishlist = models.ManyToManyField("home.Products",blank=True)
     address = models.ForeignKey('home.Address', verbose_name="Address", on_delete=models.CASCADE, blank=True, null=True)
     cart = models.ForeignKey("home.Cart", on_delete=models.CASCADE,blank = True, null=True)
     payment_details = models.ForeignKey("home.PaymentDetails",on_delete=models.PROTECT, blank=True, null=True)
+    last_OTP = models.IntegerField(validators=[MinValueValidator(1000), MaxValueValidator(9999)],blank=True,null=True)
+    OTP_sent_time = models.DateTimeField(null=True, blank=True)
 
 
     def __str__(self):
         return f"Username: {self.name}| Name: {self.username}"
+    
+@receiver(pre_save, sender=Users)
+def update_otp_sent_time(sender, instance, **kwargs):
+    # Check if the OTP field has changed
+    if instance.pk is not None: 
+        old_instance = Users.objects.filter(pk=instance.pk).first()  # Use filter().first() to handle DoesNotExist
+        if old_instance and old_instance.OTP != instance.OTP:
+            # Update the OTP_sent_time field to the current time
+            instance.OTP_sent_time = timezone.now()
 
 class Address(models.Model):
     user = models.ForeignKey(Users, verbose_name="User_Address", on_delete=models.CASCADE, related_name='addresses')
@@ -36,7 +49,7 @@ class Address(models.Model):
     landmark = models.CharField(max_length=255)
 
     def __str__(self):
-        return f"{self.street_line1}, {self.city}, {self.state}, {self.country}"
+        return f"{self.address_line1}, {self.city}, {self.state}, {self.country}"
 
 class Products(models.Model):
     name = models.CharField(max_length=200)
