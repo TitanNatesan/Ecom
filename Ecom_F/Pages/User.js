@@ -15,14 +15,12 @@ const userimg = require("../Streetmall/Dashboard/ICON2.png");
 
 const User = ({ navigation }) => {
 
-  const [name, setName] = useState('John Doe');
-  const [email, setEmail] = useState('abc@mail.com');
-  const [mobileNumber, setMobileNumber] = useState('+91 12345 67890');
-  const [addressLine1, setAddressLine1] = useState(
-    'No.123, 1st cross street, ABC Avenue, DEF Nagar, Area.'
-  );
-  const [addressLine2, setAddressLine2] = useState('City Name: QWERTY, Zonal PIN: 600123');
-  const [recoveryMail, setRecoveryMail] = useState('abc@gmail.com');
+  const [name, setName] = useState(name);
+  const [email, setEmail] = useState(email);
+  const [mobileNumber, setMobileNumber] = useState(mobileNumber);
+  const [addressLine1, setAddressLine1] = useState(addressLine1);
+  const [addressLine2, setAddressLine2] = useState(addressLine2);
+  const [recoveryMail, setRecoveryMail] = useState(recoveryMail);
 
   const [editingField, setEditingField] = useState(null);
   const [editedValue, setEditedValue] = useState('');

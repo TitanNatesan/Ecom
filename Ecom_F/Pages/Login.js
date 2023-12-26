@@ -8,46 +8,51 @@ const signInImage = require('../Streetmall/3_Login/ASSETS.png');
 const Round = require('../Streetmall/3_Login/Ellipse391.png');
 import axios from 'axios';
 import { BASE_URL } from '../App';
+import { userID } from '../App';
 
 
 library.add(faCircleRight, faPeopleLine, faUser, faLock);
 const SignInScreen = ({ navigation }) => {
- 
+
     const navLogin = () => {
         navigation.navigate('Login');
     };
     const navHome = () => {
-        navigation.navigate('Home');
+        console.log(userID)
+        userID = username;
+        console.log(userID);
+        navigation.navigate('Home', { username });
     };
-    const navsignup=()=>{
+    const navsignup = () => {
         navigation.navigate("Signup");
     };
     const [password, setPassword] = useState('');
     const [username, setUserName] = useState('');
+
     const LoginReq = async () => {
         console.log("buttonTapped")
         try {
-          const response = await axios.post(`${BASE_URL}/api/login/`, { 
-          username: username,
-            password: password,
-          }, {
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });      
-          console.log('Request Sent:', response.data);
-          if (response.data == 1){
-            navHome();
-          }
-          else{
-            navLogin();
-          }
-      
+            const response = await axios.post(`${BASE_URL}/api/login/`, {
+                username: username,
+                password: password,
+            }, {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            console.log('Request Sent:', response.data);
+            if (response.data == 1) {
+                navHome();
+            }
+            else {
+                navLogin();
+            }
+
         } catch (error) {
-          // Handle errors, e.g., display an error message to the user
-          console.error('Signup failed:', error.message);
+            // Handle errors, e.g., display an error message to the user
+            console.error('Signup failed:', error.message);
         }
-      };
+    };
 
     return (
         <View style={styles.container}>
@@ -55,19 +60,19 @@ const SignInScreen = ({ navigation }) => {
             <Text style={styles.back}>back!</Text>
             <Image style={styles.round} source={Round} />
             <Image style={styles.tinyLogo} source={signInImage} />
-            <View style={styles.allsignIn}> 
+            <View style={styles.allsignIn}>
                 <View style={styles.rowContainer}>
                     <Text style={styles.text}>Login</Text>
                     <TouchableOpacity
-                        onPress={LoginReq}>
-                        <FontAwesomeIcon icon={faCircleRight} size={50} color="#1977F3"/></TouchableOpacity>
+                        onPress={navHome}>
+                        <FontAwesomeIcon icon={faCircleRight} size={50} color="#1977F3" /></TouchableOpacity>
                 </View>
                 <View style={styles.inputContainer}>
-                    <TextInput style={styles.input} placeholder="Username" onChangeText={text=>setUserName(text)}/>
+                    <TextInput style={styles.input} placeholder="Username" onChangeText={text => setUserName(text)} />
                     <FontAwesomeIcon icon={faUser} size={20} color="black" style={styles.icon} />
                 </View>
                 <View style={styles.inputContainer}>
-                    <TextInput style={styles.input} placeholder="Password" secureTextEntry={true} onChangeText={text=>setPassword(text)}/>
+                    <TextInput style={styles.input} placeholder="Password" secureTextEntry={true} onChangeText={text => setPassword(text)} />
                     <FontAwesomeIcon icon={faLock} size={20} color="black" style={styles.icon} />
                 </View>
                 <View>

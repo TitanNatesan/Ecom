@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useContext } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
@@ -8,8 +8,7 @@ import { Button, CheckBox } from 'react-native-elements';
 const signupImage = require('../Streetmall/1_SignUp/back_asset.png');
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
-import { BASE_URL } from '../App';
-
+import { BASE_URL, UserContext } from '../App';
 
 
 axios.defaults.debug = true;
@@ -17,8 +16,8 @@ library.add(faCircleRight, faPeopleLine, faUser, faLock);
 const SignupScreen = ({ navigation }) => {
     const [isChecked, setChecked] = useState(false);
     const [referal, setReferal] = useState('');
-    const [username, setUserName] = useState('');
     const [password, setPass] = useState('');
+    const [username, setUsername] = useState('');
     const change = useNavigation();
     const handleLoginPress = () => {
         navigation.navigate('Login');
@@ -55,8 +54,6 @@ const SignupScreen = ({ navigation }) => {
           console.error('Signup failed:', error.message);
         }
       };
-      
-
     return (
         <View style={styles.container}>
             <Image style={styles.tinyLogo} source={signupImage} />
@@ -72,7 +69,7 @@ const SignupScreen = ({ navigation }) => {
                     <FontAwesomeIcon icon={faPeopleLine} size={20} color="black" style={styles.icon} />
                 </View>
                 <View style={styles.inputContainer}>
-                    <TextInput style={styles.input} placeholder="Username"  onChangeText={text=>setUserName(text)}/>
+                    <TextInput style={styles.input} placeholder="Username"  onChangeText={text=>setUsername(text)}/>
                     <FontAwesomeIcon icon={faUser} size={20} color="black" style={styles.icon}/>
                 </View>
                 <View style={styles.inputContainer}>

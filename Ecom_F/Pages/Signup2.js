@@ -43,7 +43,7 @@ const Signup2Screen = ({ navigation }) => {
             postal_code: pincode,
             country: "India (default)",
             landmark: "null",
-        },
+        }, 
     };
     const handleSignup2 = async () => {
         console.log("buttonTapped")

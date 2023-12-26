@@ -5,7 +5,8 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import Carousel, { Pagination } from 'react-native-snap-carousel';
 import { Dimensions } from 'react-native';
-import BottomBar from './BottomBar'; 
+import BottomBar from './BottomBar';
+import { useRoute } from "@react-navigation/native";
 
 const { width: screenWidth } = Dimensions.get('window');
 const giftbox = require("../Streetmall/1Home/gift.gif");
@@ -27,17 +28,22 @@ const Nike = require("../Streetmall/5Deals/nike.png")
 const Puma = require("../Streetmall/5Deals/puma.png")
 const Bata = require("../Streetmall/5Deals/bata.png")
 
+
+
 library.add(faMagnifyingGlass, faUsersViewfinder);
 
 const Home = ({ navigation }) => {
   const handleLoginPress = () => {
-    navigation.navigate('Category');
-  }; 
+    navigation.navigate('Category', {username});
+  };
+  const route = useRoute();
+  const username = route.params;
+
   const handleDealsPress = () => {
-    navigation.navigate('Deals');
+    navigation.navigate('Deals', {username});
   };
   const handleGiftsPress = () => {
-    navigation.navigate('AProduct');
+    navigation.navigate('AProduct', {username});
   };
   const [activeSlide, setActiveSlide] = useState(0);
 
@@ -109,7 +115,7 @@ const Home = ({ navigation }) => {
                 itemWidth={screenWidth}
                 autoplay={true}
                 loop
-                autoplayInterval={2000} 
+                autoplayInterval={2000}
                 onSnapToItem={(index) => setActiveSlide(index)}
               />
               <Pagination
@@ -285,13 +291,13 @@ const styles = StyleSheet.create({
     height: 90,
     alignItems: 'center',
   },
-  productImagegt:{
+  productImagegt: {
     width: 65,
     height: 70,
     borderRadius: 10,
-    left:'10%',
+    left: '10%',
   },
-  protxtgt:{
+  protxtgt: {
     color: '#FF3535',
     alignSelf: 'center',
   },
@@ -331,5 +337,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Home;
- 
+export default Home; 
