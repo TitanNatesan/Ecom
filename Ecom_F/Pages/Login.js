@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState ,useContext } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Image, Button, TextInput, TouchableOpacity } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
@@ -8,21 +8,18 @@ const signInImage = require('../Streetmall/3_Login/ASSETS.png');
 const Round = require('../Streetmall/3_Login/Ellipse391.png');
 import axios from 'axios';
 import { BASE_URL } from '../App';
-import { userID } from '../App';
-
-
+import { UserIDContext } from '../App'; // intha line
 library.add(faCircleRight, faPeopleLine, faUser, faLock);
 const SignInScreen = ({ navigation }) => {
+    const { userID, setUserID } = useContext(UserIDContext);
 
-    const navLogin = () => {
-        navigation.navigate('Login');
-    };
     const navHome = () => {
+        setUserID(username);
         console.log(userID)
-        userID = username;
-        console.log(userID);
         navigation.navigate('Home', { username });
     };
+    
+    
     const navsignup = () => {
         navigation.navigate("Signup");
     };
@@ -64,7 +61,7 @@ const SignInScreen = ({ navigation }) => {
                 <View style={styles.rowContainer}>
                     <Text style={styles.text}>Login</Text>
                     <TouchableOpacity
-                        onPress={navHome}>
+                        onPress={LoginReq}>
                         <FontAwesomeIcon icon={faCircleRight} size={50} color="#1977F3" /></TouchableOpacity>
                 </View>
                 <View style={styles.inputContainer}>

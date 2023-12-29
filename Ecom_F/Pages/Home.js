@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import Carousel, { Pagination } from 'react-native-snap-carousel';
 import { Dimensions } from 'react-native';
 import BottomBar from './BottomBar';
+import { userID } from "../App";
 import { useRoute } from "@react-navigation/native";
 
 const { width: screenWidth } = Dimensions.get('window');

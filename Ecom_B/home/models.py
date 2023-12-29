@@ -2,6 +2,7 @@ from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.contrib.postgres.fields import JSONField, ArrayField
 from phonenumber_field.modelfields import PhoneNumberField
+from django.db.models.signals import post_save
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from django.utils import timezone
@@ -19,21 +20,21 @@ class Users(models.Model):
     doj = models.DateTimeField(auto_now_add=True)
     wishlist = models.ManyToManyField("home.Products",blank=True)
     address = models.ForeignKey('home.Address', verbose_name="Address", on_delete=models.CASCADE, blank=True, null=True)
-    cart = models.ForeignKey("home.Cart", on_delete=models.CASCADE,blank = True, null=True)
+    cart = models.ForeignKey("home.Cart", on_delete=models.SET_NULL,blank = True, null=True)
     payment_details = models.ForeignKey("home.PaymentDetails",on_delete=models.PROTECT, blank=True, null=True)
     last_OTP = models.IntegerField(validators=[MinValueValidator(1000), MaxValueValidator(9999)],blank=True,null=True)
     OTP_sent_time = models.DateTimeField(null=True, blank=True)
 
 
     def __str__(self):
-        return f"Username: {self.name}| Name: {self.username}"
+        return f"{self.username}({self.name})"
     
 @receiver(pre_save, sender=Users)
 def update_otp_sent_time(sender, instance, **kwargs):
     # Check if the OTP field has changed
     if instance.pk is not None: 
         old_instance = Users.objects.filter(pk=instance.pk).first()  # Use filter().first() to handle DoesNotExist
-        if old_instance and old_instance.OTP != instance.OTP:
+        if old_instance and old_instance.last_OTP != instance.last_OTP:
             # Update the OTP_sent_time field to the current time
             instance.OTP_sent_time = timezone.now()
 
@@ -73,6 +74,7 @@ class Products(models.Model):
         return self.name
 
 class DeliveryPartner(models.Model):
+    dpid = models.CharField(max_length=50,primary_key=True)
     name = models.CharField(max_length=200)
     location = models.ForeignKey("home.Address", on_delete=models.CASCADE)
     phone = models.CharField(max_length=15)
@@ -84,22 +86,37 @@ class EachItem(models.Model):
     product = models.ForeignKey(Products, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField()
     total = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-
+ 
     def save(self, *args, **kwargs):
         if self.product:
-            self.total = self.quantity * self.product.price
+            self.total = self.quantity * self.product.sellingPrice
         super().save(*args, **kwargs)
+    def __str__(self):
+        return f"Product: {self.product} | Quantity:{self.quantity}"
 
 class Cart(models.Model):
+    cart_id = models.CharField(primary_key=True)
     user = models.ForeignKey(Users, on_delete=models.CASCADE, related_name='carts')
     ordered_products = models.ManyToManyField(EachItem)
     total = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
     def save(self, *args, **kwargs):
         self.total = sum(items.total for items in self.ordered_products.all())
+        print(self.total)
         super().save(*args, **kwargs)
+    
+    def __str__(self):
+        return f"{self.user}"
+
+@receiver(post_save, sender=EachItem)
+def update_cart_total(sender, instance, **kwargs):
+    # Update the Cart total whenever EachItem is saved
+    cart = instance.user.cart
+    cart.total = sum(item.total for item in cart.ordered_products.all())
+    cart.save()
 
 class PaymentDetails(models.Model):
+    pay_id = models.CharField(primary_key=True,max_length=50)
     user = models.ForeignKey(Users, on_delete=models.CASCADE)
     card_number = models.CharField(max_length=16,unique=True)  # Assuming a 16-digit card number
     cardholder_name = models.CharField(max_length=255)

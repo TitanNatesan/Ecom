@@ -1,9 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, View, ScrollView, TextInput, Image, TouchableOpacity, Text } from "react-native";
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faUsersViewfinder, faMapMarkerAlt, faCheckCircle, faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import BottomBar from './BottomBar';
+import { UserID, userID, BASE_URL} from "../App";
+import axios from "axios";
+import { useRoute } from "@react-navigation/native";
 
 const products = [
   {
@@ -22,14 +25,75 @@ const products = [
     freeDelivery: false,
     freestock: true,
   },
+  {
+    id: 3,
+    name: 'Sample Product 2',
+    discount: 15,
+    total: 120,
+    freeDelivery: false,
+    freestock: true,
+  },
 ];
 
 const Cart = ({ navigation }) => {
 
+  const [cartData, setCartData] = useState("");
+  const [cartItem, setCartItem] = useState("");
+  const [productIds,setPI]= useState([]);
+  //const [productData,setPD]=useState([]);
+
+  useEffect(() => {
+    const fetchCartData = async () => {
+      try {
+        const response = await axios.get(`${BASE_URL}/api/cart/${UserID}/`);
+        setCartData(response.data);
+        setCartItem(response.data['cart_items']);
+        setPI(response.data.cart_items.map(item => item.product_id));
+
+      } catch (error) {
+        console.error('Error fetching cart data:', error);
+      }
+    };
+
+    fetchCartData();
+  }, [UserID]);
+
+  console.log("\ncartData");
+  console.log(cartData);
+  console.log("\Product IDs");
+  console.log(productIds);
+  
+  
+  const fetchProducts = async (productIds) => {
+    try {
+      const productData = [];
+  
+      // Loop through each product_id and fetch individual product data
+      for (const productId of productIds) {
+        console.log("\n\n\nProduct ID:")
+        console.log(productId);
+        const response = await axios.get(`${BASE_URL}/api/product/${productId}/`);
+        productData.push(response.data);
+        console.log(productData);
+      }
+  
+      console.log("Success");
+      return productData;
+  
+    } catch (error) {
+      console.log("Failed to load data");
+      //console.error('Error fetching products:', error);
+      return null; // Handle the error appropriately in your application
+    }
+  };
+  fetchProducts();
+
   const goToPaymentPage = () => {
     navigation.navigate('Payment');
   };
-
+  
+  const route = useRoute();
+  const product = route.params;
   const orderStatus = [
     { status: 'Order Placed', date: '2023-01-01', finished: true },
     { status: 'Shipped', date: '2023-01-03', finished: false },
@@ -57,7 +121,7 @@ const Cart = ({ navigation }) => {
 
   return (
     <View style={styles.containerw}>
-      <ScrollView style={styles.containerw} showsVerticalScrollIndicator={false}>
+      <ScrollView style={styles.containery} showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
           <View style={styles.topbarinput}>
           <FontAwesomeIcon icon={faMagnifyingGlass} size={20} color="black" />
@@ -123,6 +187,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#ffffff',
     height: '80%',
+  },
+  containery: {
+    flex: 1,
+    backgroundColor: '#ffffff',
+    height: '70%',
+    marginBottom:'10%',
   },
   blueBar: {
     backgroundColor: '#1977F3',

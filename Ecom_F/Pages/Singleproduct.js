@@ -19,31 +19,32 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import BottomBar from "./BottomBar";
 import { faStar, faStarHalf, faLock } from "@fortawesome/free-solid-svg-icons";
 import { useRoute } from "@react-navigation/native";
-import { BASE_URL } from '../App';
+import { BASE_URL, UserID } from '../App';
 import axios from "axios";
+import { useState,useEffect } from "react";
 
 library.add(faMagnifyingGlass, faUsersViewfinder);
 
 const SingleProductPage = ({ navigation }) => {
- 
+  console.log(UserID)
   const route = useRoute();
   const { product } = route.params;
-
+  const navCart = () => {
+    navigation.navigate("Cart")
+  }
   const fetchProduct = async () => {
     try {
       console.log(product)
-      // const response = await axios.get(`${BASE_URL}/api/product/${product['productID']}/`);
-      // console.log(response.data);
+      const response = await axios.get(`${BASE_URL}/api/product/${product['product_id']}/`);
+      console.log(response.data);
       console.log("Success")
-      //return response.data; 
+      return response.data; 
 
     } catch (error) {
       console.log("Failed to load data");
       console.error('Error fetching product:', error);
     }
   };
-
-  fetchProduct();
 
   const productDetails = {
     name: 'Pro Max 2.01” Display Smart Watch| Bluetooth | Calling,...',
@@ -73,9 +74,29 @@ const SingleProductPage = ({ navigation }) => {
     inStock: true,
   };
 
-  const addToCart = () => {
-    navigation.navigate('Cart');
-    console.log(`Added ${product.name} to the cart`);
+  const addToCart = async () => {
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/api/cart/${UserID}/`,
+        {
+          product_id: product.product_id,
+          username: UserID,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      console.log(response.data);
+      if (response.data==1){
+        navCart();
+      }
+      // Handle the response accordingly (e.g., show a success message)
+    } catch (error) {
+      console.error('Error adding to cart:', error.message);
+      // Handle the error accordingly (e.g., show an error message)
+    }
   };
 
   const buyNow = () => {
@@ -337,7 +358,7 @@ const styles = StyleSheet.create({
       paddingLeft: 5,
       textAlign:"center",
     },
-    productPrice: {
+    productPrice: { 
       fontSize: 35,
       color: 'black',
       padding: 10,

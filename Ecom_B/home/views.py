@@ -1,7 +1,7 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .serializer import Signup,ProductSerial, AddressSerial
-from .models import Users, Products, Address
+from .models import Users, Products, Address,EachItem,Cart
 from rest_framework.views import APIView
 from rest_framework import status
 import base64
@@ -47,27 +47,90 @@ def signup(request):
     if request.method == 'POST':
         data = request.data
         address = data.pop("address")
-
-        # Use Signup serializer for Users
         user_serializer = Signup(data=data)
         address_serializer = AddressSerial(data=address)
-
         if user_serializer.is_valid() and address_serializer.is_valid():
-            # Save the user instance
             user_instance = user_serializer.save()
-
-            # Save the address instance with the user reference
             address_data = address_serializer.validated_data
             address_data['user'] = user_instance
             address_instance = Address(**address_data)
             address_instance.save()
-
             return Response(1)
-
         return Response({"error": "Invalid data provided."}, status=400)
 
+@api_view(["POST",'GET'])
+def cart(request, username):
+    if request.method == "POST":
+        data = request.data
+        product_id = data.get('product_id')
+        try:
+            user = Users.objects.get(username=username)
+            product = Products.objects.get(product_id=product_id)
+            try:
+                cart = Cart.objects.get(user=username)
+                try:
+                    each_item = EachItem.objects.get(user=username,product=product_id)
+                    each_item.quantity+=1
+                    each_item.save()
+                except EachItem.DoesNotExist:
+                    each_item = EachItem(
+                        user=user,
+                        product=product,
+                        quantity=1,
+                    )
+                    each_item.save()
+                    cart = Cart.objects.get(user=username)
+                    cart.ordered_products.add(each_item)
+                    cart.save()
+            except Cart.DoesNotExist:
+                user_cart = Cart(
+                    cart_id=user.username+"'s Cart",
+                    user = user,
+                )
+                user_cart.save()
+                user.cart = user_cart
+                user.save()
+                
+                each_item = EachItem(
+                    user=user,
+                    product=product,
+                    quantity=1,
+                )
+                each_item.save()
+                user_cart.ordered_products.add(each_item)
+                user_cart.save()
+        except Users.DoesNotExist:
+            return Response("User not found", status=status.HTTP_404_NOT_FOUND)
+        except Products.DoesNotExist:
+            return Response("Product not found", status=status.HTTP_404_NOT_FOUND)
+        
+        return Response(1)
 
+    if request.method == "GET":
+        try:
+            user = Users.objects.get(username=username)
+            cart_items = EachItem.objects.filter(user=user)
 
+            cart_data = []
+            for item in cart_items:
+                product_data = {
+                    "product_id": item.product.product_id,
+                    "name": item.product.name,
+                    "quantity": item.quantity,
+                    "total": item.total,
+                }
+                cart_data.append(product_data)
+
+            response_data = {
+                "username": user.username,
+                "cart_items": cart_data,
+                "cart_total": user.cart.total,
+            }
+
+            return Response(response_data)
+        
+        except Users.DoesNotExist:
+            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 
 
 
@@ -117,7 +180,7 @@ def viewProduct(request,pi):
 
     if request.method == "GET":
         for product in products:
-            if product['productID'] == pi:
+            if product['product_id'] == pi:
                 return Response(product) 
                 break
         return Response("Product Not Found")

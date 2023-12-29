@@ -29,17 +29,21 @@ import Manager1 from './Pages/Manager1';
 import Manager2 from './Pages/Manager2';
 import { AppRegistry } from 'react-native';
 import { name as appName } from './app.json';
-import React, { useState } from 'react';
-
+import React, { useState, createContext } from 'react';
+export const UserIDContext = createContext();
 
 const Stack = createStackNavigator();
-export const BASE_URL = 'http://10.0.2.2:8000';
-export var userID = "";
+
+export const BASE_URL = 'http://192.168.48.132:8000';
+export const UserID = "podalanga001";
+
 export default function App() {
+  const [userID, setUserID] = useState();
 
   return (
+    <UserIDContext.Provider value={{ userID, setUserID }}>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="Login">
+        <Stack.Navigator initialRouteName="Cart">
           <Stack.Screen name="Signup" component={SignUpScreen} options={{ headerShown: false }} />
           <Stack.Screen name="Signup2" component={SignUp2Screen} options={{ headerShown: false }} />
           <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
@@ -69,8 +73,8 @@ export default function App() {
           <Stack.Screen name="Manager2" component={Manager2} options={{ headerShown: false }} />
         </Stack.Navigator>
       </NavigationContainer>
-
-
+      </UserIDContext.Provider>
+      
   );
 }
 
