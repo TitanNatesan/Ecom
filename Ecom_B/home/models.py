@@ -129,6 +129,7 @@ class PaymentDetails(models.Model):
 class Orders(models.Model):
     user = models.ForeignKey(Users, on_delete=models.PROTECT)
     order_id = models.CharField(max_length=50, unique=True, primary_key=True)
+    ordered_products = models.ManyToManyField(EachItem)
     delivery_partner = models.ForeignKey(DeliveryPartner, on_delete=models.PROTECT)
     ordered_date = models.DateTimeField(auto_now_add=True)
     status_opt = [

@@ -26,9 +26,9 @@ import { useState,useEffect } from "react";
 library.add(faMagnifyingGlass, faUsersViewfinder);
 
 const SingleProductPage = ({ navigation }) => {
-  console.log(UserID)
   const route = useRoute();
   const { product } = route.params;
+  console.log(product.images)
   const navCart = () => {
     navigation.navigate("Cart")
   }

@@ -35,7 +35,7 @@ export const UserIDContext = createContext();
 const Stack = createStackNavigator();
 
 export const BASE_URL = 'http://192.168.48.132:8000';
-export const UserID = "podalanga001";
+export const UserID = "qwertyuiop";
 
 export default function App() {
   const [userID, setUserID] = useState();

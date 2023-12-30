@@ -105,12 +105,11 @@ def cart(request, username):
             return Response("Product not found", status=status.HTTP_404_NOT_FOUND)
         
         return Response(1)
-
+    
     if request.method == "GET":
         try:
             user = Users.objects.get(username=username)
             cart_items = EachItem.objects.filter(user=user)
-
             cart_data = []
             for item in cart_items:
                 product_data = {
@@ -120,18 +119,69 @@ def cart(request, username):
                     "total": item.total,
                 }
                 cart_data.append(product_data)
-
             response_data = {
                 "username": user.username,
                 "cart_items": cart_data,
                 "cart_total": user.cart.total,
             }
-
             return Response(response_data)
-        
         except Users.DoesNotExist:
             return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 
+@api_view(['POST'])
+def updateCart(request,opr):     # {"username":"TitanNatesan","product_id":"phone1"}
+    if request.method == "POST":
+        data = request.data 
+        try:
+            user = Users.objects.get(username=data['username'])
+            product = Products.objects.get(product_id=data['product_id'])
+        except Users.DoesNotExist:
+            return Response("User not Found")
+        except Products.DoesNotExist:
+            return Response("Product not Found")
+               
+        try:
+            cart = Cart.objects.get(user=user)
+            try:
+                each = EachItem.objects.get(user=user,product=product)
+            except EachItem.DoesNotExist:
+                each = EachItem(
+                    user=user,
+                    product=product,
+                    quantity=1,
+                )
+                each.save()
+                cart = Cart.objects.get(user=user)
+                cart.ordered_products.add(each)
+                cart.save()
+        except Cart.DoesNotExist:
+            user_cart = Cart(
+                cart_id=user.username+"'s Cart",
+                user = user,
+            )
+            user_cart.save()
+            user.cart = user_cart
+            user.save()
+            
+            each = EachItem(
+                user=user,
+                product=product,
+                quantity=1,
+            )
+            each.save()
+            user_cart.ordered_products.add(each)
+            user_cart.save()
+        try:
+            each.quantity = eval(str(each.quantity)+opr+"+1")
+        except:
+            return Response("Invalid URL (try .../updateCart/+/ or .../updateCart/-/)")
+
+        if each.quantity>0:
+            each.save()
+        else:
+            each.delete() 
+
+        return Response("Updated")
 
 
 
@@ -173,22 +223,18 @@ def cart(request, username):
 
 
 
-
+        
 @api_view(["GET"])
 def viewProduct(request,pi):
     products = Products.objects.all().values()
-
     if request.method == "GET":
-        for product in products:
-            if product['product_id'] == pi:
-                return Response(product) 
-                break
-        return Response("Product Not Found")
-
-def get_base64_encoded_image(img_path):
-    with open(img_path, 'rb') as image_file:
-        encoded_image = base64.b64encode(image_file.read()).decode('utf-8')
-    return f"data:image/jpeg;base64,{encoded_image}"
+        for pro in products:
+            if pro['product_id']==pi:
+                img = "media/"+pro['images']
+                imgPath = os.path.join(BASE_DIR/img)
+                pro["images"]= str(get_base64_encoded_image(imgPath))
+                return JsonResponse(pro)
+        return Response("Not")
 
 @api_view(["GET"])
 def viewProducts(request):
@@ -201,6 +247,10 @@ def viewProducts(request):
     serializer = ProductSerial(products, many=True)
     return JsonResponse(list(products),safe=False)
 
+def get_base64_encoded_image(img_path):
+    with open(img_path, 'rb') as image_file:
+        encoded_image = base64.b64encode(image_file.read()).decode('utf-8')
+    return f"data:image/jpeg;base64,{encoded_image}"
 
 def generate_otp():
     return ''.join(random.choices('0123456789', k=4))

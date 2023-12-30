@@ -23,7 +23,7 @@ const SignInScreen = ({ navigation }) => {
     const navsignup = () => {
         navigation.navigate("Signup");
     };
-    const [password, setPassword] = useState('');
+    const [password, setPassword] = useState(''); 
     const [username, setUserName] = useState('');
 
     const LoginReq = async () => {
