@@ -3,41 +3,43 @@ import { StyleSheet, View, Text, StatusBar, ScrollView, TextInput, Image, Toucha
 import { faMagnifyingGlass, faUsersViewfinder } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 const Trackbar = require('../Streetmall/14_Checkout_page/step.png');
-import BottomBar from './BottomBar'; 
+import BottomBar from './BottomBar';
+import { useEffect } from "react";
+import { BASE_URL, UserID } from "../App";
+import axios from "axios";
+import { useRoute } from "@react-navigation/native";
 
+const PaymentPage = ({ navigation }) => {
 
-const PaymentPage = ({navigation}) => {
-  
+  const route = useRoute()
+  const {product} = route.params;
+
   const goToPaymentPage2 = () => {
-    navigation.navigate('Payment2');
+    navigation.navigate('Payment2',{userData,product});
   };
-
-  const [isEditing, setIsEditing] = useState(false);
-  const [editedAddress, setEditedAddress] = useState("");
-  const [editedPinCode, setEditedPinCode] = useState("");
-  const [editedPhone, setEditedPhone] = useState("");
- 
-  const [addressLines, setAddressLines] = useState([
-    "123 Main Street",
-    "Pin Code: 123456",
-    "Phone: 123457890",
-  ]);
 
   const handleEditPress = () => {
-    setIsEditing(true);
-    setEditedAddress(addressLines[0].replace("Address: ", ""));
-    setEditedPinCode(addressLines[1].replace("Pin Code: ", ""));
-    setEditedPhone(addressLines[2].replace("Phone: ", ""));
+    navigation.navigate("User");
   };
 
-  const handleSavePress = () => {
-    setIsEditing(false);
-    setAddressLines([
-      `Address: ${editedAddress}`,
-      `Pin Code: ${editedPinCode}`,
-      `Phone: ${editedPhone}`,
-    ]);
-  };
+  const [userData, setUserData] = useState(null);
+
+  useEffect(() => {
+    // Replace 'your-api-endpoint' with the actual endpoint of your API
+    const apiUrl = `${BASE_URL}/api/order/address/${UserID}/`;
+
+    axios.get(apiUrl)
+      .then(response => {
+        // Assuming the response structure is { username: "user's name", address: { /* address details */ } }
+        setUserData(response.data);
+        console.log("Success");
+      })
+      .catch(error => {
+        console.error('Error fetching data:', error);
+      });
+  }, []);
+
+  if (userData) { const { address } = userData; console.log(address) }
 
   return (
     <View style={styles.containerw}>
@@ -61,41 +63,25 @@ const PaymentPage = ({navigation}) => {
           </View>
           <Text> {'\n'} </Text>
           <View style={styles.cont}>
-            <Text style={styles.heading}>Customer</Text>
-            {isEditing ? (
-              <View>
-                <TextInput
-                  style={styles.editInput}
-                  placeholder="Enter address"
-                  value={editedAddress}
-                  onChangeText={(text) => setEditedAddress(text)}
-                />
-                <TextInput
-                  style={styles.editInput}
-                  placeholder="Enter pin code"
-                  value={editedPinCode}
-                  onChangeText={(text) => setEditedPinCode(text)}
-                />
-                <TextInput
-                  style={styles.editInput}
-                  placeholder="Enter phone number"
-                  value={editedPhone}
-                  onChangeText={(text) => setEditedPhone(text)}
-                />
-              </View>
-            ) : (
-              addressLines.map((line, index) => (
-                <Text key={index} style={styles.addressLine}>
-                  {line}
-                </Text>
-              ))
-            )}
-            <View style={styles.buttonContainer}>
-              {isEditing ? (
-                <TouchableOpacity style={styles.saveButton} onPress={handleSavePress}>
-                  <Text style={styles.buttonText}>Save</Text>
-                </TouchableOpacity>
+            <View>
+              {userData ? (
+                <View>
+                  <Text style={styles.heading}>{userData.ud.name}</Text>
+                  <Text>Door Number:          {userData.address.door_number}</Text>
+                  <Text>Address Line 1:       {userData.address.address_line1}</Text>
+                  <Text>Address Line 2:       {userData.address.address_line2}</Text>
+                  <Text>Landmark:                {userData.address.landmark || 'N/A'}</Text>
+                  <Text>City:                           {userData.address.city}</Text>
+                  <Text>Postal Code:            {userData.address.postal_code}</Text>
+                  <Text>State:                        {userData.address.state}</Text>
+                  <Text>Country:                    {userData.address.country}</Text>
+                </View>
               ) : (
+                <Text>Loading...</Text>
+              )}
+            </View>
+            <View style={styles.buttonContainer}>
+              {(
                 <View>
                   <TouchableOpacity style={styles.editButton} onPress={handleEditPress}>
                     <Text style={styles.buttonText}>Edit Address</Text>
@@ -116,7 +102,7 @@ const PaymentPage = ({navigation}) => {
 };
 
 const styles = StyleSheet.create({
-  containerw:{
+  containerw: {
     flex: 1,
     backgroundColor: '#ffffff',
   },
@@ -149,7 +135,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   trackbar: {
-    alignSelf:'center',
+    alignSelf: 'center',
     aspectRatio: 5,
     resizeMode: 'contain',
   },
@@ -212,7 +198,7 @@ const styles = StyleSheet.create({
   tracktext: {
     fontSize: 13,
     fontWeight: 'bold',
-    color:'#003478',
+    color: '#003478',
     paddingRight: 20,
     paddingLeft: 37,
 

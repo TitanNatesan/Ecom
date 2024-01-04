@@ -6,7 +6,7 @@ from django.db.models.signals import post_save
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from django.utils import timezone
-
+  
 class Users(models.Model): 
     name = models.CharField(max_length=100, blank = True, null= True)
     username = models.CharField(max_length=100,primary_key=True)
@@ -31,11 +31,9 @@ class Users(models.Model):
     
 @receiver(pre_save, sender=Users)
 def update_otp_sent_time(sender, instance, **kwargs):
-    # Check if the OTP field has changed
     if instance.pk is not None: 
-        old_instance = Users.objects.filter(pk=instance.pk).first()  # Use filter().first() to handle DoesNotExist
+        old_instance = Users.objects.filter(pk=instance.pk).first() 
         if old_instance and old_instance.last_OTP != instance.last_OTP:
-            # Update the OTP_sent_time field to the current time
             instance.OTP_sent_time = timezone.now()
 
 class Address(models.Model):
@@ -64,7 +62,7 @@ class Products(models.Model):
     rating = models.DecimalField(validators=[MaxValueValidator(5),MinValueValidator(0)], max_digits=3,decimal_places= 2)
     freeDelivery = models.BooleanField(default=True)
     specification = models.JSONField(blank=True) # [{"label": "Case Diameter", "value": "4.4 Millimeters"}, {"label": "Brand Colour", "value": "Brown"}, {"label": "Brand Material Type", "value": "Plastic"}]
-    specification_list = ArrayField(models.CharField(max_length=100),blank=True) #JSONfield ah change panniru maybe results better ah irukalam [just try]
+    specification_list = ArrayField(models.CharField(max_length=100),blank=True) 
 
     @property
     def inStock(self)->bool: 
@@ -131,7 +129,14 @@ class Orders(models.Model):
     order_id = models.CharField(max_length=50, unique=True, primary_key=True)
     ordered_products = models.ManyToManyField(EachItem)
     delivery_partner = models.ForeignKey(DeliveryPartner, on_delete=models.PROTECT)
+    delivery_charges = models.IntegerField(null=True,blank=True)
+    total_cost = models.IntegerField(null=True,blank=True)
     ordered_date = models.DateTimeField(auto_now_add=True)
+    dchoise = [
+        ("Regular Delivery","Regular Delivery"),
+        ("Instant Delivery","Instant Delivery"),
+    ]
+    delivery_type = models.CharField(choices=dchoise,null=True,blank=True)
     status_opt = [
         ("Out for Delivery","Out for Delivery"),
         ("Pending","Pending"),
@@ -148,6 +153,7 @@ class Orders(models.Model):
         ("COD","Cash on Delivery"),
         ("UPI","Online Payment"),
         ("Card","Credit/Debit Card"),
+        ("EMI","EMI"),
     ]
     payment_method = models.CharField(choices=pay_opt)
     expected_delivery = models.DateField()

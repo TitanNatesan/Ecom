@@ -1,6 +1,16 @@
 from rest_framework import serializers
 from .models import Users, Products, Address
 
+
+class UserSerial(serializers.ModelSerializer):
+    class Meta(object):
+        model = Users
+        fields = [
+            'name',
+            'email',
+            'phone',
+            'profile_pic',
+        ]
 class AddressSerial(serializers.ModelSerializer):
     class Meta:
         model= Address

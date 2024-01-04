@@ -3,16 +3,21 @@ import { StyleSheet, View, Text, StatusBar, ScrollView, TextInput, Image, Toucha
 import { faMagnifyingGlass, faUsersViewfinder } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 const Trackbar = require('../Streetmall/14_Checkout_page/step2.png');
-import BottomBar from './BottomBar'; 
+import BottomBar from './BottomBar';
+import { useRoute } from "@react-navigation/native";
 
 
 const PaymentPage3 = ({ navigation }) => {
+
+  const route = useRoute();
+  const {userData,selectedDeliveryOption,product} = route.params;
+
+
   const goToPaymentPage4 = () => {
-    navigation.navigate('Payment4');
+    navigation.navigate('Payment4',{userData,selectedDeliveryOption,selectedPaymentOption,product});
   };
 
   const [selectedPaymentOption, setSelectedPaymentOption] = useState(null);
-
   const handlePaymentOptionPress = (option) => {
     setSelectedPaymentOption(option);
   };
@@ -90,13 +95,13 @@ const PaymentPage3 = ({ navigation }) => {
         <Text> {'\n'} </Text><Text> {'\n'} </Text><Text> {'\n'} </Text>
       </ScrollView>
       <BottomBar navigation={navigation} />
-       <View style={styles.blueBar}></View>
+      <View style={styles.blueBar}></View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  containerw:{
+  containerw: {
     flex: 1,
     backgroundColor: '#ffffff',
   },
@@ -129,7 +134,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   trackbar: {
-    alignSelf:'center',
+    alignSelf: 'center',
     aspectRatio: 9,
     resizeMode: 'contain',
   },
@@ -137,7 +142,7 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
   proceedButton: {
-    width:'70%',
+    width: '70%',
     backgroundColor: '#FF9900',
     borderRadius: 16,
     padding: 11,
@@ -157,7 +162,7 @@ const styles = StyleSheet.create({
   tracktext: {
     fontSize: 13,
     fontWeight: 'bold',
-    color:'#003478',
+    color: '#003478',
     paddingRight: 15,
     paddingLeft: 35,
   },

@@ -4,17 +4,20 @@ import { faMagnifyingGlass, faUsersViewfinder } from "@fortawesome/free-solid-sv
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 const Trackbar = require('../Streetmall/14_Checkout_page/step1.png');
 import BottomBar from './BottomBar'; 
+import { useRoute } from "@react-navigation/native";
 
 
 const PaymentPage2 = ({navigation}) => {
+
+  const route = useRoute();
+  const {userData,product}= route.params;
   
   const goToPaymentPage3 = () => {
-    navigation.navigate('Payment3');
+    navigation.navigate('Payment3',{selectedDeliveryOption,userData,product});
   };
 
   const [selectedDeliveryOption, setSelectedDeliveryOption] = useState(null);
-
-  const handleDeliveryOptionPress = (option) => {
+  const handleDeliveryOptionPress = (option) => { 
     setSelectedDeliveryOption(option);
   };
 

@@ -8,33 +8,6 @@ import { UserID, userID, BASE_URL } from "../App";
 import axios, { all } from "axios";
 import { useRoute } from "@react-navigation/native";
 
-const products = [
-    {
-        id: 1,
-        name: 'Fastrack New Limitless FS1 Pro Max 2.01” Display Smart Watch',
-        discount: 10,
-        total: 100,
-        freeDelivery: true,
-        freestock: false,
-    },
-    {
-        id: 2,
-        name: 'Sample Product 2',
-        discount: 15,
-        total: 120,
-        freeDelivery: false,
-        freestock: true,
-    },
-    {
-        id: 3,
-        name: 'Sample Product 2',
-        discount: 15,
-        total: 120,
-        freeDelivery: false,
-        freestock: true,
-    },
-];
-
 const Cart = ({ navigation }) => {
     const [refreshKey, setRefreshKey] = useState(0);
     const [cartData, setCartData] = useState("");
@@ -96,18 +69,12 @@ const Cart = ({ navigation }) => {
     }, [productIds,refreshKey]);
 
 
-    const goToPaymentPage = () => {
-        navigation.navigate('Payment');
+    const goToPaymentPage = (product) => {
+        navigation.navigate('Payment',{product});
     };
 
     const route = useRoute();
     const product = route.params;
-    const orderStatus = [
-        { status: 'Order Placed', date: '2023-01-01', finished: true },
-        { status: 'Shipped', date: '2023-01-03', finished: false },
-        { status: 'Out for Delivery', date: '2023-01-04', finished: false },
-        { status: 'Delivered', date: '2023-01-05', finished: false },
-    ];
 
     const handleDelete = async (UserID, product_id) => {
         try {
@@ -198,6 +165,9 @@ const Cart = ({ navigation }) => {
                                 <Text style={styles.productDetailpri}>₹{product.sellingPrice * product.inCart}</Text>
                                 {product.freeDelivery && <Text style={styles.productDetaildel}>Eligible for FREE Delivery</Text>}
                                 {product.freestock && <Text style={styles.productDetailst}>In Stock</Text>}
+                                <TouchableOpacity onPress={() => goToPaymentPage(product)}>
+                                    <Text  style={styles.buyNowBut}>Buy Now</Text>
+                                </TouchableOpacity>
                             </View>
                         </View>
                     ))}
@@ -210,6 +180,16 @@ const Cart = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
+     buyNowBut: {
+        width:100,
+        backgroundColor: '#003478',
+        borderRadius: 16,
+        padding: 13,
+        alignItems: 'center',
+        color:"white",
+        marginTop: 8,
+        textAlign:"center",
+    },
     containerw: {
         flex: 1,
         backgroundColor: '#ffffff',
@@ -330,7 +310,8 @@ const styles = StyleSheet.create({
     },
     rightContainer: {
         width: '60%',
-        marginLeft: 10,
+        marginLeft: 25,
+        marginTop:15,
     },
     productImage: {
         width: '100%',
@@ -339,8 +320,8 @@ const styles = StyleSheet.create({
         borderRadius: 8,
     },
     productName: {
-        fontSize: 15,
-        fontWeight: '500',
+        fontSize: 18,
+        fontWeight: '400',
     },
     productDetailoffcont: {
         backgroundColor: '#871818',
@@ -395,7 +376,8 @@ const styles = StyleSheet.create({
     productCountText: {
         fontSize: 18,
         fontWeight: 'bold',
-        marginHorizontal: 5,
+        textAlign:"justify",
+        marginHorizontal:10,
     },
     sbuttonText: {
         color: 'black',

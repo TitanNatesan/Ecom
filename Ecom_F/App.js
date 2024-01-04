@@ -34,7 +34,9 @@ export const UserIDContext = createContext();
 
 const Stack = createStackNavigator();
 
-export const BASE_URL = 'http://192.168.48.132:8000';
+const ip = "192.168.89.132";
+
+export const BASE_URL = `http://${ip}:8000`;
 export const UserID = "qwertyuiop";
 
 export default function App() {

@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { StyleSheet, View, Text, StatusBar, ScrollView, TextInput, Image, TouchableOpacity } from "react-native";
-import { faMagnifyingGlass, faUsersViewfinder } from "@fortawesome/free-solid-svg-icons";
+import { faMagnifyingGlass, faUserShield, faUsersViewfinder } from "@fortawesome/free-solid-svg-icons";
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import BottomBar from './BottomBar'; 
+import { useRoute } from "@react-navigation/native";
 
 
 const Trackbar = require('../Streetmall/14_Checkout_page/step3.png');
@@ -28,11 +29,15 @@ const products = [
 ];
 
 const PaymentPage4 = ({ navigation }) => {
-
+  const route = useRoute();
+  const {userData,selectedDeliveryOption,selectedPaymentOption,product} = route.params;
   const goToConfirmedPage = () => {
     navigation.navigate('confirmed');
   };
-
+var deliveryCost = 0;
+if ((product.sellingPrice*product.inCart)>=200){
+  deliveryCost = 0;
+}else{deliveryCost=40};
   const [productCounts, setProductCounts] = useState({});
 
   const handleDelete = (productId) => {
@@ -97,16 +102,16 @@ const PaymentPage4 = ({ navigation }) => {
           <Text style={styles.heading}>Order Summary</Text>
           <View style={styles.orderDetailsContainer}>
             <View style={styles.orderDetailsLeft}>
-              <Text style={{ fontSize: 18 }}>Product:</Text>
+              <Text style={{ fontSize: 18 }}>{product.name} (x{product.inCart}):</Text>
               <Text style={{ fontSize: 18 }}>Delivery Charge:</Text>
               <Text style={{ fontSize: 18 }}>Discount:</Text>
               <Text style={{ fontSize: 18 }}>Total:</Text>
             </View>
             <View style={styles.orderDetailsRight}>
-              <Text style={{ fontSize: 18 }}>{orderSummary.productTotal}₹</Text>
-              <Text style={{ fontSize: 18 }}>{orderSummary.deliveryCharge}₹</Text>
-              <Text style={{ fontSize: 18 }}>{orderSummary.discount}₹</Text>
-              <Text style={{ fontSize: 18 }}>{orderSummary.total}₹</Text>
+              <Text style={{ fontSize: 18 }}>{(product.mrp * product.inCart) }₹</Text>
+              <Text style={{ fontSize: 18 }}>{deliveryCost}₹</Text>
+              <Text style={{ fontSize: 18 }}>-{(product.mrp * product.inCart)-(product.sellingPrice * product.inCart)}₹</Text>
+              <Text style={{ fontSize: 18 }}>{deliveryCost+(product.sellingPrice*product.inCart)}₹</Text>
             </View>
           </View>
           <Text> {'\n'} </Text>
@@ -115,7 +120,7 @@ const PaymentPage4 = ({ navigation }) => {
               <Text style={{ fontSize: 18, fontWeight: 'bold' }}>Order Value:</Text>
             </View>
             <View style={styles.orderDetailsRight}>
-              <Text style={{ fontSize: 18, fontWeight: 'bold' }}>{orderSummary.total}₹</Text>
+              <Text style={{ fontSize: 18, fontWeight: 'bold' }}>{deliveryCost+(product.sellingPrice*product.inCart)}₹</Text>
             </View>
           </View>
           <View style={styles.buttonContainer}>

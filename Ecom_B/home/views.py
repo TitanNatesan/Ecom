@@ -1,20 +1,12 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .serializer import Signup,ProductSerial, AddressSerial
+from .serializer import Signup,ProductSerial, AddressSerial,UserSerial
 from .models import Users, Products, Address,EachItem,Cart
-from rest_framework.views import APIView
 from rest_framework import status
 import base64
 from django.http import JsonResponse
 import random,os
-from django.core.files.base import ContentFile
-from django.core.files.uploadedfile import SimpleUploadedFile
-from django.utils import timezone
 from django.core.mail import send_mail
-from django.shortcuts import render
-from django.http import HttpResponse
-from pathlib import Path
-import pyotp
 from django.conf import settings
 
 BASE_DIR = settings.BASE_DIR 
@@ -24,14 +16,12 @@ def login(request):   # {"username":"TitanNatesan","password":"1234567890"}
     if request.method == "POST":
         username = request.data.get('username')
         password = request.data.get('password')
-        print(username,password)
         user = Users.objects.filter(username=username, password=password).first()
-        print(user)
-
         if user:
             return Response(1)
         else:
             return Response({'message': 'Login failed'}, status=status.HTTP_401_UNAUTHORIZED)
+
 
 @api_view(["POST"])
 def signup1(request):   # {"username":"natesan","password":"12345678","referal":"mukilan@ref"}
@@ -41,6 +31,7 @@ def signup1(request):   # {"username":"natesan","password":"12345678","referal":
         if data.get('username') and data.get('password') and data.get('referal'):
             return Response(1)
         return Response(status=status.HTTP_400_BAD_REQUEST)
+
 
 @api_view(['POST'])
 def signup(request):
@@ -57,6 +48,7 @@ def signup(request):
             address_instance.save()
             return Response(1)
         return Response({"error": "Invalid data provided."}, status=400)
+
 
 @api_view(["POST",'GET'])
 def cart(request, username):
@@ -103,7 +95,6 @@ def cart(request, username):
             return Response("User not found", status=status.HTTP_404_NOT_FOUND)
         except Products.DoesNotExist:
             return Response("Product not found", status=status.HTTP_404_NOT_FOUND)
-        
         return Response(1)
     
     if request.method == "GET":
@@ -128,6 +119,7 @@ def cart(request, username):
         except Users.DoesNotExist:
             return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 
+
 @api_view(['POST'])
 def updateCart(request,opr):     # {"username":"TitanNatesan","product_id":"phone1"}
     if request.method == "POST":
@@ -138,8 +130,7 @@ def updateCart(request,opr):     # {"username":"TitanNatesan","product_id":"phon
         except Users.DoesNotExist:
             return Response("User not Found")
         except Products.DoesNotExist:
-            return Response("Product not Found")
-               
+            return Response("Product not Found")           
         try:
             cart = Cart.objects.get(user=user)
             try:
@@ -162,7 +153,6 @@ def updateCart(request,opr):     # {"username":"TitanNatesan","product_id":"phon
             user_cart.save()
             user.cart = user_cart
             user.save()
-            
             each = EachItem(
                 user=user,
                 product=product,
@@ -175,15 +165,35 @@ def updateCart(request,opr):     # {"username":"TitanNatesan","product_id":"phon
             each.quantity = eval(str(each.quantity)+opr+"+1")
         except:
             return Response("Invalid URL (try .../updateCart/+/ or .../updateCart/-/)")
-
         if each.quantity>0:
             each.save()
         else:
             each.delete() 
-
         return Response("Updated")
 
 
+@api_view(["GET"])
+def address(request,username):
+    if request.method == "GET":
+        try:
+            user = Users.objects.get(username=username)
+            add = Address.objects.get(user = user)
+        except Users.DoesNotExist:
+            return Response("User not found")
+        except Address.DoesNotExist:
+            return Response("No Address Found")
+        serial = AddressSerial(add)
+        us = UserSerial(user)
+        userdata = us.data
+        # img = us.data['profile_pic'] 
+        # img = str(BASE_DIR)+img
+        # userdata['profile_pic']= str(get_base64_encoded_image(img))
+
+        data = {
+            "ud":userdata,
+            "address":serial.data,
+        }
+        return Response(data)
 
 
 
