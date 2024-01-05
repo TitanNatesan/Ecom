@@ -25,7 +25,6 @@ class Users(models.Model):
     last_OTP = models.IntegerField(validators=[MinValueValidator(1000), MaxValueValidator(9999)],blank=True,null=True)
     OTP_sent_time = models.DateTimeField(null=True, blank=True)
 
-
     def __str__(self):
         return f"{self.username}({self.name})"
     
@@ -123,12 +122,12 @@ class PaymentDetails(models.Model):
     billing_address = models.TextField()
     card_type = models.CharField(max_length=20)  # Visa, MasterCard, etc.
     zip_code = models.CharField(max_length=10)
- 
+
 class Orders(models.Model):
     user = models.ForeignKey(Users, on_delete=models.PROTECT)
     order_id = models.CharField(max_length=50, unique=True, primary_key=True)
-    ordered_products = models.ManyToManyField(EachItem)
-    delivery_partner = models.ForeignKey(DeliveryPartner, on_delete=models.PROTECT)
+    ordered_product = models.ForeignKey("home.EachItem", on_delete=models.PROTECT)
+    delivery_partner = models.ForeignKey(DeliveryPartner, on_delete=models.PROTECT,null=True,blank=True)
     delivery_charges = models.IntegerField(null=True,blank=True)
     total_cost = models.IntegerField(null=True,blank=True)
     ordered_date = models.DateTimeField(auto_now_add=True)
@@ -139,7 +138,7 @@ class Orders(models.Model):
     delivery_type = models.CharField(choices=dchoise,null=True,blank=True)
     status_opt = [
         ("Out for Delivery","Out for Delivery"),
-        ("Pending","Pending"),
+        ("Placed","Placed"),
         ("Dispatched","Dispatched"),
         ("Cancelled","Cancelled"),
         ("Refunded","Refunded"),
@@ -156,4 +155,4 @@ class Orders(models.Model):
         ("EMI","EMI"),
     ]
     payment_method = models.CharField(choices=pay_opt)
-    expected_delivery = models.DateField()
+    expected_delivery = models.DateField(null=True,blank=True)

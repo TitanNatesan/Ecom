@@ -1,11 +1,12 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .serializer import Signup,ProductSerial, AddressSerial,UserSerial
-from .models import Users, Products, Address,EachItem,Cart
+from .serializer import Signup,ProductSerial, AddressSerial,UserSerial,OrderSerializer
+from .models import Users, Products, Address,EachItem,Cart,Orders
 from rest_framework import status
 import base64
 from django.http import JsonResponse
 import random,os
+from datetime import datetime, timedelta
 from django.core.mail import send_mail
 from django.conf import settings
 
@@ -185,9 +186,10 @@ def address(request,username):
         serial = AddressSerial(add)
         us = UserSerial(user)
         userdata = us.data
-        # img = us.data['profile_pic'] 
-        # img = str(BASE_DIR)+img
-        # userdata['profile_pic']= str(get_base64_encoded_image(img))
+        if us.data['profile_pic']:
+            img = us.data['profile_pic'] 
+            img = str(BASE_DIR)+img
+            userdata['profile_pic']= str(get_base64_encoded_image(img))
 
         data = {
             "ud":userdata,
@@ -196,10 +198,62 @@ def address(request,username):
         return Response(data)
 
 
+@api_view(["POST"])
+def placeOrder(request):
+    '''
+    {
+  "user": "qwertyuiop",  
+  "product_id":"phone1",
+  "delivery_type": "Regular Delivery",
+  "payment_method": "UPI"
+}
+    '''
+    if request.method == "POST":
+        try:
+            user = Users.objects.get(username=request.data['user'])
+            product = Products.objects.get(product_id=request.data['product_id'])
+        except Users.DoesNotExist:
+            return Response({"detail": "User Not Found"}, status=status.HTTP_404_NOT_FOUND)
+        except Products.DoesNotExist:
+            return Response({"detail": "Product Not Found"}, status=status.HTTP_404_NOT_FOUND)
+
+        try:
+            each = EachItem.objects.get(user=user, product=product)
+        except EachItem.DoesNotExist:
+            return Response({"detail": "Cart Not Found"}, status=status.HTTP_404_NOT_FOUND)
+
+        order_data = {
+            "user": user.username,
+            "order_id": f"{user.username}{getDateAndTime()}",
+            "delivery_charges": 40 if (each.quantity * product.sellingPrice) < 200 else 0,
+            "delivery_type": request.data['delivery_type'],
+            "expected_delivery": add_working_days(datetime.now().strftime('%Y-%m-%d'), 7),
+            "status": "Placed",
+            "payment_method": request.data['payment_method'],
+        }
+
+        order_serializer = OrderSerializer(data=order_data)
+
+        if order_serializer.is_valid():
+            order_serializer.save()
+            order_serializer.instance.ordered_products.add(each)
+            return Response({"detail": "Success"}, status=status.HTTP_201_CREATED)
+        else:
+            return Response(order_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+def getDateAndTime():
+    current_datetime = datetime.now()
+    formatted_date = current_datetime.strftime("%m%d%Y%H%M")
+    return str(formatted_date)
 
-
+def add_working_days(start_date, num_days):
+    current_date = datetime.strptime(start_date, '%Y-%m-%d')
+    for _ in range(num_days):
+        current_date += timedelta(days=1)
+        while current_date.weekday() in [5, 6]:  # Skip weekends (5 is Saturday, 6 is Sunday)
+            current_date += timedelta(days=1)
+    return current_date.strftime('%Y-%m-%d')
 
 
 

@@ -8,12 +8,14 @@ import {
   TouchableOpacity,
   TextInput,
   Button,
-} from 'react-native'; 
+} from 'react-native';
 import BottomBar from './BottomBar';
 
 const userimg = require("../Streetmall/Dashboard/ICON2.png");
 
 const User = ({ navigation }) => {
+
+  
 
   const [name, setName] = useState(name);
   const [email, setEmail] = useState(email);

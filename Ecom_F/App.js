@@ -45,7 +45,7 @@ export default function App() {
   return (
     <UserIDContext.Provider value={{ userID, setUserID }}>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="Cart">
+        <Stack.Navigator initialRouteName="Login">
           <Stack.Screen name="Signup" component={SignUpScreen} options={{ headerShown: false }} />
           <Stack.Screen name="Signup2" component={SignUp2Screen} options={{ headerShown: false }} />
           <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />

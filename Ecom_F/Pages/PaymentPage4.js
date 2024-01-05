@@ -34,10 +34,17 @@ const PaymentPage4 = ({ navigation }) => {
   const goToConfirmedPage = () => {
     navigation.navigate('confirmed');
   };
+  console.log("USER DATA")
+  console.log(userData)
+  console.log("Delivery Option")
+  console.log(selectedDeliveryOption)
+  console.log("PayMethod")
+  console.log(selectedPaymentOption)
+  console.log("Products")
+  console.log(product)
+
 var deliveryCost = 0;
-if ((product.sellingPrice*product.inCart)>=200){
-  deliveryCost = 0;
-}else{deliveryCost=40};
+if ((product.sellingPrice*product.inCart)>=200){deliveryCost = 0;}else{deliveryCost=40};
   const [productCounts, setProductCounts] = useState({});
 
   const handleDelete = (productId) => {

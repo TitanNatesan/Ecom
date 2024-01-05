@@ -87,7 +87,7 @@ const PaymentPage3 = ({ navigation }) => {
               style={[styles.proceedButton, proceedButtonDisabled && styles.disabledButton]}
               disabled={proceedButtonDisabled}
               onPress={goToPaymentPage4}
-            >
+            > 
               <Text style={styles.proceedButtonText}>Proceed</Text>
             </TouchableOpacity>
           </View>
