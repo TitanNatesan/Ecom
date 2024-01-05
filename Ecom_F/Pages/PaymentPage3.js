@@ -74,7 +74,7 @@ const PaymentPage3 = ({ navigation }) => {
 
             {/* Credit Card */}
             <Text style={styles.subtitle}>Credit Card</Text>
-            {renderPaymentOption('Credit or Debit Card', 'Choose your Bank', require('../Streetmall/Payment/Paytm_Logo.png'))}
+            {renderPaymentOption('Credit/Debit Card', 'Choose your Bank', require('../Streetmall/Payment/Paytm_Logo.png'))}
 
             {/* Other Options */}
             <Text style={styles.subtitle}>Other Options</Text>

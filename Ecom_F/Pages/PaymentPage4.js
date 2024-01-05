@@ -2,8 +2,10 @@ import React, { useState } from "react";
 import { StyleSheet, View, Text, StatusBar, ScrollView, TextInput, Image, TouchableOpacity } from "react-native";
 import { faMagnifyingGlass, faUserShield, faUsersViewfinder } from "@fortawesome/free-solid-svg-icons";
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
-import BottomBar from './BottomBar'; 
+import BottomBar from './BottomBar';
 import { useRoute } from "@react-navigation/native";
+import axios from "axios";
+import { BASE_URL, UserID } from "../App";
 
 
 const Trackbar = require('../Streetmall/14_Checkout_page/step3.png');
@@ -30,21 +32,41 @@ const products = [
 
 const PaymentPage4 = ({ navigation }) => {
   const route = useRoute();
-  const {userData,selectedDeliveryOption,selectedPaymentOption,product} = route.params;
+  const { userData, selectedDeliveryOption, selectedPaymentOption, product } = route.params;
+
+  const postData = async () => {
+    if (selectedPaymentOption == "Paytm" || "Net Banking"){
+      var pay_method = "UPI";
+    }
+    else {
+      var pay_method = selectedPaymentOption;
+    }
+    const data = {
+      user: UserID,
+      product_id: product['product_id'],
+      delivery_type: selectedDeliveryOption,
+      pay_method: selectedPaymentOption,
+    };
+
+    try {
+      const response = await axios.post(`${BASE_URL}/api/order/placeorder/`, data);
+      console.log('Response:', response.data);
+      
+      if (response.data==1){
+        goToConfirmedPage();
+      }
+
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
   const goToConfirmedPage = () => {
     navigation.navigate('confirmed');
   };
-  console.log("USER DATA")
-  console.log(userData)
-  console.log("Delivery Option")
-  console.log(selectedDeliveryOption)
-  console.log("PayMethod")
-  console.log(selectedPaymentOption)
-  console.log("Products")
-  console.log(product)
 
-var deliveryCost = 0;
-if ((product.sellingPrice*product.inCart)>=200){deliveryCost = 0;}else{deliveryCost=40};
+  var deliveryCost = 0;
+  if ((product.sellingPrice * product.inCart) >= 200) { deliveryCost = 0; } else { deliveryCost = 40 };
   const [productCounts, setProductCounts] = useState({});
 
   const handleDelete = (productId) => {
@@ -115,10 +137,10 @@ if ((product.sellingPrice*product.inCart)>=200){deliveryCost = 0;}else{deliveryC
               <Text style={{ fontSize: 18 }}>Total:</Text>
             </View>
             <View style={styles.orderDetailsRight}>
-              <Text style={{ fontSize: 18 }}>{(product.mrp * product.inCart) }₹</Text>
+              <Text style={{ fontSize: 18 }}>{(product.mrp * product.inCart)}₹</Text>
               <Text style={{ fontSize: 18 }}>{deliveryCost}₹</Text>
-              <Text style={{ fontSize: 18 }}>-{(product.mrp * product.inCart)-(product.sellingPrice * product.inCart)}₹</Text>
-              <Text style={{ fontSize: 18 }}>{deliveryCost+(product.sellingPrice*product.inCart)}₹</Text>
+              <Text style={{ fontSize: 18 }}>-{(product.mrp * product.inCart) - (product.sellingPrice * product.inCart)}₹</Text>
+              <Text style={{ fontSize: 18 }}>{deliveryCost + (product.sellingPrice * product.inCart)}₹</Text>
             </View>
           </View>
           <Text> {'\n'} </Text>
@@ -127,11 +149,11 @@ if ((product.sellingPrice*product.inCart)>=200){deliveryCost = 0;}else{deliveryC
               <Text style={{ fontSize: 18, fontWeight: 'bold' }}>Order Value:</Text>
             </View>
             <View style={styles.orderDetailsRight}>
-              <Text style={{ fontSize: 18, fontWeight: 'bold' }}>{deliveryCost+(product.sellingPrice*product.inCart)}₹</Text>
+              <Text style={{ fontSize: 18, fontWeight: 'bold' }}>{deliveryCost + (product.sellingPrice * product.inCart)}₹</Text>
             </View>
           </View>
           <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.proceedButton} onPress={goToConfirmedPage}>
+            <TouchableOpacity style={styles.proceedButton} onPress={postData}>
               <Text style={styles.buttonText}>Proceed</Text>
             </TouchableOpacity>
           </View>
@@ -172,7 +194,7 @@ if ((product.sellingPrice*product.inCart)>=200){deliveryCost = 0;}else{deliveryC
 };
 
 const styles = StyleSheet.create({
-  containerw:{
+  containerw: {
     flex: 1,
     backgroundColor: '#ffffff',
   },

@@ -109,8 +109,9 @@ class Cart(models.Model):
 def update_cart_total(sender, instance, **kwargs):
     # Update the Cart total whenever EachItem is saved
     cart = instance.user.cart
-    cart.total = sum(item.total for item in cart.ordered_products.all())
-    cart.save()
+    if cart:
+        cart.total = sum(item.total for item in cart.ordered_products.all())
+        cart.save()
 
 class PaymentDetails(models.Model):
     pay_id = models.CharField(primary_key=True,max_length=50)
@@ -126,7 +127,8 @@ class PaymentDetails(models.Model):
 class Orders(models.Model):
     user = models.ForeignKey(Users, on_delete=models.PROTECT)
     order_id = models.CharField(max_length=50, unique=True, primary_key=True)
-    ordered_product = models.ForeignKey("home.EachItem", on_delete=models.PROTECT)
+    ordered_product = models.ForeignKey(Products,on_delete=models.CASCADE,null=True)
+    quantity = models.PositiveIntegerField(null=True,blank=True)
     delivery_partner = models.ForeignKey(DeliveryPartner, on_delete=models.PROTECT,null=True,blank=True)
     delivery_charges = models.IntegerField(null=True,blank=True)
     total_cost = models.IntegerField(null=True,blank=True)

@@ -1,6 +1,6 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .serializer import Signup,ProductSerial, AddressSerial,UserSerial,OrderSerializer
+from .serializer import Signup,ProductSerial, AddressSerial,UserSerial
 from .models import Users, Products, Address,EachItem,Cart,Orders
 from rest_framework import status
 import base64
@@ -205,7 +205,7 @@ def placeOrder(request):
   "user": "qwertyuiop",  
   "product_id":"phone1",
   "delivery_type": "Regular Delivery",
-  "payment_method": "UPI"
+  "pay_method": "UPI"
 }
     '''
     if request.method == "POST":
@@ -220,26 +220,30 @@ def placeOrder(request):
         try:
             each = EachItem.objects.get(user=user, product=product)
         except EachItem.DoesNotExist:
+            each = EachItem(
+                user=user,
+                product=product,
+                quantity=1
+            )
+            each.save()
             return Response({"detail": "Cart Not Found"}, status=status.HTTP_404_NOT_FOUND)
+        
+        allOrders = Orders.objects.all()
 
-        order_data = {
-            "user": user.username,
-            "order_id": f"{user.username}{getDateAndTime()}",
-            "delivery_charges": 40 if (each.quantity * product.sellingPrice) < 200 else 0,
-            "delivery_type": request.data['delivery_type'],
-            "expected_delivery": add_working_days(datetime.now().strftime('%Y-%m-%d'), 7),
-            "status": "Placed",
-            "payment_method": request.data['payment_method'],
-        }
+        each = EachItem.objects.get(user=user)
+        order = Orders.objects.create(user=user,order_id=str(user.username)+getDateAndTime())
+        order.ordered_product = product
+        order.quantity = each.quantity 
+        order.total_cost = each.quantity*product.sellingPrice
+        order.delivery_charges = 0 if (each.quantity*product.sellingPrice)>200 else 40
+        order.delivery_type = request.data['delivery_type']
+        order.status = "Placed"
+        order.payment_method = request.data['pay_method']
+        order.expected_delivery = add_working_days(str(datetime.now().date()),7)
+        order.save()
+        each.delete()
 
-        order_serializer = OrderSerializer(data=order_data)
-
-        if order_serializer.is_valid():
-            order_serializer.save()
-            order_serializer.instance.ordered_products.add(each)
-            return Response({"detail": "Success"}, status=status.HTTP_201_CREATED)
-        else:
-            return Response(order_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(1)
 
 
 def getDateAndTime():

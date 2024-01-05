@@ -61,8 +61,8 @@ const PaymentPage2 = ({navigation}) => {
           <Text> {'\n'} </Text>
           <View style={styles.cont}>
               <Text style={styles.title}>Choose your delivery option:</Text>
-              {renderOption('Regular delivery', 'Saturday, 30 September - Free Delivery')}
-              {renderOption('Instant delivery', 'Tomorrow by 10 AM ₹100.00')}
+              {renderOption('Regular Delivery', 'Saturday, 30 September - Free Delivery')}
+              {renderOption('Instant Delivery', 'Tomorrow by 10 AM ₹100.00')}
           </View>
           <View style={styles.buttonContainer}>
           <TouchableOpacity

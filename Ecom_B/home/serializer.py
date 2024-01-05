@@ -41,22 +41,3 @@ class EachItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = EachItem
         fields = ['product', 'quantity']
-
-class OrderSerializer(serializers.ModelSerializer):
-    ordered_products = EachItemSerializer(many=True, read_only=True)
-
-    class Meta:
-        model = Orders
-        fields = [
-            'user',
-            'order_id',
-            'ordered_products',
-            'delivery_partner',
-            'delivery_charges',
-            'total_cost',
-            'ordered_date',
-            'delivery_type',
-            'status',
-            'payment_method',
-            'expected_delivery',
-        ]
