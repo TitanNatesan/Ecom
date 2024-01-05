@@ -1,0 +1,35 @@
+# Backend libraries
+Package                    Version
+------------------------   ------------
+asgiref                    3.7.2
+Django                     5.0.1
+django-cors-headers        4.3.1
+django-phonenumber-field   7.3.0
+djangorestframework        3.14.0
+phonenumbers               8.13.27
+pillow                     10.2.0
+pip                        23.3.2
+psycopg2                   2.9.9
+pyotp                      2.9.0
+pytz                       2023.3.post1
+sqlparse                   0.4.4
+tzdata                     2023.4
+
+# Frontend Commands 
+/> npm i 
+/> npm start 
+...a (for android)
+...o (for IOS)
+...w (for web)
+
+# Backend Setup 
+setup ur database as per the database compactability u have 
+and run these following commands 
+/>cd ecom_b
+      py manage.py makemigrations 
+      py manage.py migrate 
+      py manage.py createsuperuser (create a user as per ur wish)
+      py manage.py runserver 
+
+open local host http://localhost/admin/
+      use this link for admin access
