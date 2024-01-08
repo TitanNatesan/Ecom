@@ -24,6 +24,15 @@ class Users(models.Model):
     payment_details = models.ForeignKey("home.PaymentDetails",on_delete=models.PROTECT, blank=True, null=True)
     last_OTP = models.IntegerField(validators=[MinValueValidator(1000), MaxValueValidator(9999)],blank=True,null=True)
     OTP_sent_time = models.DateTimeField(null=True, blank=True)
+    user_choise = [
+        ("Customer","Customer"),
+        ("Business Leader","Business Leader"),
+        ("Team Manager","Team Manager"),
+        ("Regional Manager","Regional Manager"),
+        ("General Manager","General Manager"),
+    ]
+    role = models.CharField(max_length=50,choices=user_choise,default="Customer")
+    down_leaf = models.ManyToManyField("home.Users",null=True,blank=True)
 
     def __str__(self):
         return f"{self.username}({self.name})"

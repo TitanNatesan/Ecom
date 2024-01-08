@@ -28,7 +28,10 @@ def login(request):   # {"username":"TitanNatesan","password":"1234567890"}
 def signup1(request):   # {"username":"natesan","password":"12345678","referal":"mukilan@ref"}
     if request.method == "POST":
         data = request.data
-        
+        try:
+            referal = Users.objects.get(username=data['referal'])
+        except Users.DoesNotExist:
+            return Response("Referal Dosent Exist")
         if data.get('username') and data.get('password') and data.get('referal'):
             return Response(1)
         return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -41,6 +44,11 @@ def signup(request):
         address = data.pop("address")
         user_serializer = Signup(data=data)
         address_serializer = AddressSerial(data=address)
+        try:
+            referal = Users.objects.get(username=data['referal'])
+        except Users.DoesNotExist:
+            return Response("Referal Doesnt Exist")
+        
         if user_serializer.is_valid() and address_serializer.is_valid():
             user_instance = user_serializer.save()
             address_data = address_serializer.validated_data
