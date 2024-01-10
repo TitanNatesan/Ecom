@@ -2,7 +2,8 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .serializer import Signup,ProductSerial, AddressSerial,UserSerial
 from .models import Users, Products, Address,EachItem,Cart,Orders
-from rest_framework import status
+from rest_framework import status,generics
+from django.db.models import Q
 import base64
 from django.http import JsonResponse
 import random,os
@@ -346,28 +347,19 @@ def viewUser(request,username):
         return Response(cont)
 
 
+class ProductsSearchView(generics.ListAPIView):
+    serializer_class = ProductSerial
 
+    def get_queryset(self):
+        query = self.request.query_params.get('query', '')
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        return Products.objects.filter(
+            Q(name__icontains=query) |
+            Q(description__icontains=query) |
+            Q(tag__icontains=query) |
+            Q(specification__contains=[{"label": query}]) |  # Assuming specification is a list of dictionaries
+            Q(specification_list__contains=[query])
+        )
 
         
 @api_view(["GET"])
