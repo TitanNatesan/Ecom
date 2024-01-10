@@ -32,7 +32,7 @@ class Users(models.Model):
         ("General Manager","General Manager"),
     ]
     role = models.CharField(max_length=50,choices=user_choise,default="Customer")
-    down_leaf = models.ManyToManyField("home.Users",null=True,blank=True)
+    down_leaf = models.ManyToManyField("home.Users",blank=True)
 
     def __str__(self):
         return f"{self.username}({self.name})"
@@ -71,6 +71,7 @@ class Products(models.Model):
     freeDelivery = models.BooleanField(default=True)
     specification = models.JSONField(blank=True) # [{"label": "Case Diameter", "value": "4.4 Millimeters"}, {"label": "Brand Colour", "value": "Brown"}, {"label": "Brand Material Type", "value": "Plastic"}]
     specification_list = ArrayField(models.CharField(max_length=100),blank=True) 
+    tag = ArrayField(models.CharField(max_length=50),blank=True,null=True)
 
     @property
     def inStock(self)->bool: 

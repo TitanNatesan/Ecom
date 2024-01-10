@@ -35,7 +35,7 @@ const Signup2Screen = ({ navigation }) => {
         phone: "+91" + mobileNumber,
         email: email,
         'address': {
-            door_number: door_number,
+            door_number: door_number, 
             address_line1: addressLine1,
             address_line2: addressLine2,
             city: cityName,

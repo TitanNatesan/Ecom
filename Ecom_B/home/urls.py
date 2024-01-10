@@ -11,4 +11,5 @@ urlpatterns = [
     path('updateCart/<str:opr>/',views.updateCart,name= "UpdateCart"),
     path("order/address/<str:username>/",views.address,name="view address"), 
     path("order/placeorder/",views.placeOrder,name="Order"),
-] 
+    path("user/<str:username>/",views.viewUser,name = "User Data"),
+]  

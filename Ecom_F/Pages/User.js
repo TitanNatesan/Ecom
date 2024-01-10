@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   StyleSheet,
   View,
@@ -7,117 +7,99 @@ import {
   ScrollView,
   TouchableOpacity,
   TextInput,
-  Button,
 } from 'react-native';
 import BottomBar from './BottomBar';
+import axios from 'axios';
+import { BASE_URL, UserID } from '../App';
 
 const userimg = require("../Streetmall/Dashboard/ICON2.png");
 
 const User = ({ navigation }) => {
+  const [userData, setUserData] = useState({
+    name: "",
+    phone: "",
+    email: "",
+    doorNumber: "",
+    addressLine1: "",
+    addressLine2: "",
+    city: "",
+    state: "",
+    postalCode: "",
+    landmark: "",
+  });
 
-  
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  const [name, setName] = useState(name);
-  const [email, setEmail] = useState(email);
-  const [mobileNumber, setMobileNumber] = useState(mobileNumber);
-  const [addressLine1, setAddressLine1] = useState(addressLine1);
-  const [addressLine2, setAddressLine2] = useState(addressLine2);
-  const [recoveryMail, setRecoveryMail] = useState(recoveryMail);
+  const toggleEditMode = useCallback(() => {
+    setIsEditMode((prevMode) => !prevMode);
+  }, []);
 
-  const [editingField, setEditingField] = useState(null);
-  const [editedValue, setEditedValue] = useState('');
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`${BASE_URL}/api/user/${UserID}/`);
+        const { user, address } = response.data;
+        setUserData({
+          name: user.name,
+          phone: user.phone,
+          email: user.email,
+          doorNumber: address.door_number,
+          addressLine1: address.address_line1,
+          addressLine2: address.address_line2,
+          city: address.city,
+          state: address.state,
+          postalCode: address.postal_code,
+          landmark: address.landmark,
+        });
+      } catch (error) {
+        console.log("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const handleEdit = (field) => {
-    setEditingField(field);
-    setEditedValue(getFieldValue(field));
-  };
+    fetchData();
+  }, []);
 
-  const handleSaveEdit = () => {
-    switch (editingField) {
-      case 'name':
-        setName(editedValue);
-        break;
-      case 'email':
-        setEmail(editedValue);
-        break;
-      case 'mobileNumber':
-        setMobileNumber(editedValue);
-        break;
-      case 'addressLine1':
-        setAddressLine1(editedValue);
-        break;
-      case 'addressLine2':
-        setAddressLine2(editedValue);
-        break;
-      case 'recoveryMail':
-        setRecoveryMail(editedValue);
-        break;
-      default:
-        break;
-    }
-    setEditingField(null);
-  };
-
-  const handleCancelEdit = () => {
-    setEditingField(null);
-  };
-
-  const renderEditableField = (label, value, field) => {
-    return (
-      <View style={styles.editableField}>
-        <Text style={styles.editableLabel}>{label}</Text>
-        {editingField === field ? (
-          <View style={styles.editableInputContainer}>
-            <TextInput
-              style={styles.editableInput}
-              value={editedValue}
-              onChangeText={(text) => setEditedValue(text)}
-            />
-            <View style={styles.buttonRow}>
-              <TouchableOpacity style={styles.saveButton} onPress={handleSaveEdit}>
-                <Text style={styles.buttonText}>Save</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.cancelButton} onPress={handleCancelEdit}>
-                <Text style={styles.buttonText}>Cancel</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        ) : (
-          <View style={styles.editableValueContainer}>
-            <Text style={styles.editableValue}>{value}</Text>
-            {/* Style for the "Edit" button */}
-            <TouchableOpacity style={styles.editButton} onPress={() => handleEdit(field)}>
-              <Text style={styles.editButtonText}>Edit</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-        {/* Add a line break */}
-        <View style={styles.lineBreak} />
-      </View>
-    );
-  };
-
-  const getFieldValue = (field) => {
-    switch (field) {
-      case 'name':
-        return name;
-      case 'email':
-        return email;
-      case 'mobileNumber':
-        return mobileNumber;
-      case 'addressLine1':
-        return addressLine1;
-      case 'addressLine2':
-        return addressLine2;
-      case 'recoveryMail':
-        return recoveryMail;
-      default:
-        return '';
+  const updateUserData = async () => {
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/api/user/${UserID}/`,
+        {
+          user: {
+            name: userData.name,
+            phone: userData.phone,
+            email: userData.email,
+            username: UserID,
+          },
+          address: {
+            door_number:userData.doorNumber,
+            address_line1: userData.addressLine1,
+            address_line2: userData.addressLine2,
+            city: userData.city,
+            state: userData.state,
+            postal_code: userData.postalCode,
+            landmark: userData.landmark,
+          },
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      console.log("Data updated successfully:", response.data);
+    } catch (error) {
+      console.log("Error updating data:", error);
     }
   };
 
-  const handleButtonClick = (routeName) => {
-    navigation.navigate(routeName);
+  const handleEditChange = (field, text) => {
+    setUserData((prevUserData) => ({
+      ...prevUserData,
+      [field]: text,
+    }));
   };
 
   return (
@@ -125,49 +107,67 @@ const User = ({ navigation }) => {
       <ScrollView vertical showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
           <Image source={userimg} style={styles.uicon} />
-          <Text style={styles.utext}>Hello, Customer</Text>
-        </View>
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.button} onPress={() => handleButtonClick('confirmed')}>
-            <Text style={styles.buttonText}>Your Order</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.button} onPress={() => handleButtonClick('confirmed')}>
-            <Text style={styles.buttonText}>Buy Again</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.button} onPress={() => handleButtonClick('Dashboard')}>
-            <Text style={styles.buttonText}>Your Account</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.button} onPress={() => handleButtonClick('Cart')}>
-            <Text style={styles.buttonText}>Your Cart</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.button} onPress={() => handleButtonClick('User')}>
-            <Text style={styles.buttonText}>Support</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.button} onPress={() => handleButtonClick('User')}>
-            <Text style={styles.buttonText}>Reset Password</Text>
-          </TouchableOpacity>
+          <Text style={styles.utext}>Hello, {userData.name}</Text>
         </View>
 
-        {/* User Details */}
         <View style={styles.userDetailsContainer}>
           <View style={styles.detailsBox}>
-            {renderEditableField('Name', name, 'name')}
-            {renderEditableField('Email', email, 'email')}
-            {renderEditableField('Mobile Number', mobileNumber, 'mobileNumber')}
-            {renderEditableField('Address Line 1', addressLine1, 'addressLine1')}
-            {renderEditableField('Address Line 2', addressLine2, 'addressLine2')}
-            {renderEditableField('Recovery Mail', recoveryMail, 'recoveryMail')}
+            {renderEditableField('Name', userData.name, 'name')}
+            {renderEditableField('Phone', userData.phone, 'phone')}
+            {renderEditableField('Email', userData.email, 'email')}
+            {renderEditableField('Door Number', userData.doorNumber, 'doorNumber')}
+            {renderEditableField('Address Line 1', userData.addressLine1, 'addressLine1')}
+            {renderEditableField('Address Line 2', userData.addressLine2, 'addressLine2')}
+            {renderEditableField('City', userData.city, 'city')}
+            {renderEditableField('State', userData.state, 'state')}
+            {renderEditableField('Postal Code', userData.postalCode, 'postalCode')}
+            {renderEditableField('Landmark', userData.landmark, 'landmark')}
           </View>
         </View>
 
-        <Text> {'\n'} </Text>
-        <Text> {'\n'} </Text>
-        <Text> {'\n'} </Text>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity
+            style={styles.editButton}
+            onPress={() => {
+              toggleEditMode();
+              updateUserData();
+            }}
+          >
+            <Text style={styles.editButtonText}>
+              {isEditMode ? 'Save All' : 'Edit All'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+
       </ScrollView>
+
       <BottomBar navigation={navigation} />
       <View style={styles.blueBar}></View>
     </View>
   );
+
+  function renderEditableField(label, value, field) {
+    return (
+      <View style={styles.editableField}>
+        <Text style={styles.editableLabel}>{label}</Text>
+        {isEditMode ? (
+          <View style={styles.editableInputContainer}>
+            <TextInput
+              style={styles.editableInput}
+              value={value}
+              onChangeText={(text) => handleEditChange(field, text)}
+              editable={isEditMode}
+            />
+          </View>
+        ) : (
+          <View style={styles.editableValueContainer}>
+            <Text style={styles.editableValue}>{value}</Text>
+          </View>
+        )}
+        <View style={styles.lineBreak} />
+      </View>
+    );
+  }
 };
 
 const styles = StyleSheet.create({
@@ -197,6 +197,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginTop: '6%',
     paddingHorizontal: 35,
+    marginBottom:"20%",
   },
   button: {
     backgroundColor: '#ffffff',
@@ -276,7 +277,7 @@ const styles = StyleSheet.create({
   },
   editButton: {
     backgroundColor: '#F5F5F5',
-    borderRadius: 16,
+    borderRadius: 1,
     padding: 7,
     alignItems: 'center',
     marginTop: 8,
@@ -290,24 +291,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     fontSize: 15,
   },
-  saveButton: {
-    backgroundColor: '#F5F5F5',
-    borderRadius: 16,
-    padding: 7,
-    alignItems: 'center',
-    marginBottom: 4,
-    borderWidth: 1,
-    borderColor: '#ccc',
-  },
-  cancelButton: {
-    backgroundColor: '#F5F5F5',
-    borderRadius: 16,
-    padding: 7,
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#ccc',
-    marginBottom: 10,
-  },
+
   lineBreak: {
     height: 1,
     backgroundColor: '#ccc',

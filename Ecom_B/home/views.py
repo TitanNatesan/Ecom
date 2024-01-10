@@ -22,7 +22,7 @@ def login(request):   # {"username":"TitanNatesan","password":"1234567890"}
             return Response(1)
         else:
             return Response({'message': 'Login failed'}, status=status.HTTP_401_UNAUTHORIZED)
-
+        
 
 @api_view(["POST"])
 def signup1(request):   # {"username":"natesan","password":"12345678","referal":"mukilan@ref"}
@@ -55,6 +55,9 @@ def signup(request):
             address_data['user'] = user_instance
             address_instance = Address(**address_data)
             address_instance.save()
+            user = Users.objects.get(username=data['username'])
+            referal.down_leaf.add(user)
+            referal.save()
             return Response(1)
         return Response({"error": "Invalid data provided."}, status=400)
 
@@ -269,11 +272,78 @@ def add_working_days(start_date, num_days):
 
 
 
-
-
-
-
-
+@api_view(["GET","POST"])
+def viewUser(request,username):
+    
+    if request.method == "POST":
+        userdata = request.data.pop("user")
+        addressData = request.data.pop("address")
+        print(userdata)
+        print("-----------------------------")
+        print(addressData)
+        try:
+            user = Users.objects.get(username=userdata['username'])
+            user.name = userdata['name']
+            user.phone = userdata['phone']
+            user.email = userdata['email']
+            user.save()
+            try:
+                address = Address.objects.get(user=user)
+                address.door_number = addressData['door_number']
+                address.address_line1 = addressData['address_line1']
+                address.address_line2 = addressData['address_line2']
+                address.city = addressData['city']
+                address.state = addressData['state']
+                address.postal_code = addressData['postal_code']
+                address.landmark = addressData['landmark']
+                address.save()
+            except Address.DoesNotExist:
+                Address.objects.create(
+                    user=user,
+                    door_number=addressData['door_number'],
+                    address_line1=addressData['address_line1'],
+                    address_line2=addressData['address_line2'],
+                    city=addressData['city'],
+                    state=addressData['state'],
+                    postal_code=addressData['postal_code'],
+                    landmark=addressData['landmark']
+                )
+        except Users.DoesNotExist:
+            return Response("User not found")
+        return Response("Updated")
+    
+    if request.method == "GET":
+        try:
+            user = Users.objects.get(username=username)
+            address = Address.objects.get(user=user)
+        except Users.DoesNotExist:
+            return Response("User Not Exist")
+        except Address.DoesNotExist:
+            return Response("Address Not Found")
+        address_data = {
+            'door_number':address.door_number,
+            'address_line1':address.address_line1,
+            'address_line2':address.address_line2,
+            'city':address.city,
+            'country':address.country,
+            'state':address.state,
+            'postal_code':address.postal_code,
+            'country':address.country,
+            'landmark':address.landmark
+        }
+        user_data = {
+            'name':user.name,
+            'username':user.username,
+            'referal':user.referal,
+            'phone':str(user.phone),
+            'email':user.email,
+            'role':user.role,
+        }
+        cont={
+            'user':user_data,
+            'address':address_data
+        }
+        return Response(cont)
 
 
 

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useContext } from "react";
 import { StyleSheet, View, Image, Text, TextInput, StatusBar, ScrollView, TouchableOpacity, ImageBackground } from "react-native";
 import { faMagnifyingGlass, faUsersViewfinder } from "@fortawesome/free-solid-svg-icons";
 import { library } from "@fortawesome/fontawesome-svg-core";
@@ -8,6 +8,7 @@ import { Dimensions } from 'react-native';
 import BottomBar from './BottomBar';
 import { userID } from "../App";
 import { useRoute } from "@react-navigation/native";
+import { UserIDContext } from "../App";
 
 const { width: screenWidth } = Dimensions.get('window');
 const giftbox = require("../Streetmall/1Home/gift.gif");
@@ -34,9 +35,11 @@ const Bata = require("../Streetmall/5Deals/bata.png")
 library.add(faMagnifyingGlass, faUsersViewfinder);
 
 const Home = ({ navigation }) => {
+  const { userID } = useContext(UserIDContext);
   const handleLoginPress = () => {
     navigation.navigate('Category', {username});
   };
+  console.log(userID);
   const route = useRoute();
   const username = route.params;
 
@@ -62,7 +65,6 @@ const Home = ({ navigation }) => {
     { image: shoe },
     { image: banner },
   ];
-
   const renderCarouselItem = ({ item }) => (
     <View style={styles.carouselItem}>
       <Image style={styles.carouselImage} source={item.image} />

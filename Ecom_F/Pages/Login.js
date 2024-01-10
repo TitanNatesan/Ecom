@@ -1,4 +1,4 @@
-import React, { useState ,useContext } from 'react';
+import React, { useState ,useContext, useId } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Image, Button, TextInput, TouchableOpacity } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
@@ -7,25 +7,23 @@ import { faCircleRight, faLock, faPeopleLine, faUser } from '@fortawesome/free-s
 const signInImage = require('../Streetmall/3_Login/ASSETS.png');
 const Round = require('../Streetmall/3_Login/Ellipse391.png');
 import axios from 'axios';
-import { BASE_URL } from '../App';
-import { UserIDContext } from '../App'; // intha line
+import { BASE_URL, UserID } from '../App';
+import { UserIDContext } from '../App';
 library.add(faCircleRight, faPeopleLine, faUser, faLock);
+
 const SignInScreen = ({ navigation }) => {
-    const { userID, setUserID } = useContext(UserIDContext);
+    const { setUserID,userID } = useContext(UserIDContext);
 
     const navHome = () => {
         setUserID(username);
-        console.log(userID)
         navigation.navigate('Home', { username });
     };
-    
-    
+    console.log(userID);
     const navsignup = () => {
         navigation.navigate("Signup");
     };
     const [password, setPassword] = useState(''); 
     const [username, setUserName] = useState('');
-
     const LoginReq = async () => {
         console.log("buttonTapped")
         try {

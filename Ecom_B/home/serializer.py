@@ -8,6 +8,11 @@ class UserSerial(serializers.ModelSerializer):
         fields = [
             'name',
             'email',
+            'username',
+            'referal',
+            'dob',
+            'role',
+            'down_leaf',
             'phone',
             'profile_pic',
         ]
