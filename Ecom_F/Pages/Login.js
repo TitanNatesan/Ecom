@@ -1,4 +1,4 @@
-import React, { useState ,useContext, useId } from 'react';
+import React, { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Image, Button, TextInput, TouchableOpacity } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
@@ -7,21 +7,21 @@ import { faCircleRight, faLock, faPeopleLine, faUser } from '@fortawesome/free-s
 const signInImage = require('../Streetmall/3_Login/ASSETS.png');
 const Round = require('../Streetmall/3_Login/Ellipse391.png');
 import axios from 'axios';
-import { BASE_URL, UserID } from '../App';
-import { UserIDContext } from '../App';
+import { BASE_URL } from '../App';
+import { useUserContext } from './UserContext';
+
 library.add(faCircleRight, faPeopleLine, faUser, faLock);
 
 const SignInScreen = ({ navigation }) => {
-    const { setUserID,userID } = useContext(UserIDContext);
 
     const navHome = () => {
-        setUserID(username);
         navigation.navigate('Home', { username });
+        updateUserID(username);
     };
-    console.log(userID);
     const navsignup = () => {
         navigation.navigate("Signup");
     };
+    const { userID, updateUserID } = useUserContext();
     const [password, setPassword] = useState(''); 
     const [username, setUserName] = useState('');
     const LoginReq = async () => {
@@ -35,7 +35,6 @@ const SignInScreen = ({ navigation }) => {
                     'Content-Type': 'application/json',
                 },
             });
-            console.log('Request Sent:', response.data);
             if (response.data == 1) {
                 navHome();
             }

@@ -29,21 +29,21 @@ import Manager1 from './Pages/Manager1';
 import Manager2 from './Pages/Manager2';
 import { AppRegistry } from 'react-native';
 import { name as appName } from './app.json';
-import React, { useState, createContext } from 'react';
-export const UserIDContext = createContext({ userID: null, setUserID: () => { } });
+import { UserProvider } from './Pages/UserContext';
+import React from 'react';
+import { createContext, useContext, useState } from 'react';
+
 
 const Stack = createStackNavigator();
 
-const ip = "192.168.252.132";
+const ip = "192.168.34.132";
 
 export const BASE_URL = `http://${ip}:8000`;
-export const UserID = "titanNatesan";
 
 export default function App() {
-  const [userID, setUserID] = useState();
 
   return (
-    <UserIDContext.Provider value={{ userID, setUserID }}>
+    <UserProvider>
       <NavigationContainer>
         <Stack.Navigator initialRouteName="Login">
           <Stack.Screen name="Signup" component={SignUpScreen} options={{ headerShown: false }} />
@@ -75,7 +75,7 @@ export default function App() {
           <Stack.Screen name="Manager2" component={Manager2} options={{ headerShown: false }} />
         </Stack.Navigator>
       </NavigationContainer>
-    </UserIDContext.Provider>
+      </UserProvider>
 
   );
 }

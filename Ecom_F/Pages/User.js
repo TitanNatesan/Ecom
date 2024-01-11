@@ -10,11 +10,13 @@ import {
 } from 'react-native';
 import BottomBar from './BottomBar';
 import axios from 'axios';
-import { BASE_URL, UserID } from '../App';
+import { BASE_URL } from '../App';
+import { useUserContext } from './UserContext';
 
 const userimg = require("../Streetmall/Dashboard/ICON2.png");
 
 const User = ({ navigation }) => {
+  const { userID } = useUserContext();
   const [userData, setUserData] = useState({
     name: "",
     phone: "",
@@ -38,7 +40,7 @@ const User = ({ navigation }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`${BASE_URL}/api/user/${UserID}/`);
+        const response = await axios.get(`${BASE_URL}/api/user/${userID}/`);
         const { user, address } = response.data;
         setUserData({
           name: user.name,
@@ -65,13 +67,13 @@ const User = ({ navigation }) => {
   const updateUserData = async () => {
     try {
       const response = await axios.post(
-        `${BASE_URL}/api/user/${UserID}/`,
+        `${BASE_URL}/api/user/${userID}/`,
         {
           user: {
             name: userData.name,
             phone: userData.phone,
             email: userData.email,
-            username: UserID,
+            username: userID,
           },
           address: {
             door_number:userData.doorNumber,

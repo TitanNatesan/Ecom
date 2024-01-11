@@ -5,7 +5,8 @@ import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import BottomBar from './BottomBar';
 import { useRoute } from "@react-navigation/native";
 import axios from "axios";
-import { BASE_URL, UserID } from "../App";
+import { BASE_URL } from "../App";
+import { useUserContext } from "./UserContext";
 
 
 const Trackbar = require('../Streetmall/14_Checkout_page/step3.png');
@@ -33,7 +34,7 @@ const products = [
 const PaymentPage4 = ({ navigation }) => {
   const route = useRoute();
   const { userData, selectedDeliveryOption, selectedPaymentOption, product } = route.params;
-
+  const { userID } = useUserContext();
   const postData = async () => {
     if (selectedPaymentOption == "Paytm" || "Net Banking"){
       var pay_method = "UPI";
@@ -42,7 +43,7 @@ const PaymentPage4 = ({ navigation }) => {
       var pay_method = selectedPaymentOption;
     }
     const data = {
-      user: UserID,
+      user: userID,
       product_id: product['product_id'],
       delivery_type: selectedDeliveryOption,
       pay_method: selectedPaymentOption,
@@ -50,7 +51,6 @@ const PaymentPage4 = ({ navigation }) => {
 
     try {
       const response = await axios.post(`${BASE_URL}/api/order/placeorder/`, data);
-      console.log('Response:', response.data);
       
       if (response.data==1){
         goToConfirmedPage();

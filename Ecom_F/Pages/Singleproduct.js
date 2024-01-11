@@ -19,9 +19,10 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import BottomBar from "./BottomBar";
 import { faStar, faStarHalf, faLock } from "@fortawesome/free-solid-svg-icons";
 import { useRoute } from "@react-navigation/native";
-import { BASE_URL, UserID } from '../App';
+import { BASE_URL } from '../App';
 import axios from "axios";
 import { useState,useEffect } from "react";
+import { useUserContext } from "./UserContext";
 
 library.add(faMagnifyingGlass, faUsersViewfinder);
 
@@ -73,14 +74,15 @@ const SingleProductPage = ({ navigation }) => {
     deliveryDate: 'Sunday, Dec 20, 2023',
     inStock: true,
   };
+  const { userID } = useUserContext()
 
   const addToCart = async () => {
     try {
       const response = await axios.post(
-        `${BASE_URL}/api/cart/${UserID}/`,
+        `${BASE_URL}/api/cart/${userID}/`,
         {
           product_id: product.product_id,
-          username: UserID,
+          username: userID,
         },
         {
           headers: {

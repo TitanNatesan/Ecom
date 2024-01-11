@@ -4,9 +4,10 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faUsersViewfinder, faMapMarkerAlt, faCheckCircle, faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import BottomBar from './BottomBar';
-import { UserID, userID, BASE_URL } from "../App";
+import { BASE_URL } from "../App";
 import axios, { all } from "axios";
 import { useRoute } from "@react-navigation/native";
+import { useUserContext } from "./UserContext";
 
 const Cart = ({ navigation }) => {
     const [refreshKey, setRefreshKey] = useState(0);
@@ -14,11 +15,12 @@ const Cart = ({ navigation }) => {
     const [cartItem, setCartItem] = useState("");
     const [productIds, setPI] = useState([]);
     const [allProducts, setAllProducts] = useState([]); // Use state to store fetched products
+    const { userID } = useUserContext();
 
     useEffect(() => {
         const fetchCartData = async () => {
             try {
-                const response = await axios.get(`${BASE_URL}/api/cart/${UserID}/`);
+                const response = await axios.get(`${BASE_URL}/api/cart/${userID}/`);
                 setCartData(response.data);
                 setCartItem(response.data['cart_items']);
                 setPI(response.data.cart_items.map(item => item.product_id));
@@ -29,7 +31,7 @@ const Cart = ({ navigation }) => {
         };
 
         fetchCartData();
-    }, [UserID,refreshKey]);
+    }, [userID,refreshKey]);
 
     const fetchProducts = async (productIds) => {
         try {
@@ -76,10 +78,10 @@ const Cart = ({ navigation }) => {
     const route = useRoute();
     const product = route.params;
 
-    const handleDelete = async (UserID, product_id) => {
+    const handleDelete = async (userID, product_id) => {
         try {
             const response = await axios.post(`${BASE_URL}/api/updateCart/-/`, {
-                username: UserID,
+                username: userID,
                 product_id: product_id,
             }, {
                 headers: {
@@ -93,10 +95,10 @@ const Cart = ({ navigation }) => {
         }
     };
 
-    const handleAdd = async (UserID, product_id) => {
+    const handleAdd = async (userID, product_id) => {
         try {
             const response = await axios.post(`${BASE_URL}/api/updateCart/+/`, {
-                username: UserID,
+                username: userID,
                 product_id: product_id,
             }, {
                 headers: {
@@ -148,11 +150,11 @@ const Cart = ({ navigation }) => {
                             <View style={styles.leftContainer}>
                                 <Image style={styles.productImage} source={{ uri: product.images }} />
                                 <View style={styles.productCountContainer}>
-                                    <TouchableOpacity onPress={() => handleDelete(UserID, product.product_id)} style={styles.deleteButton}>
+                                    <TouchableOpacity onPress={() => handleDelete(userID, product.product_id)} style={styles.deleteButton}>
                                         <Icon name="trash-o" size={15} color="black" />
                                     </TouchableOpacity>
                                     <Text style={styles.productCountText}>{product.inCart}</Text>
-                                    <TouchableOpacity onPress={() => handleAdd(UserID, product.product_id)} style={styles.countButton}>
+                                    <TouchableOpacity onPress={() => handleAdd(userID, product.product_id)} style={styles.countButton}>
                                         <Text style={styles.sbuttonText}>+</Text>
                                     </TouchableOpacity>
                                 </View>

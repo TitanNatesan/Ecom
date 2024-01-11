@@ -5,15 +5,16 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 const Trackbar = require('../Streetmall/14_Checkout_page/step.png');
 import BottomBar from './BottomBar';
 import { useEffect } from "react";
-import { BASE_URL, UserID } from "../App";
+import { BASE_URL } from "../App";
 import axios from "axios";
 import { useRoute } from "@react-navigation/native";
+import { useUserContext } from "./UserContext";
 
 const PaymentPage = ({ navigation }) => {
 
   const route = useRoute()
   const {product} = route.params;
-
+  const { userID, updateUserID } = useUserContext();
   const goToPaymentPage2 = () => {
     navigation.navigate('Payment2',{userData,product});
   };
@@ -26,13 +27,12 @@ const PaymentPage = ({ navigation }) => {
 
   useEffect(() => {
     // Replace 'your-api-endpoint' with the actual endpoint of your API
-    const apiUrl = `${BASE_URL}/api/order/address/${UserID}/`;
+    const apiUrl = `${BASE_URL}/api/order/address/${userID}/`;
 
     axios.get(apiUrl)
       .then(response => {
         // Assuming the response structure is { username: "user's name", address: { /* address details */ } }
         setUserData(response.data);
-        console.log("Success");
       })
       .catch(error => {
         console.error('Error fetching data:', error);
