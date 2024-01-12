@@ -4,7 +4,7 @@ import { faMagnifyingGlass, faUsersViewfinder, faShirt, faChildDress, faChild, f
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
-import BottomBar from './BottomBar'; 
+import BottomBar from './BottomBar';
 
 
 const giftbox = require('../Streetmall/1Home/gift.gif');
@@ -16,41 +16,17 @@ const watch = require('../Streetmall/1Home/Watch.png');
 library.add(faMagnifyingGlass, faUsersViewfinder);
 
 const data = [
-    { icon: faShirt, label: "Men's Wear" },
-    { icon: faChildDress, label: "Women's Wear" },
-    { icon: faChild, label: "Kids Wear" },
-    { icon: faBlenderPhone, label: "Home Appliances" },
-    { icon: faShoePrints, label: "Shoes" },
-    { icon: faCar, label: "Cars" },
-    { icon: faBiking, label: "Bike" },
-    { icon: faPepperHot, label: "Groceries" },
+    { icon: faShirt, text: "Men's Wear" },
+    { icon: faChildDress, text: "Women's Wear" },
+    { icon: faChild, text: "Kids Wear" },
+    { icon: faBlenderPhone, text: "Home Appliances" },
+    { icon: faShoePrints, text: "Shoes" },
+    { icon: faCar, text: "Cars" },
+    { icon: faBiking, text: "Bike" },
+    { icon: faPepperHot, text: "Groceries" },
 ];
 
 const Category = ({ navigation }) => {
-    const handleMenswearPress = () => {
-        navigation.navigate('Menswear');
-    };
-    const handleWomenswearPress = () => {
-        navigation.navigate('Womenswear');
-    };
-    const handleKidswearPress = () => {
-        navigation.navigate('Kidswear');
-    };
-    const handleHomeAppPress = () => {
-        navigation.navigate('HomeApp');
-    };
-    const handleShoesPress = () => {
-        navigation.navigate('Shoes');
-    };
-    const handleCarsPress = () => {
-        navigation.navigate('Cars');
-    };
-    const handleBikesPress = () => {
-        navigation.navigate('Bikes');
-    };
-    const handleGroceriesPress = () => {
-        navigation.navigate('Groceries');
-    };
 
     const carouselItems = [
         { image: giftbox, text: 'Gifts' },
@@ -74,10 +50,11 @@ const Category = ({ navigation }) => {
                 <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                     <View style={styles.productsbar}>
                         {carouselItems.map((item, index) => (
-                            <View key={index} style={styles.product}>
-                                <Image style={styles.productImage} source={item.image} />
-                                <Text>{item.text}</Text>
-                            </View>
+                            <TouchableOpacity onPress={()=>navigation.navigate("AProducts",{item})}>
+                                <View key={index} style={styles.product}>
+                                    <Image style={styles.productImage} source={item.image} />
+                                    <Text>{item.text}</Text>
+                                </View></TouchableOpacity>
                         ))}
                     </View>
                 </ScrollView>
@@ -87,39 +64,10 @@ const Category = ({ navigation }) => {
                         <TouchableOpacity
                             key={index}
                             style={styles.categoryItem}
-                            onPress={() => {
-                                switch (item.label) {
-                                    case "Men's Wear":
-                                        handleMenswearPress();
-                                        break;
-                                    case "Women's Wear":
-                                        handleWomenswearPress();
-                                        break;
-                                    case "Kids Wear":
-                                        handleKidswearPress();
-                                        break;
-                                    case "Home Appliances":
-                                        handleHomeAppPress();
-                                        break;
-                                    case "Shoes":
-                                        handleShoesPress();
-                                        break;
-                                    case "Cars":
-                                        handleCarsPress();
-                                        break;
-                                    case "Bike":
-                                        handleBikesPress();
-                                        break;
-                                    case "Groceries":
-                                        handleGroceriesPress();
-                                        break;
-                                    default:
-                                        console.log(`Pressed ${item.label}`);
-                                }
-                            }}
+                            onPress={() => { navigation.navigate('AProduct', { item }) }}
                         >
                             <FontAwesomeIcon icon={item.icon} size={20} color="black" />
-                            <Text style={styles.categoryLabel}>{item.label}</Text>
+                            <Text style={styles.categoryLabel}>{item.text}</Text>
                             <FontAwesomeIcon icon={faChevronRight} size={20} color="black" />
                         </TouchableOpacity>
                     ))}
@@ -139,7 +87,7 @@ const styles = StyleSheet.create({
     containerw: {
         flex: 1,
         backgroundColor: '#ffffff',
-      },
+    },
     container: {
         paddingTop: 120,
         backgroundColor: '#1977F3',
@@ -152,7 +100,7 @@ const styles = StyleSheet.create({
         bottom: 60,
         left: 0,
         right: 0,
-      },
+    },
     all: {
         backgroundColor: '#D3E6FD',
     },
