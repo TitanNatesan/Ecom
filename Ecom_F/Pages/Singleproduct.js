@@ -29,7 +29,6 @@ library.add(faMagnifyingGlass, faUsersViewfinder);
 const SingleProductPage = ({ navigation }) => {
   const route = useRoute();
   const { product } = route.params;
-  console.log(product.images)
   const navCart = () => {
     navigation.navigate("Cart")
   }
@@ -37,7 +36,6 @@ const SingleProductPage = ({ navigation }) => {
     try {
       console.log(product)
       const response = await axios.get(`${BASE_URL}/api/product/${product['product_id']}/`);
-      console.log(response.data);
       console.log("Success")
       return response.data; 
 

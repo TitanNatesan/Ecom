@@ -66,7 +66,7 @@ const PaymentPage = ({ navigation }) => {
             <View>
               {userData ? (
                 <View>
-                  <Text style={styles.heading}>{userData.ud.name}</Text>
+                  <Text style={styles.heading}>{userData.user['name']}</Text>
                   <Text>Door Number:          {userData.address.door_number}</Text>
                   <Text>Address Line 1:       {userData.address.address_line1}</Text>
                   <Text>Address Line 2:       {userData.address.address_line2}</Text>

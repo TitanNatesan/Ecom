@@ -56,6 +56,9 @@ def signup(request):
             address_data['user'] = user_instance
             address_instance = Address(**address_data)
             address_instance.save()
+            user_instance.address = address_instance
+            user_instance.save()
+
             user = Users.objects.get(username=data['username'])
             referal.down_leaf.add(user)
             referal.save()
@@ -126,7 +129,8 @@ def cart(request, username):
             response_data = {
                 "username": user.username,
                 "cart_items": cart_data,
-                "cart_total": user.cart.total,
+                "cart_total": sum([i['total'] for i in cart_data]),
+
             }
             return Response(response_data)
         except Users.DoesNotExist:
@@ -204,7 +208,7 @@ def address(request,username):
             userdata['profile_pic']= str(get_base64_encoded_image(img))
 
         data = {
-            "ud":userdata,
+            "user":userdata,
             "address":serial.data,
         }
         return Response(data)
@@ -242,7 +246,7 @@ def placeOrder(request):
         
         allOrders = Orders.objects.all()
 
-        each = EachItem.objects.get(user=user)
+        each = EachItem.objects.get(user=user,product=product)
         order = Orders.objects.create(user=user,order_id=str(user.username)+getDateAndTime())
         order.ordered_product = product
         order.quantity = each.quantity 
@@ -272,16 +276,12 @@ def add_working_days(start_date, num_days):
     return current_date.strftime('%Y-%m-%d')
 
 
-
 @api_view(["GET","POST"])
 def viewUser(request,username):
     
     if request.method == "POST":
         userdata = request.data.pop("user")
         addressData = request.data.pop("address")
-        print(userdata)
-        print("-----------------------------")
-        print(addressData)
         try:
             user = Users.objects.get(username=userdata['username'])
             user.name = userdata['name']
@@ -316,35 +316,24 @@ def viewUser(request,username):
     if request.method == "GET":
         try:
             user = Users.objects.get(username=username)
-            address = Address.objects.get(user=user)
+            add = Address.objects.get(user = user)
         except Users.DoesNotExist:
-            return Response("User Not Exist")
+            return Response("User not found")
         except Address.DoesNotExist:
-            return Response("Address Not Found")
-        address_data = {
-            'door_number':address.door_number,
-            'address_line1':address.address_line1,
-            'address_line2':address.address_line2,
-            'city':address.city,
-            'country':address.country,
-            'state':address.state,
-            'postal_code':address.postal_code,
-            'country':address.country,
-            'landmark':address.landmark
+            return Response("No Address Found")
+        serial = AddressSerial(add)
+        us = UserSerial(user)
+        userdata = us.data
+        if us.data['profile_pic']:
+            img = us.data['profile_pic'] 
+            img = str(BASE_DIR)+img
+            userdata['profile_pic']= str(get_base64_encoded_image(img))
+
+        data = {
+            "user":userdata,
+            "address":serial.data,
         }
-        user_data = {
-            'name':user.name,
-            'username':user.username,
-            'referal':user.referal,
-            'phone':str(user.phone),
-            'email':user.email,
-            'role':user.role,
-        }
-        cont={
-            'user':user_data,
-            'address':address_data
-        }
-        return Response(cont)
+        return Response(data)
 
 
 class ProductsSearchView(generics.ListAPIView):

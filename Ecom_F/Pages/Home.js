@@ -45,7 +45,7 @@ const Home = ({ navigation }) => {
     navigation.navigate('Deals', {username});
   };
   const handleGiftsPress = () => {
-    navigation.navigate('AProduct', {username});
+    navigation.navigate('Gifts', {username});
   };
   const [activeSlide, setActiveSlide] = useState(0);
 
@@ -77,7 +77,7 @@ const Home = ({ navigation }) => {
           <View style={styles.container}>
             <View style={styles.topbarinput}>
               <FontAwesomeIcon icon={faMagnifyingGlass} size={20} color="black" />
-              <TextInput placeholder="Search Sunlight.in" style={styles.inputBox} />
+              <TextInput placeholder="Search Sunlight.in" style={styles.inputBox} onPressIn={()=>navigation.navigate("AProduct",{item:{text:""}})}/>
               <FontAwesomeIcon icon={faUsersViewfinder} size={20} color="black" />
             </View>
             <StatusBar style="dark-content" />
@@ -92,17 +92,19 @@ const Home = ({ navigation }) => {
                       source={backl}
                       imageStyle={styles.backgroundImageStyle}
                     >
-                      <TouchableOpacity onPress={handleGiftsPress} >
+                      <TouchableOpacity onPress={()=>navigation.navigate("AProduct",{item})} >
                         <Image style={styles.productImagegt} source={item.image} />
                         <Text style={styles.protxtgt}>{item.text}</Text>
                       </TouchableOpacity>
                     </ImageBackground>
                   </View>
                 ) : (
+                  <TouchableOpacity onPress={()=>navigation.navigate("AProduct",{item})}>
                   <View key={index} style={styles.product}>
                     <Image style={styles.productImage} source={item.image} />
                     <Text>{item.text}</Text>
                   </View>
+                  </TouchableOpacity>
                 )
               ))}
             </View>

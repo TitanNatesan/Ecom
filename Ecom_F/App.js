@@ -39,6 +39,7 @@ const Stack = createStackNavigator();
 const ip = "192.168.34.132";
 
 export const BASE_URL = `http://${ip}:8000`;
+export const UserID = "titanNatesan";
 
 export default function App() {
 

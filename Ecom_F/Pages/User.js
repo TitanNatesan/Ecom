@@ -28,6 +28,8 @@ const User = ({ navigation }) => {
     state: "",
     postalCode: "",
     landmark: "",
+    role:"",
+    down_leaf:[],
   });
 
   const [isEditMode, setIsEditMode] = useState(false);
@@ -46,6 +48,7 @@ const User = ({ navigation }) => {
           name: user.name,
           phone: user.phone,
           email: user.email,
+          role: user.role,
           doorNumber: address.door_number,
           addressLine1: address.address_line1,
           addressLine2: address.address_line2,
@@ -53,6 +56,7 @@ const User = ({ navigation }) => {
           state: address.state,
           postalCode: address.postal_code,
           landmark: address.landmark,
+          down_leaf:user.down_leaf,
         });
       } catch (error) {
         console.log("Error fetching data:", error);
@@ -76,7 +80,7 @@ const User = ({ navigation }) => {
             username: userID,
           },
           address: {
-            door_number:userData.doorNumber,
+            door_number: userData.doorNumber,
             address_line1: userData.addressLine1,
             address_line2: userData.addressLine2,
             city: userData.city,
@@ -104,12 +108,39 @@ const User = ({ navigation }) => {
     }));
   };
 
+  const navManager = () => {
+    navigation.navigate("Manager1",{userData});
+  }
+
   return (
     <View style={styles.containerw}>
       <ScrollView vertical showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
           <Image source={userimg} style={styles.uicon} />
           <Text style={styles.utext}>Hello, {userData.name}</Text>
+        </View>
+
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity style={styles.button} >
+            <Text style={styles.buttonText}>Your Order</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.button} >
+            <Text style={styles.buttonText}>Buy Again</Text>
+          </TouchableOpacity>
+          {userData.role != 'Customer' && (
+            <TouchableOpacity style={styles.button} onPress={navManager}>
+              <Text style={styles.buttonText} >Your Account</Text>
+            </TouchableOpacity>
+          )}
+          <TouchableOpacity style={styles.button} >
+            <Text style={styles.buttonText}>Your Cart</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.button} >
+            <Text style={styles.buttonText}>Support</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.button} >
+            <Text style={styles.buttonText}>Reset Password</Text>
+          </TouchableOpacity>
         </View>
 
         <View style={styles.userDetailsContainer}>
@@ -127,7 +158,7 @@ const User = ({ navigation }) => {
           </View>
         </View>
 
-        <View style={styles.buttonContainer}>
+        <View style={styles.buttonContainerbotom}>
           <TouchableOpacity
             style={styles.editButton}
             onPress={() => {
@@ -199,7 +230,14 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginTop: '6%',
     paddingHorizontal: 35,
-    marginBottom:"20%",
+  },
+  buttonContainerbotom: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    marginTop: '6%',
+    paddingHorizontal: 35,
+    marginBottom: '20%',
   },
   button: {
     backgroundColor: '#ffffff',

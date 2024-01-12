@@ -5,53 +5,43 @@ import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import BottomBar from './BottomBar';
-
-const giftbox = require('../Streetmall/1Home/gift.gif');
-const laptop = require('../Streetmall/1Home/Laptop.png');
-const mobile = require('../Streetmall/1Home/Mobiles.png');
-const car = require('../Streetmall/1Home/car.png');
-const watch = require('../Streetmall/1Home/Watch.png');
+import { useRoute } from '@react-navigation/native';
 
 library.add(faMagnifyingGlass, faUsersViewfinder);
 
-const data = [
-    { icon: faCircleUser, label: "Name" },
-    { icon: faCircleUser, label: "Name" },
-    { icon: faCircleUser, label: "Name" },
-    { icon: faCircleUser, label: "Name" },
-    { icon: faCircleUser, label: "Name" },
-    { icon: faCircleUser, label: "Name" },
-    { icon: faCircleUser, label: "Name" },
-    { icon: faCircleUser, label: "Name" },
-];
+
 
 //Dei natesan maakan - mela irukura json data la ni names display panna vachuko..ilana modify according to ur convinience , 
 
 
 
 const Manager1 = ({ navigation }) => {
-    const handleMenswearPress = () => {
-        navigation.navigate('Manager2');
-    };
+
+    const route = useRoute();
+    const { userData } = route.params;
+    const data = userData.down_leaf.map((label, index) => ({
+        icon: faCircleUser,
+        label: label,
+    }));
 
     return (
         <View style={styles.containerw}>
             <ScrollView style={styles.all} vertical showsVerticalScrollIndicator={false}>
                 <View style={styles.container} >
-                    <FontAwesomeIcon icon={faCircleUser} style={{ color: '#fff', marginLeft:'5%', }}size={30} />
-                    <Text style={{marginLeft:'3%',color:'#fff',}}>General Manager Name</Text>
+                    <FontAwesomeIcon icon={faCircleUser} style={{ color: '#fff', marginLeft: '5%', }} size={30} />
+                    <Text style={{ marginLeft: '3%', color: '#fff', }}>{userData.name} ({userData.role})</Text>
                 </View>
                 <View>
-  <View style={{ flexDirection: 'row', width: '100%', justifyContent: 'space-evenly', alignItems: 'center', marginVertical: 20 }}>
-    <Text style={{ padding: 10 }}>Referred</Text>
-    <Text style={{ backgroundColor: '#FFAC2F',color:'#fff', width: 150, textAlign: 'center', paddingVertical: 10, borderRadius: 10 }}>00</Text>
-  </View>
+                    <View style={{ flexDirection: 'row', width: '100%', justifyContent: 'space-evenly', alignItems: 'center', marginVertical: 20 }}>
+                        <Text style={{ padding: 10 }}>Referred</Text>
+                        <Text style={{ backgroundColor: '#FFAC2F', color: '#fff', width: 150, textAlign: 'center', paddingVertical: 10, borderRadius: 10 }}>{data.length}</Text>
+                    </View>
 
-  <View style={{ flexDirection: 'row', width: '100%', justifyContent: 'space-evenly', alignItems: 'center', marginVertical: 20 }}>
-    <Text style={{ padding: 10 }}>Income</Text>
-    <Text style={{ backgroundColor: '#FFAC2F',color:'#fff', width: 150, textAlign: 'center', paddingVertical: 10, borderRadius: 10 }}>00/-</Text>
-  </View>
-</View>
+                    <View style={{ flexDirection: 'row', width: '100%', justifyContent: 'space-evenly', alignItems: 'center', marginVertical: 20 }}>
+                        <Text style={{ padding: 10 }}>Income</Text>
+                        <Text style={{ backgroundColor: '#FFAC2F', color: '#fff', width: 150, textAlign: 'center', paddingVertical: 10, borderRadius: 10 }}>00/-</Text>
+                    </View>
+                </View>
 
                 <Text style={styles.category}>Regional Managers</Text>
                 <View style={styles.categoryContainer}>
@@ -59,6 +49,7 @@ const Manager1 = ({ navigation }) => {
                         <TouchableOpacity
                             key={index}
                             style={styles.categoryItem}
+                            onPress={() => navigation.navigate('Manager2', { item })}
                         >
                             <FontAwesomeIcon icon={item.icon} size={20} color="black" />
                             <Text style={styles.categoryLabel}>{item.label}</Text>
@@ -81,8 +72,8 @@ const styles = StyleSheet.create({
     },
     container: {
         display: 'flex',
-        flexDirection:'row',
-        alignItems:'center',
+        flexDirection: 'row',
+        alignItems: 'center',
         paddingTop: 120,
         backgroundColor: '#1977F3',
         paddingBottom: 15,
@@ -100,8 +91,10 @@ const styles = StyleSheet.create({
     },
     category: {
         padding: 5,
-        color:'#871818',
-        fontSize:20,
+        color: '#871818',
+        fontSize: 20,
+        fontWeight: '800',
+        marginLeft: "5%",
     },
     topbarinput: {
         justifyContent: 'center',
