@@ -75,10 +75,6 @@ const Manager2 = ({ navigation }) => {
                             <Text style={styles.infoText}>{userData.name}</Text>
                         </View>
 
-                        <View style={styles.infoSection}>
-                            <Text style={styles.infoLabel}>DOB:</Text>
-                            <Text style={styles.infoText}>dd/mm/yy</Text>
-                        </View>
 
                         <View style={styles.infoSection}>
                             <Text style={styles.infoLabel}>Mobile Number:</Text>

@@ -16,7 +16,7 @@ import { useUserContext } from './UserContext';
 const userimg = require("../Streetmall/Dashboard/ICON2.png");
 
 const User = ({ navigation }) => {
-  const { userID } = useUserContext();
+  const { userID, updateUserID } = useUserContext();
   const [userData, setUserData] = useState({
     name: "",
     phone: "",
@@ -28,8 +28,9 @@ const User = ({ navigation }) => {
     state: "",
     postalCode: "",
     landmark: "",
-    role:"",
-    down_leaf:[],
+    role: "",
+    down_leaf: [],
+    earning: "",
   });
 
   const [isEditMode, setIsEditMode] = useState(false);
@@ -56,7 +57,8 @@ const User = ({ navigation }) => {
           state: address.state,
           postalCode: address.postal_code,
           landmark: address.landmark,
-          down_leaf:user.down_leaf,
+          down_leaf: user.down_leaf,
+          earning: user.earning,
         });
       } catch (error) {
         console.log("Error fetching data:", error);
@@ -109,7 +111,12 @@ const User = ({ navigation }) => {
   };
 
   const navManager = () => {
-    navigation.navigate("Manager1",{userData});
+    navigation.navigate("Manager1", { userData });
+  }
+
+  const logout = () => {
+    navigation.navigate('Login');
+    updateUserID("");
   }
 
   return (
@@ -124,8 +131,8 @@ const User = ({ navigation }) => {
           <TouchableOpacity style={styles.button} >
             <Text style={styles.buttonText}>Your Order</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.button} >
-            <Text style={styles.buttonText}>Buy Again</Text>
+          <TouchableOpacity style={styles.button} onPress={logout}>
+            <Text style={styles.buttonText}>Logout</Text>
           </TouchableOpacity>
           {userData.role != 'Customer' && (
             <TouchableOpacity style={styles.button} onPress={navManager}>

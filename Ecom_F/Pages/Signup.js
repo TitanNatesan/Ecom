@@ -18,6 +18,7 @@ const SignupScreen = ({ navigation }) => {
     const [referal, setReferal] = useState('');
     const [password, setPass] = useState('');
     const [username, setUsername] = useState('');
+    const [reEnterPassword, setReEnterPassword] = useState('');
     const change = useNavigation();
     const handleLoginPress = () => {
         navigation.navigate('Login');
@@ -29,31 +30,35 @@ const SignupScreen = ({ navigation }) => {
     const handleSignup = async () => {
         console.log("buttonTapped")
         try {
-          const response = await axios.post(`${BASE_URL}/api/signup1/`, { 
+            if (password !== reEnterPassword) {
+                // Check if password and re-entered password match
+                console.error('Passwords do not match');
+                // You can show an error message to the user or handle it in your way
+                return;
+            }
 
-            referal: referal,
-            username: username,
-            password: password
+            const response = await axios.post(`${BASE_URL}/api/signup1/`, {
+                referal: referal,
+                username: username,
+                password: password
+            }, {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
 
-          }, {
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
-      
-          // Handle the response, e.g., show a success message or navigate to another screen
-          console.log('Signup1 successful:', response.data);
-          if (response.data == 1){
-            handleSignup2(referal,username,password);
-          }
-          else {
-            navigation.navigate('Signup');
-          }
+            // Handle the response, e.g., show a success message or navigate to another screen
+            console.log('Signup1 successful:', response.data);
+            if (response.data === 1) {
+                handleSignup2(referal, username, password);
+            } else {
+                navigation.navigate('Signup');
+            }
         } catch (error) {
-          // Handle errors, e.g., display an error message to the user
-          console.error('Signup failed:', error.message);
+            // Handle errors, e.g., display an error message to the user
+            console.error('Signup failed:', error.message);
         }
-      };
+    };
     return (
         <View style={styles.container}>
             <Image style={styles.tinyLogo} source={signupImage} />
@@ -74,6 +79,10 @@ const SignupScreen = ({ navigation }) => {
                 </View>
                 <View style={styles.inputContainer}>
                     <TextInput style={styles.input} placeholder="Password" secureTextEntry={true} onChangeText={text=>setPass(text)}/>
+                    <FontAwesomeIcon icon={faLock} size={20} color="black" style={styles.icon} />
+                </View>
+                <View style={styles.inputContainer}>
+                    <TextInput style={styles.input} placeholder="Re - Enter Password" secureTextEntry={true} onChangeText={text=>setReEnterPassword(text)}/>
                     <FontAwesomeIcon icon={faLock} size={20} color="black" style={styles.icon} />
                 </View>
                 <View style={styles.checkboxContainer}>
@@ -114,7 +123,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     remember: {
-        marginLeft: -13,
+        marginLeft: -10,
     },
     forget: {
         color: '#1977F3',
@@ -129,7 +138,7 @@ const styles = StyleSheet.create({
 
     container: {
         flex: 1,
-        backgroundColor: '#00ADEF',
+        backgroundColor: '#1977F3',
         justifyContent: 'center',
 
     },

@@ -22,10 +22,9 @@ const SignInScreen = ({ navigation }) => {
         navigation.navigate("Signup");
     };
     const { userID, updateUserID } = useUserContext();
-    const [password, setPassword] = useState(''); 
+    const [password, setPassword] = useState('');
     const [username, setUserName] = useState('');
     const LoginReq = async () => {
-        console.log("buttonTapped")
         try {
             const response = await axios.post(`${BASE_URL}/api/login/`, {
                 username: username,
@@ -41,9 +40,7 @@ const SignInScreen = ({ navigation }) => {
             else {
                 navLogin();
             }
-
         } catch (error) {
-            // Handle errors, e.g., display an error message to the user
             console.error('Signup failed:', error.message);
         }
     };
@@ -127,7 +124,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         width: 150,
         alignSelf: 'center',
-        marginTop: 15,
+        marginTop: 30,
     },
     loginButtonText: {
         color: 'white',
@@ -141,6 +138,9 @@ const styles = StyleSheet.create({
     forget: {
         color: '#1977F3',
         flex: 1,
+        alignSelf: 'center',
+        top: 20,
+        bottom: 20,
     },
     checkboxContainer: {
         flexDirection: 'row',
@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
-        backgroundColor: '#00ADEF',
+        backgroundColor: '#1977F3',
         justifyContent: 'center',
     },
     rowContainer: {

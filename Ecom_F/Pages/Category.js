@@ -50,7 +50,7 @@ const Category = ({ navigation }) => {
                 <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                     <View style={styles.productsbar}>
                         {carouselItems.map((item, index) => (
-                            <TouchableOpacity onPress={()=>navigation.navigate("AProducts",{item})}>
+                            <TouchableOpacity onPress={()=>navigation.navigate("AProduct",{item})}>
                                 <View key={index} style={styles.product}>
                                     <Image style={styles.productImage} source={item.image} />
                                     <Text>{item.text}</Text>

@@ -15,7 +15,7 @@ library.add(faMagnifyingGlass, faUsersViewfinder);
 
 
 
-const Manager1 = ({ navigation }) => {
+const Manager1 = ({ navigation }) => { 
 
     const route = useRoute();
     const { userData } = route.params;
@@ -23,6 +23,7 @@ const Manager1 = ({ navigation }) => {
         icon: faCircleUser,
         label: label,
     }));
+    console.log(userData)
 
     return (
         <View style={styles.containerw}>
@@ -39,7 +40,7 @@ const Manager1 = ({ navigation }) => {
 
                     <View style={{ flexDirection: 'row', width: '100%', justifyContent: 'space-evenly', alignItems: 'center', marginVertical: 20 }}>
                         <Text style={{ padding: 10 }}>Income</Text>
-                        <Text style={{ backgroundColor: '#FFAC2F', color: '#fff', width: 150, textAlign: 'center', paddingVertical: 10, borderRadius: 10 }}>00/-</Text>
+                        <Text style={{ backgroundColor: '#FFAC2F', color: '#fff', width: 150, textAlign: 'center', paddingVertical: 10, borderRadius: 10 }}>{userData.earning}/-</Text>
                     </View>
                 </View>
 

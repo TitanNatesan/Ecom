@@ -8,7 +8,7 @@ import { BASE_URL } from "../App";
 import axios, { all } from "axios";
 import { useRoute } from "@react-navigation/native";
 import { useUserContext } from "./UserContext";
-
+ 
 const Cart = ({ navigation }) => {
     const [refreshKey, setRefreshKey] = useState(0);
     const [cartData, setCartData] = useState("");
@@ -75,13 +75,10 @@ const Cart = ({ navigation }) => {
         navigation.navigate('Payment',{product});
     };
 
-    const route = useRoute();
-    const product = route.params;
-
     const handleDelete = async (userID, product_id) => {
         try {
             const response = await axios.post(`${BASE_URL}/api/updateCart/-/`, {
-                username: userID,
+                username: userID, 
                 product_id: product_id,
             }, {
                 headers: {

@@ -15,6 +15,7 @@ class UserSerial(serializers.ModelSerializer):
             'down_leaf',
             'phone',
             'profile_pic',
+            'earning'
         ]
 class AddressSerial(serializers.ModelSerializer):
     class Meta:

@@ -10,6 +10,7 @@ import random,os
 from datetime import datetime, timedelta
 from django.core.mail import send_mail
 from django.conf import settings
+from decimal import Decimal
 
 BASE_DIR = settings.BASE_DIR 
 
@@ -258,6 +259,18 @@ def placeOrder(request):
         order.expected_delivery = add_working_days(str(datetime.now().date()),7)
         order.save()
         each.delete()
+
+        while user.referal!='null':
+            user = Users.objects.get(username=user.referal)
+            if user.role == "General Manager":
+                user.earning += product.sellingPrice * (product.CFM)/Decimal(100) * Decimal(0.3*order.quantity)
+                user.save()
+            elif user.role == "Regional Manager" or "Team Manager" or 'Business Leader' :
+                user.earning += product.sellingPrice * (product.CFM)/Decimal(100) * Decimal(0.2*order.quantity)
+                user.save()
+            else:
+                break
+
 
         return Response(1)
 

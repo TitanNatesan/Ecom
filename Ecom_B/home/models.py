@@ -6,6 +6,7 @@ from django.db.models.signals import post_save
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from django.utils import timezone
+from decimal import Decimal
   
 class Users(models.Model): 
     name = models.CharField(max_length=100, blank = True, null= True)
@@ -25,14 +26,15 @@ class Users(models.Model):
     last_OTP = models.IntegerField(validators=[MinValueValidator(1000), MaxValueValidator(9999)],blank=True,null=True)
     OTP_sent_time = models.DateTimeField(null=True, blank=True)
     user_choise = [
-        ("Customer","Customer"),
-        ("Business Leader","Business Leader"),
-        ("Team Manager","Team Manager"),
-        ("Regional Manager","Regional Manager"),
         ("General Manager","General Manager"),
+        ("Regional Manager","Regional Manager"),
+        ("Team Manager","Team Manager"),
+        ("Business Leader","Business Leader"),
+        ("Customer","Customer"),
     ]
     role = models.CharField(max_length=50,choices=user_choise,default="Customer")
     down_leaf = models.ManyToManyField("home.Users",blank=True)
+    earning = models.DecimalField(max_digits=10, decimal_places=3,default=Decimal(0.0))
 
     def __str__(self):
         return f"{self.username}({self.name})"
@@ -72,6 +74,7 @@ class Products(models.Model):
     specification = models.JSONField(blank=True) # [{"label": "Case Diameter", "value": "4.4 Millimeters"}, {"label": "Brand Colour", "value": "Brown"}, {"label": "Brand Material Type", "value": "Plastic"}]
     specification_list = ArrayField(models.CharField(max_length=100),blank=True) 
     tag = ArrayField(models.CharField(max_length=50),blank=True,null=True)
+    CFM = models.PositiveIntegerField(null=True,blank=True)
 
     @property
     def inStock(self)->bool: 

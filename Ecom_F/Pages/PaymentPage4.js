@@ -7,6 +7,7 @@ import { useRoute } from "@react-navigation/native";
 import axios from "axios";
 import { BASE_URL } from "../App";
 import { useUserContext } from "./UserContext";
+import { useEffect } from "react";
 
 
 const Trackbar = require('../Streetmall/14_Checkout_page/step3.png');
@@ -29,9 +30,10 @@ const products = [
     freeDelivery: false,
     freestock: true,
   },
-];
+]; 
 
 const PaymentPage4 = ({ navigation }) => {
+ 
   const route = useRoute();
   const { userData, selectedDeliveryOption, selectedPaymentOption, product } = route.params;
   const { userID } = useUserContext();
@@ -68,22 +70,6 @@ const PaymentPage4 = ({ navigation }) => {
   var deliveryCost = 0;
   if ((product.sellingPrice * product.inCart) >= 200) { deliveryCost = 0; } else { deliveryCost = 40 };
   const [productCounts, setProductCounts] = useState({});
-
-  const handleDelete = (productId) => {
-    if (productCounts[productId] > 0) {
-      setProductCounts({
-        ...productCounts,
-        [productId]: productCounts[productId] - 1,
-      });
-    }
-  };
-
-  const handleAdd = (productId) => {
-    setProductCounts({
-      ...productCounts,
-      [productId]: (productCounts[productId] || 0) + 1,
-    });
-  };
 
   const orderSummary = products.reduce(
     (summary, product) => {
@@ -157,33 +143,6 @@ const PaymentPage4 = ({ navigation }) => {
               <Text style={styles.buttonText}>Proceed</Text>
             </TouchableOpacity>
           </View>
-        </View>
-        <View style={styles.cont2}>
-          {products.map((product) => (
-            <View key={product.id} style={styles.productContainer}>
-              <View style={styles.leftContainer}>
-                <Image source={require('../Streetmall/Orderstatement/imagebike.png')} style={styles.productImage} />
-                <View style={styles.productCountContainer}>
-                  <TouchableOpacity onPress={() => handleDelete(product.id)} style={styles.deleteButton}>
-                    <FontAwesomeIcon name="trash-o" size={15} color="black" />
-                  </TouchableOpacity>
-                  <Text style={styles.productCountText}>{productCounts[product.id] || 0}</Text>
-                  <TouchableOpacity onPress={() => handleAdd(product.id)} style={styles.countButton}>
-                    <Text style={styles.sbuttonText}>+</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-              <View style={styles.rightContainer}>
-                <Text style={styles.productName}>{product.name}</Text>
-                <View style={styles.productDetailoffcont}>
-                  <Text style={styles.productDetailoff}>{product.discount}% off</Text>
-                </View>
-                <Text style={styles.productDetailpri}>₹{product.total}</Text>
-                {product.freeDelivery && <Text style={styles.productDetaildel}>Eligible for FREE Delivery</Text>}
-                {product.freestock && <Text style={styles.productDetailst}>In Stock</Text>}
-              </View>
-            </View>
-          ))}
         </View>
         <Text> {'\n'} </Text><Text> {'\n'} </Text><Text> {'\n'} </Text>
       </ScrollView>

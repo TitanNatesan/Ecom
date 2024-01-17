@@ -3,50 +3,118 @@ import { StyleSheet, View, ScrollView, TextInput, Image, TouchableOpacity, Text 
 import { faMagnifyingGlass, faUsersViewfinder } from "@fortawesome/free-solid-svg-icons";
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 const bike = require('../Streetmall/Orderstatement/imagebike.png');
-import BottomBar from './BottomBar'; 
+import BottomBar from './BottomBar';
+import { useUserContext } from "./UserContext";
+import { useEffect } from "react";
+import axios from "axios";
+import { BASE_URL } from "../App";
 
-
-const products = [
-  {
-    id: 1,
-    name: 'Fastrack New Limitless FS1 Pro Max 2.01” Display Smart Watch',
-    discount: 10,
-    total: 100,
-    freeDelivery: true,
-    freestock: false,
-  },
-  {
-    id: 2,
-    name: 'Sample Product 2',
-    discount: 15,
-    total: 120,
-    freeDelivery: false,
-    freestock: true,
-  },
-];
 
 const PaymentPage4 = ({ navigation }) => {
-  const goToOrderPage = () => {
-    navigation.navigate('TrackOrder');
+  const [refreshKey, setRefreshKey] = useState(0);
+  const [cartData, setCartData] = useState("");
+  const [cartItem, setCartItem] = useState("");
+  const [productIds, setPI] = useState([]);
+  const [allProducts, setAllProducts] = useState([]); // Use state to store fetched products
+  const { userID } = useUserContext();
+
+  useEffect(() => {
+      const fetchCartData = async () => {
+          try {
+              const response = await axios.get(`${BASE_URL}/api/cart/${userID}/`);
+              setCartData(response.data);
+              setCartItem(response.data['cart_items']);
+              setPI(response.data.cart_items.map(item => item.product_id));
+
+          } catch (error) {
+              console.error('Error fetching cart data:', error);
+          }
+      };
+
+      fetchCartData();
+  }, [userID,refreshKey]);
+
+  const fetchProducts = async (productIds) => {
+      try {
+          const productData = [];
+          var temp = '';
+          for (let productId of productIds) {
+              const response = await axios.get(`${BASE_URL}/api/product/${productId}/`);
+              temp = response.data;
+              temp['inCart'] = 0;
+              for (let i of cartItem) {
+                  if (i['product_id'] == productId) {
+                      temp['inCart'] = i['quantity'];
+                  }
+              }
+              productData.push(temp);
+          }
+
+          console.log("Success");
+          return productData;
+
+      } catch (error) {
+          console.log("Failed to load data");
+          console.error('Error fetching products:', error);
+          return null; // Handle the error appropriately in your application
+      }
   };
 
-  const [productCounts, setProductCounts] = useState({});
+  useEffect(() => {
+      const fetchAllProducts = async () => {
+          if (productIds.length > 0) {
+              const products = await fetchProducts(productIds);
+              setAllProducts(products);
+          }
+      };
 
-  const handleDelete = (productId) => {
-    if (productCounts[productId] > 0) {
-      setProductCounts({
-        ...productCounts,
-        [productId]: productCounts[productId] - 1,
-      });
-    }
+      fetchAllProducts();
+  }, [productIds,refreshKey]);
+
+
+  const goToPaymentPage = (product) => {
+      navigation.navigate('Payment',{product});
   };
 
-  const handleAdd = (productId) => {
-    setProductCounts({
-      ...productCounts,
-      [productId]: (productCounts[productId] || 0) + 1,
-    });
+  const goToOrderPage = ()=>{
+    navigation.navigate("TrackOrder");
+  }
+
+  const handleDelete = async (userID, product_id) => {
+      try {
+          const response = await axios.post(`${BASE_URL}/api/updateCart/-/`, {
+              username: userID, 
+              product_id: product_id,
+          }, {
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+          });
+          console.log("Deleted");
+          setRefreshKey(prevKey => prevKey + 1);
+      } catch (error) {
+          console.log("Unable To Update", error);
+      }
   };
+
+  const handleAdd = async (userID, product_id) => {
+      try {
+          const response = await axios.post(`${BASE_URL}/api/updateCart/+/`, {
+              username: userID,
+              product_id: product_id,
+          }, {
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+          });
+          console.log("Added")
+          setRefreshKey(prevKey => prevKey + 1);
+      } catch (error) {
+          console.log("Unable To Update", error);
+      }
+  };
+
+
 
   return (
     <View style={styles.containerw}>
@@ -60,17 +128,27 @@ const PaymentPage4 = ({ navigation }) => {
         </View>
         <Text> {'\n'} </Text>
         <Text style={styles.heading}>Order Placed successfully!</Text>
+        
+        <Text style={styles.chtext} >{"\n"}*Check your registered email & Mobile number for Invoice</Text>
+
+        <Image source={bike} style={styles.lstimage} />
+
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity style={styles.proceedButton} onPress={goToOrderPage}>
+            <Text style={styles.buttonText}>Track your order</Text>
+          </TouchableOpacity>
+        </View>
         <View style={styles.cont}>
-          {products.map((product) => (
-            <View key={product.id} style={styles.productContainer}>
+          {allProducts.map((product) => (
+            <View key={product.product_id} style={styles.productContainer}>
               <View style={styles.leftContainer}>
-                <Image source={require('../Streetmall/Orderstatement/imagebike.png')} style={styles.productImage} />
+                <Image source={{ uri: product.images }} style={styles.productImage} />
                 <View style={styles.productCountContainer}>
-                  <TouchableOpacity onPress={() => handleDelete(product.id)} style={styles.deleteButton}>
+                  <TouchableOpacity onPress={() => handleDelete(userID,product.product_id)} style={styles.deleteButton}>
                     <FontAwesomeIcon name="trash-o" size={15} color="black" />
                   </TouchableOpacity>
-                  <Text style={styles.productCountText}>{productCounts[product.id] || 0}</Text>
-                  <TouchableOpacity onPress={() => handleAdd(product.id)} style={styles.countButton}>
+                  <Text style={styles.productCountText}>{product.inCart}</Text>
+                  <TouchableOpacity onPress={() => handleAdd(userID,product.product_id)} style={styles.countButton}>
                     <Text style={styles.sbuttonText}>+</Text>
                   </TouchableOpacity>
                 </View>
@@ -80,21 +158,12 @@ const PaymentPage4 = ({ navigation }) => {
                 <View style={styles.productDetailoffcont}>
                   <Text style={styles.productDetailoff}>{product.discount}% off</Text>
                 </View>
-                <Text style={styles.productDetailpri}>₹{product.total}</Text>
+                <Text style={styles.productDetailpri}>₹{product.sellingPrice * product.inCart}</Text>
                 {product.freeDelivery && <Text style={styles.productDetaildel}>Eligible for FREE Delivery</Text>}
                 {product.freestock && <Text style={styles.productDetailst}>In Stock</Text>}
               </View>
             </View>
           ))}
-        </View>
-        <Text style={styles.chtext} >*Check your registered email & Mobile number for Invoice</Text>
-
-        <Image source={bike} style={styles.lstimage} />
-
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.proceedButton} onPress={goToOrderPage}>
-            <Text style={styles.buttonText}>Track your order</Text>
-          </TouchableOpacity>
         </View>
         <Text> {'\n'} </Text><Text> {'\n'} </Text>
         <Text> {'\n'} </Text><Text> {'\n'} </Text>
@@ -213,7 +282,7 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     padding: 2,
     marginTop: 5,
-    width:'25%',
+    width: '25%',
   },
   productDetailoff: {
     color: 'white',

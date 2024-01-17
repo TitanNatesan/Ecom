@@ -8,7 +8,7 @@ import {
   TextInput,
   Image,
   TouchableOpacity,
-} from "react-native"; 
+} from "react-native";
 import {
   faMagnifyingGlass,
   faStrikethrough,
@@ -21,7 +21,7 @@ import { faStar, faStarHalf, faLock } from "@fortawesome/free-solid-svg-icons";
 import { useRoute } from "@react-navigation/native";
 import { BASE_URL } from '../App';
 import axios from "axios";
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useUserContext } from "./UserContext";
 
 library.add(faMagnifyingGlass, faUsersViewfinder);
@@ -37,7 +37,7 @@ const SingleProductPage = ({ navigation }) => {
       console.log(product)
       const response = await axios.get(`${BASE_URL}/api/product/${product['product_id']}/`);
       console.log("Success")
-      return response.data; 
+      return response.data;
 
     } catch (error) {
       console.log("Failed to load data");
@@ -89,7 +89,7 @@ const SingleProductPage = ({ navigation }) => {
         }
       );
       console.log(response.data);
-      if (response.data==1){
+      if (response.data == 1) {
         navCart();
       }
       // Handle the response accordingly (e.g., show a success message)
@@ -99,10 +99,6 @@ const SingleProductPage = ({ navigation }) => {
     }
   };
 
-  const buyNow = () => {
-    navigation.navigate('Payment');
-    console.log('Navigating to the payment page');
-  };
 
   const renderStars = (rating) => {
     const stars = [];
@@ -189,7 +185,7 @@ const SingleProductPage = ({ navigation }) => {
           <TouchableOpacity style={styles.addToCartButton} onPress={addToCart}>
             <Text style={styles.abButtonText}>Add to Cart</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.buyNowButton} onPress={buyNow}>
+          <TouchableOpacity style={styles.buyNowButton} onPress={addToCart}>
             <Text style={styles.abButtonText}>Buy Now</Text>
           </TouchableOpacity>
         </View>
@@ -238,210 +234,210 @@ const SingleProductPage = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  containerw:{
-      flex: 1,
-      backgroundColor: '#ffffff',
+  containerw: {
+    flex: 1,
+    backgroundColor: '#ffffff',
   },
   blueBar: {
-      backgroundColor: '#1977F3',
-      height: 15,
-      position: 'absolute',
-      bottom: 60,
-      left: 0,
-      right: 0,
-    },
+    backgroundColor: '#1977F3',
+    height: 15,
+    position: 'absolute',
+    bottom: 60,
+    left: 0,
+    right: 0,
+  },
   container: {
-      flex: 1,
-      paddingTop: 100,
-      backgroundColor: "#1977F3",
-      paddingBottom: 15,
+    flex: 1,
+    paddingTop: 100,
+    backgroundColor: "#1977F3",
+    paddingBottom: 15,
   },
   topbarinput: {
-      justifyContent: "center",
-      marginHorizontal: 20,
-      borderRadius: 10,
-      flexDirection: "row",
-      alignItems: "center",
-      backgroundColor: "white",
-      padding: 10,
+    justifyContent: "center",
+    marginHorizontal: 20,
+    borderRadius: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "white",
+    padding: 10,
   },
   detailsListContainer: {
-      marginTop: 10,
-    },
-    detailsListItem: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      marginBottom: 5,
-    },
-    detailsListItemLabel: {
-      fontSize: 16,
-      fontWeight: 'bold',
-      color: '#333',
-    },
-    detailsListItemValue: {
-      fontSize: 16,
-      color: '#666',
-    },
-  
-    specificationsContainer: {
-      paddingHorizontal: 16,
-      paddingBottom: 16,
-      marginTop: 16,
-    },
-    specificationsHeader: {
-      fontSize: 18,
-      fontWeight: 'bold',
-      marginBottom: 8,
-    },
-    specificationsItem: {
-      fontSize: 16,
-      marginBottom: 8,
-      marginTop: 8,
-    },
+    marginTop: 10,
+  },
+  detailsListItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 5,
+  },
+  detailsListItemLabel: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  detailsListItemValue: {
+    fontSize: 16,
+    color: '#666',
+  },
+
+  specificationsContainer: {
+    paddingHorizontal: 16,
+    paddingBottom: 16,
+    marginTop: 16,
+  },
+  specificationsHeader: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 8,
+  },
+  specificationsItem: {
+    fontSize: 16,
+    marginBottom: 8,
+    marginTop: 8,
+  },
   inputBox: {
-      flex: 1,
-      color: "#1977F3",
-      marginLeft: 10,
+    flex: 1,
+    color: "#1977F3",
+    marginLeft: 10,
   },
   proceedButton: {
-      backgroundColor: '#FF9900',
-      borderRadius: 16,
-      padding: 13,
-      alignItems: 'center',
-      marginTop: 8,
+    backgroundColor: '#FF9900',
+    borderRadius: 16,
+    padding: 13,
+    alignItems: 'center',
+    marginTop: 8,
   },
   buttonText: {
-      color: 'white',
-      fontWeight: 'bold',
-      fontSize: 17,
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 17,
   },
   productImage: {
-      width: '100%',
-      height: 300,
-    },
-    productDetails: {
-      padding: 16,
-    },
-    productHeader: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-    },
-    productName: {
-      flex: 1,
-      fontSize: 14,
-      fontWeight: '100',
-      marginBottom: 8,
-      flexWrap: 'wrap', 
-    },
-    priOfferContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'flex-start',
-    },
-    ratingContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
-    },
-    ratingText: {
-      marginLeft: 4,
-      fontSize: 16,
-    },
-    offerText: {
-      backgroundColor: '#871818',
-      borderRadius: 14,
-      padding: 2,
-      marginTop: 5,
-      width: '15%',
-      color: 'white',
-      fontSize: 12,
-      paddingLeft: 5,
-      textAlign:"center",
-    },
-    productPrice: { 
-      fontSize: 35,
-      color: 'black',
-      padding: 10,
-    },
-    RealPrice:{
-      fontSize:17,
-      textDecorationLine:"line-through",
-    },
-    deliveryInfoContainer: {
-      flexDirection: 'row',
-      paddingHorizontal: 26,
-      marginTop: '-5%',
-    },
-    deliveryInfoText: {
-      fontSize: 17,
-      color: '#1977F3',
-      paddingLeft:10,
-    },
-    DateInfoText: {
-      fontSize: 17,
-      paddingLeft: '3%',
-    },
-    inStockInfoText: {
-      fontSize: 17,
-      marginTop: '1%',
-      paddingHorizontal: 26,
-      marginBottom: '6%',
-      color:'#478509',
-      fontWeight:'600',
-    },
-    buttonsContainer: {
-      flexDirection: 'row',
-      justifyContent: 'flex-start', // Adjust the alignment as needed
-      paddingHorizontal: 16,
-      marginBottom: 16,
-    },
-    addToCartButton: {
-      flex: 1, // This button takes more space
-      backgroundColor: '#FF9C09',
-      borderRadius: 15,
-      padding: 13,
-      alignItems: 'center',
-      marginRight: 8, // Adjust the margin if needed
-    },
-    buyNowButton: {
-      flex: 1, // This button takes less space
-      backgroundColor: '#0047A6',
-      borderRadius: 15,
-      padding: 13,
-      alignItems: 'center',
-    },
-    abButtonText:{
-      color: 'white',
-      fontWeight: 'bold',
-      fontSize: 15,
-    },
-    secureTransactionContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: 2,
-      paddingBottom: 10,
-    },
-    secureTransactionText: {
-      fontSize: 15,
-      marginLeft: 4,
-      color: '#003478',
-    },
-    detailsContainer: {
-      paddingHorizontal: 16,
-      paddingBottom: 16,
-    },
-    detailsHeader: {
-      fontSize: 18,
-      fontWeight: 'bold',
-      marginBottom: 8,
-    },
-    detailsText: {
-      fontSize: 16,
-      textAlign: 'justify',
-      marginBottom: 16,
-    },
-    
+    width: '100%',
+    height: 300,
+  },
+  productDetails: {
+    padding: 16,
+  },
+  productHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  productName: {
+    flex: 1,
+    fontSize: 14,
+    fontWeight: '100',
+    marginBottom: 8,
+    flexWrap: 'wrap',
+  },
+  priOfferContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+  },
+  ratingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  ratingText: {
+    marginLeft: 4,
+    fontSize: 16,
+  },
+  offerText: {
+    backgroundColor: '#871818',
+    borderRadius: 14,
+    padding: 2,
+    marginTop: 5,
+    width: '15%',
+    color: 'white',
+    fontSize: 12,
+    paddingLeft: 5,
+    textAlign: "center",
+  },
+  productPrice: {
+    fontSize: 35,
+    color: 'black',
+    padding: 10,
+  },
+  RealPrice: {
+    fontSize: 17,
+    textDecorationLine: "line-through",
+  },
+  deliveryInfoContainer: {
+    flexDirection: 'row',
+    paddingHorizontal: 26,
+    marginTop: '-5%',
+  },
+  deliveryInfoText: {
+    fontSize: 17,
+    color: '#1977F3',
+    paddingLeft: 10,
+  },
+  DateInfoText: {
+    fontSize: 17,
+    paddingLeft: '3%',
+  },
+  inStockInfoText: {
+    fontSize: 17,
+    marginTop: '1%',
+    paddingHorizontal: 26,
+    marginBottom: '6%',
+    color: '#478509',
+    fontWeight: '600',
+  },
+  buttonsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start', // Adjust the alignment as needed
+    paddingHorizontal: 16,
+    marginBottom: 16,
+  },
+  addToCartButton: {
+    flex: 1, // This button takes more space
+    backgroundColor: '#0047A6',
+    borderRadius: 15,
+    padding: 13,
+    alignItems: 'center',
+    marginRight: 8, // Adjust the margin if needed
+  },
+  buyNowButton: {
+    flex: 1, // This button takes less space
+    backgroundColor: '#FF9C09',
+    borderRadius: 15,
+    padding: 13,
+    alignItems: 'center',
+  },
+  abButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 15,
+  },
+  secureTransactionContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 2,
+    paddingBottom: 10,
+  },
+  secureTransactionText: {
+    fontSize: 15,
+    marginLeft: 4,
+    color: '#003478',
+  },
+  detailsContainer: {
+    paddingHorizontal: 16,
+    paddingBottom: 16,
+  },
+  detailsHeader: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 8,
+  },
+  detailsText: {
+    fontSize: 16,
+    textAlign: 'justify',
+    marginBottom: 16,
+  },
+
 })
 
 export default SingleProductPage;
