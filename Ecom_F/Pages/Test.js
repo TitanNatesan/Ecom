@@ -25,13 +25,6 @@ const brand8 = require("../Streetmall/brands/brand8.png");
 library.add(faMagnifyingGlass, faUsersViewfinder);
 
 const AllProductPage = ({ navigation }) => {
-  const handleLoginPress = () => {
-    navigation.navigate('Category');
-  }; 
-  const handleDealsPress = () => {
-    navigation.navigate('Deals');
-  };
-  const [activeSlide, setActiveSlide] = useState(0);
 
   const carouselItems = [
     { image: giftbox, text: "Gifts" },
@@ -42,13 +35,6 @@ const AllProductPage = ({ navigation }) => {
   ];
 
   const topBrands = [brand1, brand2, brand3, brand4, brand5, brand6, brand7, brand8];
-
-  const renderCarouselItem = ({ item }) => (
-    <View style={styles.carouselItem}>
-      <Image style={styles.carouselImage} source={item.image} />
-      <Text>{item.text}</Text>
-    </View>
-  );
 
   const products = [
     {

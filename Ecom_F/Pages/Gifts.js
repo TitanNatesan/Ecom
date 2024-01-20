@@ -6,7 +6,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import BottomBar from './BottomBar'; 
 import ProductItem from './ProductItem';
 import FilterPage from './Filter';
-import SingleProductPage from './Singleproduct';
 
 const giftbox = require("../Streetmall/1Home/gift.gif");
 const laptop = require("../Streetmall/1Home/Laptop.png");
@@ -40,13 +39,6 @@ const GiftsPage = ({ navigation }) => {
   ];
 
   const topBrands = [brand1, brand2, brand3, brand4, brand5, brand6, brand7, brand8];
-
-  const renderCarouselItem = ({ item }) => (
-    <View style={styles.carouselItem}>
-      <Image style={styles.carouselImage} source={item.image} />
-      <Text>{item.text}</Text>
-    </View>
-  );
 
   const [isFilterModalVisible, setFilterModalVisible] = useState(false);
 

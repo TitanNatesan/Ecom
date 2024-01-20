@@ -5,8 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faUsersViewfinder, faMapMarkerAlt, faCheckCircle, faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import BottomBar from './BottomBar';
 import { BASE_URL } from "../App";
-import axios, { all } from "axios";
-import { useRoute } from "@react-navigation/native";
+import axios from "axios";
 import { useUserContext } from "./UserContext";
  
 const Cart = ({ navigation }) => {

@@ -1,56 +1,34 @@
 import React, { useState } from "react";
 import { StyleSheet, View, Text, StatusBar, ScrollView, TextInput, Image, TouchableOpacity } from "react-native";
-import { faMagnifyingGlass, faUserShield, faUsersViewfinder } from "@fortawesome/free-solid-svg-icons";
+import { faMagnifyingGlass, faUsersViewfinder } from "@fortawesome/free-solid-svg-icons";
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import BottomBar from './BottomBar';
 import { useRoute } from "@react-navigation/native";
 import axios from "axios";
 import { BASE_URL } from "../App";
 import { useUserContext } from "./UserContext";
-import { useEffect } from "react";
 
 
 const Trackbar = require('../Streetmall/14_Checkout_page/step3.png');
 
-const products = [
-  {
-    id: 1,
-    name: 'Fastrack New Limitless FS1 Pro Max 2.01” Display Smart Watch',
-    discount: 10,
-    total: 100,
-    freeDelivery: true,
-    freestock: false,
-  },
-  {
-    id: 2,
-    name: 'Sample Product 2',
-    discount: 15,
-    deliveryCharge: 40,
-    total: 120,
-    freeDelivery: false,
-    freestock: true,
-  },
-]; 
-
 const PaymentPage4 = ({ navigation }) => {
  
   const route = useRoute();
-  const { userData, selectedDeliveryOption, selectedPaymentOption, product } = route.params;
+  const { selectedDeliveryOption, selectedPaymentOption, product } = route.params;
   const { userID } = useUserContext();
   const postData = async () => {
     if (selectedPaymentOption == "Paytm" || "Net Banking"){
       var pay_method = "UPI";
     }
     else {
-      var pay_method = selectedPaymentOption;
+      var pay_method = selectedPaymentOption=="Credit/Debit Card"?"Card":"COD";
     }
     const data = {
       user: userID,
       product_id: product['product_id'],
       delivery_type: selectedDeliveryOption,
-      pay_method: selectedPaymentOption,
+      pay_method: pay_method,
     };
-
     try {
       const response = await axios.post(`${BASE_URL}/api/order/placeorder/`, data);
       
@@ -69,29 +47,6 @@ const PaymentPage4 = ({ navigation }) => {
 
   var deliveryCost = 0;
   if ((product.sellingPrice * product.inCart) >= 200) { deliveryCost = 0; } else { deliveryCost = 40 };
-  const [productCounts, setProductCounts] = useState({});
-
-  const orderSummary = products.reduce(
-    (summary, product) => {
-      const count = productCounts[product.id] || 0;
-      const productTotal = count * product.total;
-      const discountAmount = (product.discount / 100) * productTotal;
-      const deliveryCharge = product.deliveryCharge || 0;
-
-      summary.productTotal += productTotal;
-      summary.discount += discountAmount;
-      summary.deliveryCharge += deliveryCharge;
-      summary.total += productTotal - discountAmount + deliveryCharge;
-
-      return summary;
-    },
-    {
-      productTotal: 0,
-      discount: 0,
-      deliveryCharge: 0,
-      total: 0,
-    }
-  );
 
   return (
     <View style={styles.containerw}>

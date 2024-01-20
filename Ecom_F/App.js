@@ -31,15 +31,13 @@ import { AppRegistry } from 'react-native';
 import { name as appName } from './app.json';
 import { UserProvider } from './Pages/UserContext';
 import React from 'react';
-import { createContext, useContext, useState } from 'react';
 
 
 const Stack = createStackNavigator();
 
-const ip = "192.168.34.132";
+const ip = "192.168.81.132";
 
 export const BASE_URL = `http://${ip}:8000`;
-export const UserID = "titanNatesan";
 
 export default function App() {
 

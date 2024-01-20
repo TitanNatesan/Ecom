@@ -74,7 +74,11 @@ class Products(models.Model):
     specification = models.JSONField(blank=True) # [{"label": "Case Diameter", "value": "4.4 Millimeters"}, {"label": "Brand Colour", "value": "Brown"}, {"label": "Brand Material Type", "value": "Plastic"}]
     specification_list = ArrayField(models.CharField(max_length=100),blank=True) 
     tag = ArrayField(models.CharField(max_length=50),blank=True,null=True)
-    CFM = models.PositiveIntegerField(null=True,blank=True)
+    GME = models.DecimalField( max_digits=10, decimal_places=3)
+    RME = models.DecimalField( max_digits=10, decimal_places=3)
+    TME = models.DecimalField( max_digits=10, decimal_places=3)
+    BLE = models.DecimalField( max_digits=10, decimal_places=3)
+    
 
     @property
     def inStock(self)->bool: 

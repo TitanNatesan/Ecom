@@ -1,14 +1,13 @@
-import React, { useState,useContext } from 'react';
+import React, { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { faCircleRight, faLock, faPeopleLine, faUser } from '@fortawesome/free-solid-svg-icons';
-import { Button, CheckBox } from 'react-native-elements';
+import { CheckBox } from 'react-native-elements';
 const signupImage = require('../Streetmall/1_SignUp/back_asset.png');
 import axios from 'axios';
-import { useNavigation } from '@react-navigation/native';
-import { BASE_URL, UserContext } from '../App';
+import { BASE_URL } from '../App';
 
 
 axios.defaults.debug = true;
@@ -19,7 +18,6 @@ const SignupScreen = ({ navigation }) => {
     const [password, setPass] = useState('');
     const [username, setUsername] = useState('');
     const [reEnterPassword, setReEnterPassword] = useState('');
-    const change = useNavigation();
     const handleLoginPress = () => {
         navigation.navigate('Login');
     };

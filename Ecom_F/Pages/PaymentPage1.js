@@ -14,7 +14,7 @@ const PaymentPage = ({ navigation }) => {
 
   const route = useRoute()
   const {product} = route.params;
-  const { userID, updateUserID } = useUserContext();
+  const { userID } = useUserContext();
   const goToPaymentPage2 = () => {
     navigation.navigate('Payment2',{userData,product});
   };

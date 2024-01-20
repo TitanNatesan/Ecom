@@ -1,6 +1,6 @@
-import React from 'react';
-import { StyleSheet, View, Image, Text, TextInput, StatusBar, ScrollView, TouchableOpacity } from 'react-native';
-import { faMagnifyingGlass, faCircleUser, faUsersViewfinder, faShirt, faChildDress, faChild, faBlenderPhone, faShoePrints, faCar, faBiking, faPepperHot } from '@fortawesome/free-solid-svg-icons';
+import React, { useState,useEffect } from 'react';
+import { StyleSheet, View, Text, ScrollView, TouchableOpacity } from 'react-native';
+import { faMagnifyingGlass, faCircleUser, faUsersViewfinder } from '@fortawesome/free-solid-svg-icons';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
@@ -25,6 +25,19 @@ const Manager1 = ({ navigation }) => {
     }));
     console.log(userData)
 
+    const [userPos,setUnserPose] = useState("");
+    useEffect(() => {
+        if (userData.role === "General Manager") {
+            setUnserPose("Regional Manager");
+        } else if (userData.role === "Regional Manager") {
+            setUnserPose("Team Manager");
+        } else if (userData.role === "Team Manager") {
+            setUnserPose("Business Leader");
+        } else if (userData.role === "Business Leader") {
+            setUnserPose("Customer");
+        }
+    }, []);
+
     return (
         <View style={styles.containerw}>
             <ScrollView style={styles.all} vertical showsVerticalScrollIndicator={false}>
@@ -44,7 +57,7 @@ const Manager1 = ({ navigation }) => {
                     </View>
                 </View>
 
-                <Text style={styles.category}>Regional Managers</Text>
+                <Text style={styles.category}>{userPos}</Text>
                 <View style={styles.categoryContainer}>
                     {data.map((item, index) => (
                         <TouchableOpacity

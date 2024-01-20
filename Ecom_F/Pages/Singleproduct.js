@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   View,
@@ -11,7 +11,6 @@ import {
 } from "react-native";
 import {
   faMagnifyingGlass,
-  faStrikethrough,
   faUsersViewfinder,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -21,7 +20,6 @@ import { faStar, faStarHalf, faLock } from "@fortawesome/free-solid-svg-icons";
 import { useRoute } from "@react-navigation/native";
 import { BASE_URL } from '../App';
 import axios from "axios";
-import { useState, useEffect } from "react";
 import { useUserContext } from "./UserContext";
 
 library.add(faMagnifyingGlass, faUsersViewfinder);
@@ -32,18 +30,52 @@ const SingleProductPage = ({ navigation }) => {
   const navCart = () => {
     navigation.navigate("Cart")
   }
-  const fetchProduct = async () => {
-    try {
-      console.log(product)
-      const response = await axios.get(`${BASE_URL}/api/product/${product['product_id']}/`);
-      console.log("Success")
-      return response.data;
 
-    } catch (error) {
-      console.log("Failed to load data");
-      console.error('Error fetching product:', error);
-    }
-  };
+  const [userData, setUserData] = useState({
+    name: "",
+    phone: "",
+    email: "",
+    doorNumber: "",
+    addressLine1: "",
+    addressLine2: "",
+    city: "",
+    state: "",
+    postalCode: "",
+    landmark: "",
+    role: "",
+    down_leaf: [],
+  });
+
+  const [isBL, setIsBL] = useState(false);
+  const { userID } = useUserContext()
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`${BASE_URL}/api/user/${userID}/`);
+        const { user, address } = response.data;
+        setUserData({
+          name: user.name,
+          phone: user.phone,
+          email: user.email,
+          role: user.role,
+          doorNumber: address.door_number,
+          addressLine1: address.address_line1,
+          addressLine2: address.address_line2,
+          city: address.city,
+          state: address.state,
+          postalCode: address.postal_code,
+          landmark: address.landmark,
+          down_leaf: user.down_leaf,
+        });
+        setIsBL(user.role == "Business Leader");
+        console.log(user.role)
+      } catch (error) {
+        console.log("Error fetching data:", error);
+      }
+    };
+    fetchData();
+  }, []);
+
 
   const productDetails = {
     name: 'Pro Max 2.01” Display Smart Watch| Bluetooth | Calling,...',
@@ -72,7 +104,6 @@ const SingleProductPage = ({ navigation }) => {
     deliveryDate: 'Sunday, Dec 20, 2023',
     inStock: true,
   };
-  const { userID } = useUserContext()
 
   const addToCart = async () => {
     try {
@@ -160,19 +191,21 @@ const SingleProductPage = ({ navigation }) => {
           </View>
           <Image style={styles.productImage} source={{ uri: product.images }} />
           <View style={styles.priOfferContainer}>
-            <Text style={styles.productPrice}>{`$${product.sellingPrice}`}</Text>
+            <Text style={styles.productPrice}>{`₹${product.sellingPrice}`}</Text>
             <Text style={styles.offerText}>{product.discount}%</Text>
           </View>
         </View>
-
-        {/* Free Delivery, Delivery Date, and In Stock/Out of Stock Sections */}
+        
         <View style={styles.deliveryInfoContainer}>
           {product.mrp && (
             <Text style={styles.RealPrice}>${product.mrp}</Text>
-          )}
+            )}
           {productDetails.freeDelivery && (
             <Text style={styles.deliveryInfoText}>Free Delivery</Text>
-          )}
+            )}
+            {isBL && (
+              <Text style={styles.ble}>{product.BLE}{"\n"}</Text>
+            )}
         </View>
         <View>
           <Text style={styles.inStockInfoText}>
@@ -273,6 +306,19 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     color: '#333',
+  },
+  ble: {
+    backgroundColor: '#871818',
+    borderRadius: 14,
+    padding: 2,
+    marginTop: 5,
+    width: '15%',
+    color: 'white',
+    fontSize: 12,
+    paddingLeft: 5,
+    marginHorizontal:10,
+    marginBottom:10,
+    textAlign: "center",
   },
   detailsListItemValue: {
     fontSize: 16,

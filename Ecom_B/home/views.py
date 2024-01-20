@@ -246,7 +246,7 @@ def placeOrder(request):
             return Response({"detail": "Cart Not Found"}, status=status.HTTP_404_NOT_FOUND)
         
         allOrders = Orders.objects.all()
-
+        print(request.data)
         each = EachItem.objects.get(user=user,product=product)
         order = Orders.objects.create(user=user,order_id=str(user.username)+getDateAndTime())
         order.ordered_product = product
@@ -263,14 +263,19 @@ def placeOrder(request):
         while user.referal!='null':
             user = Users.objects.get(username=user.referal)
             if user.role == "General Manager":
-                user.earning += product.sellingPrice * (product.CFM)/Decimal(100) * Decimal(0.3*order.quantity)
+                user.earning += product.sellingPrice * (product.GME)/Decimal(100) * Decimal(order.quantity)
                 user.save()
-            elif user.role == "Regional Manager" or "Team Manager" or 'Business Leader' :
-                user.earning += product.sellingPrice * (product.CFM)/Decimal(100) * Decimal(0.2*order.quantity)
+            elif user.role == "Regional Manager":
+                user.earning += product.sellingPrice * (product.RME)/Decimal(100) * Decimal(order.quantity)
+                user.save()
+            elif user.role =="Team Manager":
+                user.earning += product.sellingPrice * (product.TME)/Decimal(100) * Decimal(order.quantity)
+                user.save()
+            elif user.role == 'Business Leader' :
+                user.earning += product.sellingPrice * (product.BLE)/Decimal(100) * Decimal(order.quantity)
                 user.save()
             else:
                 break
-
 
         return Response(1)
 
@@ -291,7 +296,6 @@ def add_working_days(start_date, num_days):
 
 @api_view(["GET","POST"])
 def viewUser(request,username):
-    
     if request.method == "POST":
         userdata = request.data.pop("user")
         addressData = request.data.pop("address")
@@ -385,7 +389,7 @@ def viewProducts(request):
         pro["images"]= str(get_base64_encoded_image(imgPath))
 
     serializer = ProductSerial(products, many=True)
-    return JsonResponse(list(products),safe=False)
+    return Response(list(products))
 
 def get_base64_encoded_image(img_path):
     with open(img_path, 'rb') as image_file:
@@ -394,11 +398,13 @@ def get_base64_encoded_image(img_path):
 
 def generate_otp():
     return ''.join(random.choices('0123456789', k=4))
+
 def send_otp_email(email, otp):
     subject = 'Your OTP'
     message = f'Your OTP is: {otp}\n Do not share this OTP'
     from_email = 'mukilan@gmail.com'  # Update with your email
     send_mail(subject, message, from_email, [email])
+
 @api_view(['POST'])
 def generate_and_send_otp(request):
     print("111")

@@ -71,11 +71,6 @@ const PaymentPage4 = ({ navigation }) => {
       fetchAllProducts();
   }, [productIds,refreshKey]);
 
-
-  const goToPaymentPage = (product) => {
-      navigation.navigate('Payment',{product});
-  };
-
   const goToOrderPage = ()=>{
     navigation.navigate("TrackOrder");
   }

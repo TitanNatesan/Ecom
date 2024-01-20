@@ -1,20 +1,16 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity, KeyboardAvoidingView, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { faCircleRight, faUser } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
-const signupImage = require('../Streetmall/1_SignUp/back_asset.png');
-const Round = require('../Streetmall/3_Login/Ellipse391.png');
 import { useRoute } from "@react-navigation/native";
-import { useUserContext } from './UserContext';
 import { BASE_URL } from '../App';
 
 library.add(faCircleRight, faUser);
 
 const Signup2Screen = ({ navigation }) => {
     const route = useRoute();
-    const { userID } = useUserContext();
     const { referal, username, password } = route.params;
     const [name, setName] = useState('');
     const [door_number, setDr] = useState('');

@@ -18,25 +18,11 @@ const Dashboard = ({ navigation }) => {
         ],
     });
 
-
-
-    const [productCounts, setProductCounts] = useState({});
-    const getCurrentMonth = () => {
-        const months = [
-            "January", "February", "March", "April", "May", "June",
-            "July", "August", "September", "October", "November", "December"
-        ];
-        const currentDate = new Date();
-        return months[currentDate.getMonth()];
-    };
-
     const getCurrentWeek = () => {
         const currentDate = new Date();
 
         const options = { year: 'numeric', month: 'long', day: 'numeric' };
         const formattedDate = currentDate.toLocaleDateString(undefined, options);
-
-        const isoWeek = currentDate.toLocaleDateString(undefined, { week: 'iso' });
 
         return `${formattedDate}`;
     };
