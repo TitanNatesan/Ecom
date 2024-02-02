@@ -21,10 +21,17 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.titannatesan.Ecom_F"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "cfe58aaf-ba8a-4073-b063-203f7a60d5c1"
+      }
+    },
+    "owner": "titannatesan"
   }
 }

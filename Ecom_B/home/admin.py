@@ -11,7 +11,7 @@ class AdminUsers(admin.ModelAdmin):
     ]
 admin.site.register(Users,AdminUsers)
 
-class AdminDP(admin.ModelAdmin):
+class AdminDP(admin.ModelAdmin): 
     list_display=[
         'name',
         'phone',

@@ -78,8 +78,6 @@ class Products(models.Model):
     RME = models.DecimalField( max_digits=10, decimal_places=3)
     TME = models.DecimalField( max_digits=10, decimal_places=3)
     BLE = models.DecimalField( max_digits=10, decimal_places=3)
-    
-
     @property
     def inStock(self)->bool: 
         return self.stock>0

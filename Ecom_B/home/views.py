@@ -372,22 +372,11 @@ class ProductsSearchView(generics.ListAPIView):
 def viewProduct(request,pi):
     products = Products.objects.all().values()
     if request.method == "GET":
-        for pro in products:
-            if pro['product_id']==pi:
-                img = "media/"+pro['images']
-                imgPath = os.path.join(BASE_DIR/img)
-                pro["images"]= str(get_base64_encoded_image(imgPath))
-                return JsonResponse(pro)
         return Response("Not")
 
 @api_view(["GET"])
 def viewProducts(request):
     products = Products.objects.all().values()
-    for pro in products:
-        img = "media/"+pro['images']
-        imgPath = os.path.join(BASE_DIR/img)
-        pro["images"]= str(get_base64_encoded_image(imgPath))
-
     serializer = ProductSerial(products, many=True)
     return Response(list(products))
 

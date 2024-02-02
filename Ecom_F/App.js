@@ -35,7 +35,7 @@ import React from 'react';
 
 const Stack = createStackNavigator();
 
-const ip = "192.168.81.132";
+const ip = "64.227.134.220";
 
 export const BASE_URL = `http://${ip}:8000`;
 
