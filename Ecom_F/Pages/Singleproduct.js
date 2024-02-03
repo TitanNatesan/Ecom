@@ -27,6 +27,7 @@ library.add(faMagnifyingGlass, faUsersViewfinder);
 const SingleProductPage = ({ navigation }) => {
   const route = useRoute();
   const { product } = route.params;
+  console.log(product)
   const navCart = () => {
     navigation.navigate("Cart")
   }
@@ -68,7 +69,7 @@ const SingleProductPage = ({ navigation }) => {
           down_leaf: user.down_leaf,
         });
         setIsBL(user.role == "Business Leader");
-        console.log(user.role)
+        console.log(setUserData)
       } catch (error) {
         console.log("Error fetching data:", error);
       }
@@ -76,34 +77,6 @@ const SingleProductPage = ({ navigation }) => {
     fetchData();
   }, []);
 
-
-  const productDetails = {
-    name: 'Pro Max 2.01” Display Smart Watch| Bluetooth | Calling,...',
-    price: 19.99,
-    details: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed ac arcu non odio.',
-    specifications: [
-      'High-quality material',
-      'Lorem ipsum specification',
-      'Another specification example',
-      'Lorem ipsum dolor sit',
-    ],
-    specificationsList: [
-      { label: 'Case Diameter', value: '4.4 Millimeters' },
-      { label: 'Brand Colour', value: 'Brown' },
-      { label: 'Brand Material Type', value: 'Plastic' },
-    ],
-    detailsList: [
-      { label: 'Case Diameter', value: '4.4 Millimeters' },
-      { label: 'Brand Colour', value: 'Brown' },
-      { label: 'Brand Material Type', value: 'Plastic' },
-    ],
-    image: require('../Streetmall/product/watch.png'),
-    rating: 3.5,
-    offer: '25% OFF',
-    freeDelivery: true,
-    deliveryDate: 'Sunday, Dec 20, 2023',
-    inStock: true,
-  };
 
   const addToCart = async () => {
     try {
@@ -200,7 +173,7 @@ const SingleProductPage = ({ navigation }) => {
           {product.mrp && (
             <Text style={styles.RealPrice}>${product.mrp}</Text>
             )}
-          {productDetails.freeDelivery && (
+          {product.freeDelivery && (
             <Text style={styles.deliveryInfoText}>Free Delivery</Text>
             )}
             {isBL && (

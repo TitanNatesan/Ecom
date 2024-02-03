@@ -49,6 +49,7 @@ const Cart = ({ navigation }) => {
             }
 
             console.log("Success");
+            console.log(productData)
             return productData;
 
         } catch (error) {
@@ -144,7 +145,7 @@ const Cart = ({ navigation }) => {
 
                         <View key={product.product_id} style={styles.productContainer}>
                             <View style={styles.leftContainer}>
-                                <Image style={styles.productImage} source={{ uri: product.images }} />
+                                <Image style={styles.productImage} source={{uri: product.images}} />
                                 <View style={styles.productCountContainer}>
                                     <TouchableOpacity onPress={() => handleDelete(userID, product.product_id)} style={styles.deleteButton}>
                                         <Icon name="trash-o" size={15} color="black" />
@@ -166,7 +167,7 @@ const Cart = ({ navigation }) => {
                                 <TouchableOpacity onPress={() => goToPaymentPage(product)}>
                                     <Text  style={styles.buyNowBut}>Buy Now</Text>
                                 </TouchableOpacity>
-                            </View>
+                            </View> 
                         </View>
                     ))}
                 </View>

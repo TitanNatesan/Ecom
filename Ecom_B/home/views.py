@@ -7,6 +7,7 @@ from django.db.models import Q
 import base64
 from django.http import JsonResponse
 import random,os
+from django.shortcuts import get_object_or_404
 from datetime import datetime, timedelta
 from django.core.mail import send_mail
 from django.conf import settings
@@ -369,16 +370,66 @@ class ProductsSearchView(generics.ListAPIView):
 
         
 @api_view(["GET"])
-def viewProduct(request,pi):
-    products = Products.objects.all().values()
+def viewProduct(request, pi):
     if request.method == "GET":
-        return Response("Not")
+        product = get_object_or_404(Products, product_id=pi)
+        
+        # Get the absolute URL for the product image
+        image_url = request.build_absolute_uri(product.images.url)
+        
+        # Add the absolute image URL to the product data
+        product_data = {
+            "product_id": product.product_id,
+            "name": product.name,
+            "description": product.description,
+            "images": image_url,  # Use the absolute URL
+            "mrp": product.mrp,
+            "discount": product.discount,
+            "sellingPrice": product.sellingPrice,
+            "stock": product.stock,
+            "rating": product.rating,
+            "freeDelivery": product.freeDelivery,
+            "specification": product.specification,
+            "specification_list": product.specification_list,
+            "tag": product.tag,
+            "GME": product.GME,
+            "RME": product.RME,
+            "TME": product.TME,
+            "BLE": product.BLE,
+        }
+
+        return Response(product_data)
 
 @api_view(["GET"])
 def viewProducts(request):
-    products = Products.objects.all().values()
-    serializer = ProductSerial(products, many=True)
-    return Response(list(products))
+    products = Products.objects.all()
+    
+    # Get the absolute URL for each product image
+    product_data_list = []
+    for product in products:
+        image_url = request.build_absolute_uri(product.images.url)
+        product_data = {
+            "product_id": product.product_id,
+            "name": product.name,
+            "description": product.description,
+            "images": image_url,  # Use the absolute URL
+            "mrp": product.mrp,
+            "discount": product.discount,
+            "sellingPrice": product.sellingPrice,
+            "stock": product.stock,
+            "rating": product.rating,
+            "freeDelivery": product.freeDelivery,
+            "specification": product.specification,
+            "specification_list": product.specification_list,
+            "tag": product.tag,
+            "GME": product.GME,
+            "RME": product.RME,
+            "TME": product.TME,
+            "BLE": product.BLE,
+        }
+        product_data_list.append(product_data)
+
+    return Response(product_data_list)
 
 def get_base64_encoded_image(img_path):
     with open(img_path, 'rb') as image_file:

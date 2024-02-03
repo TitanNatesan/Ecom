@@ -141,7 +141,7 @@ const AllProductPage = ({ navigation }) => {
                     <View style={styles.productsContainer}>
                         {products.map((product, index) => (
                             <TouchableOpacity
-                                key={index}
+                                key={product.product_id}
                                 style={styles.productItem}
                                 onPress={() => handleProductPress(product, index)}
                             >
