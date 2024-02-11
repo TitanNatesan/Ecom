@@ -18,7 +18,6 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import BottomBar from "./BottomBar";
 import { faStar, faStarHalf, faLock } from "@fortawesome/free-solid-svg-icons";
 import { useRoute } from "@react-navigation/native";
-import { BASE_URL } from '../App';
 import axios from "axios";
 import { useUserContext } from "./UserContext";
 
@@ -48,7 +47,7 @@ const SingleProductPage = ({ navigation }) => {
   });
 
   const [isBL, setIsBL] = useState(false);
-  const { userID } = useUserContext()
+  const { userID,BASE_URL } = useUserContext()
   useEffect(() => {
     const fetchData = async () => {
       try {

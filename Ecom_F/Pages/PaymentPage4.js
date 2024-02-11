@@ -5,7 +5,6 @@ import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import BottomBar from './BottomBar';
 import { useRoute } from "@react-navigation/native";
 import axios from "axios";
-import { BASE_URL } from "../App";
 import { useUserContext } from "./UserContext";
 
 
@@ -15,7 +14,7 @@ const PaymentPage4 = ({ navigation }) => {
  
   const route = useRoute();
   const { selectedDeliveryOption, selectedPaymentOption, product } = route.params;
-  const { userID } = useUserContext();
+  const { userID,BASE_URL } = useUserContext();
   const postData = async () => {
     if (selectedPaymentOption == "Paytm" || "Net Banking"){
       var pay_method = "UPI";

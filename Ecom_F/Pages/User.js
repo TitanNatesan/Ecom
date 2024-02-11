@@ -10,13 +10,12 @@ import {
 } from 'react-native';
 import BottomBar from './BottomBar';
 import axios from 'axios';
-import { BASE_URL } from '../App';
 import { useUserContext } from './UserContext';
 
 const userimg = require("../Streetmall/Dashboard/ICON2.png");
 
 const User = ({ navigation }) => {
-  const { userID, updateUserID } = useUserContext();
+  const { userID, updateUserID,BASE_URL } = useUserContext();
   const [userData, setUserData] = useState({
     name: "",
     phone: "",

@@ -6,13 +6,13 @@ import BottomBar from './BottomBar';
 import { useRoute } from '@react-navigation/native';
 import { useEffect } from 'react';
 import axios from 'axios';
-import { BASE_URL } from '../App';
+import { useUserContext } from './UserContext';
 
 const Manager2 = ({ navigation }) => {
     const route = useRoute();
     const { item } = route.params;
     const [username, setusername] = useState(item['label']);
-
+    const {BASE_URL}=useUserContext();
     const [userData, setUserData] = useState({
         name: "",
         phone: "",

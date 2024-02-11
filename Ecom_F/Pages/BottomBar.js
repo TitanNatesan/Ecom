@@ -2,36 +2,37 @@ import React, { useState } from 'react';
 import { StyleSheet, View, TouchableOpacity } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faHome, faBars, faShoppingCart, faUser } from '@fortawesome/free-solid-svg-icons';
-import { userID } from '../App';
 
 const BottomBar = ({ navigation, initialPage }) => {
   const [activePage, setActivePage] = useState(initialPage);
 
-  const handleNavigation = (screen,{userID}) => {
-    navigation.navigate(screen,{userID});
-    setActivePage(screen,{userID});
+  const handleNavigation = (screen) => {
+    // Navigate to the selected screen
+    navigation.navigate(screen);
+    // Update the active page
+    setActivePage(screen);
   };
 
   const isPageActive = (page) => page === activePage;
 
   return (
     <View style={styles.navbar}>
-      <TouchableOpacity onPress={() => handleNavigation('Home',{userID})}>
+      <TouchableOpacity onPress={() => handleNavigation('Home')}>
         <View style={[styles.navbarIcon, isPageActive('Home') && styles.navbarIconHome]}>
           <FontAwesomeIcon icon={faHome} size={25} color={isPageActive('Home') ? 'white' : '#1977F3'} />
         </View>
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => handleNavigation('Category',{userID})}>
+      <TouchableOpacity onPress={() => handleNavigation('Category')}>
         <View style={[styles.navbarIcon, isPageActive('Category') && styles.navbarIconHome]}>
           <FontAwesomeIcon icon={faBars} size={20} color={isPageActive('Category') ? 'white' : '#1977F3'} />
         </View>
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => handleNavigation('Cart',{userID})}>
+      <TouchableOpacity onPress={() => handleNavigation('Cart')}>
         <View style={[styles.navbarIcon, isPageActive('Cart') && styles.navbarIconHome]}>
           <FontAwesomeIcon icon={faShoppingCart} size={20} color={isPageActive('Cart') ? 'white' : '#1977F3'} />
         </View>
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => handleNavigation('User',{userID})}>
+      <TouchableOpacity onPress={() => handleNavigation('User')}>
         <View style={[styles.navbarIcon, isPageActive('User') && styles.navbarIconHome]}>
           <FontAwesomeIcon icon={faUser} size={20} color={isPageActive('User') ? 'white' : '#1977F3'} />
         </View>

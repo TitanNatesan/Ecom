@@ -5,11 +5,13 @@ import { library } from '@fortawesome/fontawesome-svg-core';
 import { faCircleRight, faUser } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 import { useRoute } from "@react-navigation/native";
-import { BASE_URL } from '../App';
+import { useUserContext } from './UserContext';
 
 library.add(faCircleRight, faUser);
 
 const Signup2Screen = ({ navigation }) => {
+    const { userID, updateUserID,BASE_URL } = useUserContext();
+
     const route = useRoute();
     const { referal, username, password } = route.params;
     const [name, setName] = useState('');
@@ -22,7 +24,8 @@ const Signup2Screen = ({ navigation }) => {
     const [pincode, setPincode] = useState('');
 
     const navLogin = () => {
-        navigation.navigate('Login');
+        updateUserID(username); 
+        navigation.navigate('Home', { username });
     };
 
     const reqData = {
@@ -130,7 +133,7 @@ const Signup2Screen = ({ navigation }) => {
                 <View style={styles.inputContainer}>
                     <Text>City :</Text>
                     <TextInput
-                        style={styles.input}
+                        style={styles.input} 
                         value={cityName}
                         onChangeText={text => setCityName(text)}
                     />

@@ -7,7 +7,6 @@ import BottomBar from './BottomBar';
 import { useUserContext } from "./UserContext";
 import { useEffect } from "react";
 import axios from "axios";
-import { BASE_URL } from "../App";
 
 
 const PaymentPage4 = ({ navigation }) => {
@@ -16,7 +15,7 @@ const PaymentPage4 = ({ navigation }) => {
   const [cartItem, setCartItem] = useState("");
   const [productIds, setPI] = useState([]);
   const [allProducts, setAllProducts] = useState([]); // Use state to store fetched products
-  const { userID } = useUserContext();
+  const { userID,BASE_URL } = useUserContext();
 
   useEffect(() => {
       const fetchCartData = async () => {

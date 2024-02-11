@@ -34,13 +34,13 @@ library.add(faMagnifyingGlass, faUsersViewfinder);
 
 const Home = ({ navigation }) => {
   const handleLoginPress = () => {
-    navigation.navigate('Category', {username});
+    navigation.navigate('Category', { username });
   };
   const route = useRoute();
   const username = route.params;
 
   const handleDealsPress = () => {
-    navigation.navigate('Deals', {username});
+    navigation.navigate('Deals', { username });
   };
 
   const [activeSlide, setActiveSlide] = useState(0);
@@ -73,7 +73,7 @@ const Home = ({ navigation }) => {
           <View style={styles.container}>
             <View style={styles.topbarinput}>
               <FontAwesomeIcon icon={faMagnifyingGlass} size={20} color="black" />
-              <TextInput placeholder="Search Sunlight.in" style={styles.inputBox} onPressIn={()=>navigation.navigate("AProduct",{item:{text:""}})}/>
+              <TextInput placeholder="Search Sunlight.in" style={styles.inputBox} onPressIn={() => navigation.navigate("AProduct", { item: { text: "" } })} />
               <FontAwesomeIcon icon={faUsersViewfinder} size={20} color="black" />
             </View>
             <StatusBar style="dark-content" />
@@ -88,46 +88,44 @@ const Home = ({ navigation }) => {
                       source={backl}
                       imageStyle={styles.backgroundImageStyle}
                     >
-                      <TouchableOpacity onPress={()=>navigation.navigate("AProduct",{item})} >
+                      <TouchableOpacity onPress={() => navigation.navigate("Gifts", { item })} >
                         <Image style={styles.productImagegt} source={item.image} />
                         <Text style={styles.protxtgt}>{item.text}</Text>
                       </TouchableOpacity>
                     </ImageBackground>
                   </View>
                 ) : (
-                  <TouchableOpacity onPress={()=>navigation.navigate("AProduct",{item})}>
-                  <View key={index} style={styles.product}>
-                    <Image style={styles.productImage} source={item.image} />
-                    <Text>{item.text}</Text>
-                  </View>
+                  <TouchableOpacity onPress={() => navigation.navigate("AProduct", { item })}>
+                    <View key={index} style={styles.product}>
+                      <Image style={styles.productImage} source={item.image} />
+                      <Text>{item.text}</Text>
+                    </View>
                   </TouchableOpacity>
                 )
               ))}
             </View>
           </ScrollView>
-          <TouchableOpacity onPress={handleLoginPress}>
-            <View style={{ marginTop: 20, }}>
-              <Carousel
-                data={carouselItems1}
-                renderItem={renderCarouselItem}
-                sliderWidth={screenWidth}
-                itemWidth={screenWidth}
-                autoplay={true}
-                loop
-                autoplayInterval={2000}
-                onSnapToItem={(index) => setActiveSlide(index)}
-              />
-              <Pagination
-                dotsLength={carouselItems1.length}
-                activeDotIndex={activeSlide}
-                containerStyle={styles.paginationContainer}
-                dotStyle={styles.paginationDot}
-                inactiveDotStyle={styles.paginationInactiveDot}
-                inactiveDotOpacity={1}
-                inactiveDotScale={0.6}
-              />
-            </View>
-          </TouchableOpacity>
+          <View style={{ marginTop: 20, }}>
+            <Carousel
+              data={carouselItems1}
+              renderItem={renderCarouselItem}
+              sliderWidth={screenWidth}
+              itemWidth={screenWidth}
+              autoplay={true}
+              loop
+              autoplayInterval={2000}
+              onSnapToItem={(index) => setActiveSlide(index)}
+            />
+            <Pagination
+              dotsLength={carouselItems1.length}
+              activeDotIndex={activeSlide}
+              containerStyle={styles.paginationContainer}
+              dotStyle={styles.paginationDot}
+              inactiveDotStyle={styles.paginationInactiveDot}
+              inactiveDotOpacity={1}
+              inactiveDotScale={0.6}
+            />
+          </View>
           <Text style={styles.applianceHeaderText}>Appliances for Home | up to 50 % off </Text>
           <View>
             <View style={styles.appliances}>
@@ -292,18 +290,21 @@ const styles = StyleSheet.create({
   },
   productImagegt: {
     width: 65,
-    height: 70,
+    height: 60,
     borderRadius: 10,
     left: '10%',
+    objectFit:"contain",
   },
   protxtgt: {
     color: '#FF3535',
     alignSelf: 'center',
+    margin:'auto',
   },
   productImage: {
     width: 65,
     height: 70,
     borderRadius: 10,
+    objectFit: "contain",
   },
   carouselItem: {
     alignItems: 'center',
@@ -336,4 +337,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Home; 
+export default Home;

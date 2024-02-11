@@ -15,6 +15,7 @@ import OrderPage from './Pages/Orderpage';
 import Deals from './Pages/Deals';
 import Category from './Pages/Category';
 import Menswear from './Pages/Menswear';
+import BottomBar from './Pages/BottomBar';
 import Womenswear from './Pages/Womenswear';
 import Groceries from './Pages/Groceries';
 import Sproduct from './Pages/Singleproduct';
@@ -31,13 +32,9 @@ import { AppRegistry } from 'react-native';
 import { name as appName } from './app.json';
 import { UserProvider } from './Pages/UserContext';
 import React from 'react';
-
+ 
 
 const Stack = createStackNavigator();
-
-const ip = "64.227.134.220";
-
-export const BASE_URL = `http://${ip}:8000`;
 
 export default function App() {
 
@@ -72,6 +69,7 @@ export default function App() {
           <Stack.Screen name="User" component={User} options={{ headerShown: false }} />
           <Stack.Screen name="Manager1" component={Manager1} options={{ headerShown: false }} />
           <Stack.Screen name="Manager2" component={Manager2} options={{ headerShown: false }} />
+          <Stack.Screen name="BottomBar" component={BottomBar} />
         </Stack.Navigator>
       </NavigationContainer>
       </UserProvider>

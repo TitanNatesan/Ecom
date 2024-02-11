@@ -2,10 +2,9 @@ import React, { useState } from "react";
 import { StyleSheet, View, Text, StatusBar, ScrollView, TextInput, Image, TouchableOpacity } from "react-native";
 import { faMagnifyingGlass, faUsersViewfinder } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-const Trackbar = require('../Streetmall/14_Checkout_page/step.png');
+import Trackbar from '../Streetmall/14_Checkout_page/step.png';
 import BottomBar from './BottomBar';
 import { useEffect } from "react";
-import { BASE_URL } from "../App";
 import axios from "axios";
 import { useRoute } from "@react-navigation/native";
 import { useUserContext } from "./UserContext";
@@ -14,7 +13,7 @@ const PaymentPage = ({ navigation }) => {
 
   const route = useRoute()
   const {product} = route.params;
-  const { userID } = useUserContext();
+  const { userID,BASE_URL } = useUserContext();
   const goToPaymentPage2 = () => {
     navigation.navigate('Payment2',{userData,product});
   };

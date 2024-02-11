@@ -4,7 +4,6 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faUsersViewfinder, faMapMarkerAlt, faCheckCircle, faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import BottomBar from './BottomBar';
-import { BASE_URL } from "../App";
 import axios from "axios";
 import { useUserContext } from "./UserContext";
  
@@ -14,7 +13,7 @@ const Cart = ({ navigation }) => {
     const [cartItem, setCartItem] = useState("");
     const [productIds, setPI] = useState([]);
     const [allProducts, setAllProducts] = useState([]); // Use state to store fetched products
-    const { userID } = useUserContext();
+    const { userID,BASE_URL } = useUserContext();
 
     useEffect(() => {
         const fetchCartData = async () => {
