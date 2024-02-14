@@ -148,7 +148,7 @@ class Orders(models.Model):
     delivery_charges = models.IntegerField(null=True,blank=True)
     total_cost = models.IntegerField(null=True,blank=True)
     ordered_date = models.DateTimeField(auto_now_add=True)
-    dchoise = [
+    dchoise = [ 
         ("Regular Delivery","Regular Delivery"),
         ("Instant Delivery","Instant Delivery"),
     ]

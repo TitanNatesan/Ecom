@@ -103,7 +103,7 @@ const AllProductPage = ({ navigation }) => {
             <View style={styles.topbarinput}>
               <FontAwesomeIcon icon={faMagnifyingGlass} size={20} color="black" />
               <TextInput placeholder="Search Sunlight.in" style={styles.inputBox} />
-              <FontAwesomeIcon icon={faUsersViewfinder} size={20} color="black" />
+              {/* <FontAwesomeIcon icon={faUsersViewfinder} size={20} color="black" /> */}
             </View>
             <StatusBar style="dark-content" />
           </View>

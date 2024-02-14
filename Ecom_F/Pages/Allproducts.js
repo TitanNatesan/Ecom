@@ -114,7 +114,7 @@ const AllProductPage = ({ navigation }) => {
             fetchProducts();
         }
     }, [item]);
-
+    console.log("all products")
     return (
         <View style={styles.containerw}>
             <ScrollView vertical showsVerticalScrollIndicator={false}>
@@ -134,11 +134,7 @@ const AllProductPage = ({ navigation }) => {
                                     handleSearch(text), setSearchQuery(text);
                                 }}
                             />
-                            <FontAwesomeIcon
-                                icon={faUsersViewfinder}
-                                size={20}
-                                color="black"
-                            />
+
                         </View>
                         <StatusBar style="dark-content" />
                     </View>
@@ -154,14 +150,14 @@ const AllProductPage = ({ navigation }) => {
                                         setSelectedCategory(
                                             item.text === "Gifts" ? "Gifts" : null
                                         );
-                                        navigation.navigate("AProduct", { item });
+                                        navigation.navigate("Gifts", { item });
                                     }}
                                 >
                                     <View
                                         style={[
                                             styles.product,
                                             item.text === "Gifts" && {
-                                                backgroundColor: selectedCategory === "Gifts" ? "#FF7272" : "#1977F33A",
+                                                backgroundColor: selectedCategory === "Gifts" ? "#FF7272" : "#FF7272",
                                                 borderTopEndRadius: 10,
                                                 borderBottomEndRadius: 10,
                                             },
@@ -226,7 +222,6 @@ const AllProductPage = ({ navigation }) => {
 const styles = StyleSheet.create({
     containerw: {
         flex: 1,
-        backgroundColor: "#ffffff",
     },
     productItem: {
         marginBottom: 10,

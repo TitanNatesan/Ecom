@@ -68,13 +68,13 @@ const Home = ({ navigation }) => {
 
   return (
     <View style={styles.containerw}>
-      <ScrollView vertical showsVerticalScrollIndicator={false}>
+      <ScrollView style={{ marginBottom: "20%" }} vertical showsVerticalScrollIndicator={false}>
         <View>
           <View style={styles.container}>
             <View style={styles.topbarinput}>
               <FontAwesomeIcon icon={faMagnifyingGlass} size={20} color="black" />
               <TextInput placeholder="Search Sunlight.in" style={styles.inputBox} onPressIn={() => navigation.navigate("AProduct", { item: { text: "" } })} />
-              <FontAwesomeIcon icon={faUsersViewfinder} size={20} color="black" />
+              {/* <FontAwesomeIcon icon={faUsersViewfinder} size={20} color="black" /> */}
             </View>
             <StatusBar style="dark-content" />
           </View>
@@ -83,16 +83,10 @@ const Home = ({ navigation }) => {
               {carouselItems.map((item, index) => (
                 item.text === "Gifts" ? (
                   <View key={index} style={styles.productcont}>
-                    <ImageBackground
-                      style={styles.backgroundImage}
-                      source={backl}
-                      imageStyle={styles.backgroundImageStyle}
-                    >
-                      <TouchableOpacity onPress={() => navigation.navigate("Gifts", { item })} >
-                        <Image style={styles.productImagegt} source={item.image} />
-                        <Text style={styles.protxtgt}>{item.text}</Text>
-                      </TouchableOpacity>
-                    </ImageBackground>
+                    <TouchableOpacity onPress={() => navigation.navigate("Gifts", { item })} >
+                      <Image style={styles.productImagegt} source={item.image} />
+                      <Text style={styles.protxtgt}>{item.text}</Text>
+                    </TouchableOpacity>
                   </View>
                 ) : (
                   <TouchableOpacity onPress={() => navigation.navigate("AProduct", { item })}>
@@ -142,8 +136,27 @@ const Home = ({ navigation }) => {
                     <Text style={styles.applianceText}>Washing Machine</Text>
                   </View>
                 </TouchableOpacity>
+                <TouchableOpacity onPress={handleDealsPress}>
+                  <View style={styles.individual}>
+                    <Image source={fridge} style={styles.applianceImage} />
+                    <Text style={styles.applianceText}>Refrigerator</Text>
+                  </View>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={handleDealsPress}>
+                  <View style={styles.individual}>
+                    <Image source={fridge} style={styles.applianceImage} />
+                    <Text style={styles.applianceText}>Refrigerator</Text>
+                  </View>
+                </TouchableOpacity>
               </View>
+
               <View style={styles.applianceContainer}>
+                <TouchableOpacity onPress={handleDealsPress}>
+                  <View style={styles.individual}>
+                    <Image source={fridge} style={styles.applianceImage} />
+                    <Text style={styles.applianceText}>Refrigerator</Text>
+                  </View>
+                </TouchableOpacity>
                 <TouchableOpacity onPress={handleDealsPress}>
                   <View style={styles.individual}>
                     <Image source={fridge} style={styles.applianceImage} />
@@ -156,9 +169,21 @@ const Home = ({ navigation }) => {
                     <Text style={styles.applianceText}>Microwave Oven</Text>
                   </View>
                 </TouchableOpacity>
+                <TouchableOpacity onPress={handleDealsPress}>
+                  <View style={styles.individual}>
+                    <Image source={fridge} style={styles.applianceImage} />
+                    <Text style={styles.applianceText}>Refrigerator</Text>
+                  </View>
+                </TouchableOpacity>
               </View>
               <View style={[styles.applianceContainertop, { backgroundColor: '#E8F2FE' }]}>
                 <Text style={styles.topbrand}>Top Brands</Text>
+                <Image source={Nike} style={styles.nike} />
+                <Image source={Puma} style={styles.puma} />
+                <Image source={Bata} style={styles.bata} />
+                <Image source={Nike} style={styles.nike} />
+                <Image source={Puma} style={styles.puma} />
+                <Image source={Bata} style={styles.bata} />
                 <Image source={Nike} style={styles.nike} />
                 <Image source={Puma} style={styles.puma} />
                 <Image source={Bata} style={styles.bata} />
@@ -234,18 +259,23 @@ const styles = StyleSheet.create({
     height: 30,
     justifyContent: 'center',
     marginLeft: 5,
+    marginBottom: 5,
   },
   puma: {
     width: 50,
     height: 30,
     justifyContent: 'center',
     marginLeft: 5,
+    marginBottom: 5,
+
   },
   bata: {
     width: 70,
     height: 16,
     justifyContent: 'center',
     marginLeft: 5,
+    marginBottom: 5,
+
   },
   applianceContainer: {
     flex: 1,
@@ -281,7 +311,12 @@ const styles = StyleSheet.create({
   },
   productcont: {
     marginRight: 25,
+    paddingEnd: 10,
+    width: 70,
     alignItems: 'center',
+    backgroundColor: "#FF7272",
+    borderTopEndRadius: 10,
+    borderBottomEndRadius: 10,
   },
   backgroundImage: {
     width: '115%',
@@ -293,12 +328,12 @@ const styles = StyleSheet.create({
     height: 60,
     borderRadius: 10,
     left: '10%',
-    objectFit:"contain",
+    objectFit: "contain",
   },
   protxtgt: {
     color: '#FF3535',
     alignSelf: 'center',
-    margin:'auto',
+    margin: 'auto',
   },
   productImage: {
     width: 65,

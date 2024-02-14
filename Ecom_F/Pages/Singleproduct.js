@@ -145,11 +145,11 @@ const SingleProductPage = ({ navigation }) => {
               placeholder="Search Sunlight.in"
               style={styles.inputBox}
             />
-            <FontAwesomeIcon
+            {/* <FontAwesomeIcon
               icon={faUsersViewfinder}
               size={20}
               color="black"
-            />
+            /> */}
           </View>
           <StatusBar style="auto" />
         </View>

@@ -1,3 +1,4 @@
+from attr import fields
 from rest_framework import serializers
 from .models import Users, Products, Address,Orders,EachItem
 
@@ -47,3 +48,28 @@ class EachItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = EachItem
         fields = ['product', 'quantity']
+
+
+class OrderSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Orders
+        fields = "__all__"
+
+from rest_framework import serializers
+
+class OrderDetailSerializer(serializers.Serializer):
+    order_id = serializers.CharField()
+    quantity = serializers.IntegerField()
+    delivery_charges = serializers.IntegerField()
+    total_cost = serializers.DecimalField(max_digits=10, decimal_places=2)
+    ordered_date = serializers.DateTimeField()
+    delivery_type = serializers.CharField()
+    status = serializers.CharField()
+    payment_method = serializers.CharField()
+    expected_delivery = serializers.DateField()
+    name = serializers.CharField()
+    description = serializers.CharField()
+    images = serializers.ImageField()  # You might need to adjust this based on your actual model
+    mrp = serializers.DecimalField(max_digits=10, decimal_places=2)
+    discount = serializers.IntegerField()
+    sellingPrice = serializers.DecimalField(max_digits=10, decimal_places=2)

@@ -15,6 +15,7 @@ urlpatterns = [
     path("order/placeorder/",views.placeOrder,name="Order"), 
     path("user/<str:username>/",views.viewUser,name = "User Data"),
     path('search/', views.ProductsSearchView.as_view(), name='products-search'),
+    path('getorder/',views.getOrder,name="Get Order"),
 ]  
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

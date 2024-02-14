@@ -40,11 +40,12 @@ const SignInScreen = ({ navigation }) => {
     const [password, setPassword] = useState("");
     const [username, setUserName] = useState("");
     const [showPassword, setShowPassword] = useState(false);
-    const [errorMessage, setErrorMessage] = useState("");
+    const [errorMessage, setErrorMessage] = useState(null);
     const { updateUserID,BASE_URL } = useUserContext();
     const [rememberPassword, setRememberPassword] = useState(false);
 
     useEffect(() => {
+
         const retrieveCredentials = async () => {
             try {
                 const storedRememberPassword = await AsyncStorage.getItem("rememberPassword");
@@ -132,20 +133,15 @@ const SignInScreen = ({ navigation }) => {
                 }
                 navHome();
             } else {
-                displayError("Incorrect username or password.");
+                setErrorMessage(response.data['message']);
+
             }
         } catch (error) {
             console.error("Login failed:", error.message);
-            displayError("Check your username and password!");
         }
     };
 
-    const displayError = (message) => {
-        setErrorMessage(message);
-        setTimeout(() => {
-            setErrorMessage("");
-        }, 3000);
-    };
+
 
     return (
         <View style={styles.container}>
@@ -157,6 +153,9 @@ const SignInScreen = ({ navigation }) => {
                 <View style={styles.rowContainer}>
                     <Text style={styles.text}>Login</Text>
                 </View>
+                {errorMessage && (
+                    <Text style={styles.errorText}>{errorMessage}</Text>
+                )}
                 <View style={styles.inputContainer}>
                     <TextInput
                         style={styles.input}

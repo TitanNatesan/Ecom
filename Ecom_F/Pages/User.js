@@ -15,7 +15,7 @@ import { useUserContext } from './UserContext';
 const userimg = require("../Streetmall/Dashboard/ICON2.png");
 
 const User = ({ navigation }) => {
-  const { userID, updateUserID,BASE_URL } = useUserContext();
+  const { userID, updateUserID, BASE_URL } = useUserContext();
   const [userData, setUserData] = useState({
     name: "",
     phone: "",
@@ -127,7 +127,7 @@ const User = ({ navigation }) => {
         </View>
 
         <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.button} >
+          <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("Order")}>
             <Text style={styles.buttonText}>Your Order</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.button} onPress={logout}>
@@ -138,13 +138,13 @@ const User = ({ navigation }) => {
               <Text style={styles.buttonText} >Your Account</Text>
             </TouchableOpacity>
           )}
-          <TouchableOpacity style={styles.button} >
+          <TouchableOpacity style={styles.button} onPress={()=>navigation.navigate("Cart")}>
             <Text style={styles.buttonText}>Your Cart</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.button} >
             <Text style={styles.buttonText}>Support</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.button} >
+          <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("Resetpass")}>
             <Text style={styles.buttonText}>Reset Password</Text>
           </TouchableOpacity>
         </View>

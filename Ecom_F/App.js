@@ -18,6 +18,8 @@ import Menswear from './Pages/Menswear';
 import BottomBar from './Pages/BottomBar';
 import Womenswear from './Pages/Womenswear';
 import Groceries from './Pages/Groceries';
+import Order from './Pages/orders';
+import ResetPasswordScreen from './Pages/Resetpassword';
 import Sproduct from './Pages/Singleproduct';
 import AllProduct from './Pages/Allproducts';
 import Dashboard from './Pages/Dashboard';
@@ -32,7 +34,7 @@ import { AppRegistry } from 'react-native';
 import { name as appName } from './app.json';
 import { UserProvider } from './Pages/UserContext';
 import React from 'react';
- 
+
 
 const Stack = createStackNavigator();
 
@@ -42,6 +44,7 @@ export default function App() {
     <UserProvider>
       <NavigationContainer>
         <Stack.Navigator initialRouteName="Login">
+          <Stack.Screen name="Order" component={Order} options={{headerShown: false}} />
           <Stack.Screen name="Signup" component={SignUpScreen} options={{ headerShown: false }} />
           <Stack.Screen name="Signup2" component={SignUp2Screen} options={{ headerShown: false }} />
           <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
@@ -64,15 +67,16 @@ export default function App() {
           <Stack.Screen name="AProduct" component={AllProduct} options={{ headerShown: false }} />
           <Stack.Screen name="Filter" component={Filter} options={{ headerShown: false }} />
           <Stack.Screen name="Dashboard" component={Dashboard} options={{ headerShown: false }} />
-          <Stack.Screen name="Cart" component={Cart} options={{ headerShown: false }} />
+          <Stack.Screen name="Cart" component={Cart} options={{ headerShown: false }} />  
           <Stack.Screen name="Gifts" component={Gifts} options={{ headerShown: false }} />
           <Stack.Screen name="User" component={User} options={{ headerShown: false }} />
           <Stack.Screen name="Manager1" component={Manager1} options={{ headerShown: false }} />
           <Stack.Screen name="Manager2" component={Manager2} options={{ headerShown: false }} />
           <Stack.Screen name="BottomBar" component={BottomBar} />
+          <Stack.Screen name="Resetpass" component={ResetPasswordScreen} options={{ headerShown: false }} />
         </Stack.Navigator>
       </NavigationContainer>
-      </UserProvider>
+    </UserProvider>
 
   );
 }

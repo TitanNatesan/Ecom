@@ -22,6 +22,8 @@ const Signup2Screen = ({ navigation }) => {
     const [addressLine2, setAddressLine2] = useState('');
     const [cityName, setCityName] = useState('');
     const [pincode, setPincode] = useState('');
+    const [errorMessage, setErrorMessage] = useState(null);
+
 
     const navLogin = () => {
         updateUserID(username); 
@@ -60,12 +62,15 @@ const Signup2Screen = ({ navigation }) => {
                 navLogin();
             }
             else {
+                setErrorMessage(response.data['message']);
                 navigation.navigate('Signup');
             }
         }
         catch (error) {
             // Handle errors, e.g., display an error message to the user
             console.error('Signup failed:', error.message);
+            setErrorMessage(error.message);
+
         }
     };
 
@@ -76,6 +81,9 @@ const Signup2Screen = ({ navigation }) => {
             </View>
             <View style={styles.allsignup}>
                 <Text style={styles.signupText}>Sign up</Text>
+                {errorMessage && (
+                    <Text style={styles.errorText}>{errorMessage}</Text>
+                )}
                 <View style={styles.inputContainer}>
                     <Text>Name:</Text>
                     <TextInput
@@ -197,6 +205,12 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         margin: 20,
         padding: 20,
+    },
+    errorText: {
+        color: "red",
+        fontSize: 16,
+        textAlign: "center",
+        marginTop: 10,
     },
     welcome: {
         position: 'absolute',

@@ -6,109 +6,24 @@ import { faUsersViewfinder, faMapMarkerAlt, faCheckCircle, faMagnifyingGlass } f
 import BottomBar from './BottomBar';
 import axios from "axios";
 import { useUserContext } from "./UserContext";
- 
-const Cart = ({ navigation }) => {
-    const [refreshKey, setRefreshKey] = useState(0);
+
+const Order = ({ navigation }) => {
     const [cartData, setCartData] = useState("");
-    const [cartItem, setCartItem] = useState("");
-    const [productIds, setPI] = useState([]);
     const [allProducts, setAllProducts] = useState([]); // Use state to store fetched products
-    const { userID,BASE_URL } = useUserContext();
+    const { userID, BASE_URL } = useUserContext();
 
     useEffect(() => {
-        const fetchCartData = async () => {
-            try {
-                const response = await axios.get(`${BASE_URL}/api/cart/${userID}/`);
-                setCartData(response.data);
-                setCartItem(response.data['cart_items']);
-                setPI(response.data.cart_items.map(item => item.product_id));
-
-            } catch (error) {
-                console.error('Error fetching cart data:', error);
-            }
-        };
-
-        fetchCartData();
-    }, [userID,refreshKey]);
-
-    const fetchProducts = async (productIds) => {
-        try {
-            const productData = [];
-            var temp = '';
-            for (let productId of productIds) {
-                const response = await axios.get(`${BASE_URL}/api/product/${productId}/`);
-                temp = response.data;
-                temp['inCart'] = 0;
-                for (let i of cartItem) {
-                    if (i['product_id'] == productId) {
-                        temp['inCart'] = i['quantity'];
-                    }
-                }
-                productData.push(temp);
-            }
-
-            console.log("Success");
-            console.log(productData)
-            return productData;
-
-        } catch (error) {
-            console.log("Failed to load data");
-            console.error('Error fetching products:', error);
-            return null; // Handle the error appropriately in your application
+        const fetchData = async() =>{
+            const response = await axios.post(`${BASE_URL}/api/getorder/`, { username: userID }, {headers: {'Content-Type': 'application/json',}})
+            setAllProducts(response.data);
         }
-    };
+        fetchData();
+    }, [BASE_URL,userID]);
 
-    useEffect(() => {
-        const fetchAllProducts = async () => {
-            if (productIds.length > 0) {
-                const products = await fetchProducts(productIds);
-                setAllProducts(products);
-            }
-        };
-
-        fetchAllProducts();
-    }, [productIds,refreshKey]);
-
-
+    
     const goToPaymentPage = (product) => {
-        navigation.navigate('Payment',{product});
+        navigation.navigate('Payment', { product });
     };
-
-    const handleDelete = async (userID, product_id) => {
-        try {
-            const response = await axios.post(`${BASE_URL}/api/updateCart/-/`, {
-                username: userID, 
-                product_id: product_id,
-            }, {
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
-            console.log("Deleted");
-            setRefreshKey(prevKey => prevKey + 1);
-        } catch (error) {
-            console.log("Unable To Update", error);
-        }
-    };
-
-    const handleAdd = async (userID, product_id) => {
-        try {
-            const response = await axios.post(`${BASE_URL}/api/updateCart/+/`, {
-                username: userID,
-                product_id: product_id,
-            }, {
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
-            console.log("Added")
-            setRefreshKey(prevKey => prevKey + 1);
-        } catch (error) {
-            console.log("Unable To Update", error);
-        }
-    };
-
-
 
     return (
         <View style={styles.containerw}>
@@ -121,52 +36,25 @@ const Cart = ({ navigation }) => {
                     </View>
                 </View>
 
-                <View style={{ flexDirection: 'row', alignItems: 'center', margin: 10, }}>
-                    <FontAwesomeIcon icon={faMapMarkerAlt} size={30} color="#003478" />
-                    <Text style={{ color: '#003478' }}>Deliver to Customer Name - Chennai  600087</Text>
-                </View>
-                <Text style={{ marginLeft: 10, }}>Total <Text style={{ fontWeight: '900' }}> ₹{cartData.cart_total}</Text></Text>
-                <Text style={{ marginLeft: 10, }}>EMI Available<Text style={{ color: '#003478', }}> Details.</Text></Text>
-                <View style={{ flexDirection: 'row', margin: 20, alignItems: 'center', justifyContent: 'center' }}>
-                    <FontAwesomeIcon style={{ marginRight: 10 }} icon={faCheckCircle} color='green' size={30} />
-                    <Text>Your order is eligible for FREE Delivery. </Text>
-                </View>
-                <View style={{ alignItems: 'center' }}>
-                    <TouchableOpacity onPress={goToPaymentPage} >
-                        <Text style={{ backgroundColor: '#003478', borderRadius: 10, padding: 10, paddingHorizontal: 40, color: 'white', textAlign: 'center' }}>
-                            Proceed to Buy
-                        </Text>
-                    </TouchableOpacity>
-                </View>
-
                 <View style={styles.cont}>
                     {allProducts.reverse().map((product) => (
 
-                        <View key={product.product_id} style={styles.productContainer}>
+                        <View key={product.order_id} style={styles.productContainer}>
                             <View style={styles.leftContainer}>
-                                <Image style={styles.productImage} source={{uri: product.images}} />
-                                <View style={styles.productCountContainer}>
-                                    <TouchableOpacity onPress={() => handleDelete(userID, product.product_id)} style={styles.deleteButton}>
-                                        <Icon name="trash-o" size={15} color="black" />
-                                    </TouchableOpacity>
-                                    <Text style={styles.productCountText}>{product.inCart}</Text>
-                                    <TouchableOpacity onPress={() => handleAdd(userID, product.product_id)} style={styles.countButton}>
-                                        <Text style={styles.sbuttonText}>+</Text>
-                                    </TouchableOpacity>
-                                </View>
+                                <Image style={styles.productImage} source={{ uri: BASE_URL+product.images }} />
+                              
                             </View>
                             <View style={styles.rightContainer}>
                                 <Text style={styles.productName}>{product.name}</Text>
                                 <View style={styles.productDetailoffcont}>
-                                    <Text style={styles.productDetailoff}>{product.discount}% off</Text>
+                                    <Text style={styles.productDetailoff}>{product.quantity}</Text>
                                 </View>
-                                <Text style={styles.productDetailpri}>₹{product.sellingPrice * product.inCart}</Text>
-                                {product.freeDelivery && <Text style={styles.productDetaildel}>Eligible for FREE Delivery</Text>}
+                                <Text style={styles.productDetailpri}>₹{product.total_cost}</Text>
                                 {product.freestock && <Text style={styles.productDetailst}>In Stock</Text>}
-                                <TouchableOpacity onPress={() => goToPaymentPage(product)}>
-                                    <Text  style={styles.buyNowBut}>Buy Now</Text>
+                                <TouchableOpacity onPress={() => navigation.navigate('TrackOrder')}>
+                                    <Text style={styles.buyNowBut}>Track Order</Text>
                                 </TouchableOpacity>
-                            </View> 
+                            </View>
                         </View>
                     ))}
                 </View>
@@ -178,15 +66,15 @@ const Cart = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-     buyNowBut: {
-        width:100,
+    buyNowBut: {
+        width: 100,
         backgroundColor: '#003478',
         borderRadius: 16,
         padding: 13,
         alignItems: 'center',
-        color:"white",
+        color: "white",
         marginTop: 8,
-        textAlign:"center",
+        textAlign: "center",
     },
     containerw: {
         flex: 1,
@@ -309,7 +197,7 @@ const styles = StyleSheet.create({
     rightContainer: {
         width: '60%',
         marginLeft: 25,
-        marginTop:15,
+        marginTop: 15,
     },
     productImage: {
         width: '100%',
@@ -374,8 +262,8 @@ const styles = StyleSheet.create({
     productCountText: {
         fontSize: 18,
         fontWeight: 'bold',
-        textAlign:"justify",
-        marginHorizontal:10,
+        textAlign: "justify",
+        marginHorizontal: 10,
     },
     sbuttonText: {
         color: 'black',
@@ -452,4 +340,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default Cart;
+export default Order;

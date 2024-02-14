@@ -29,6 +29,7 @@ const SignupScreen = ({ navigation }) => {
     const [isChecked, setChecked] = useState(false);
     const [referal, setReferal] = useState("");
     const [password, setPass] = useState("");
+    const [errorMessage, setErrorMessage] = useState(null);
     const [username, setUsername] = useState("");
     const [reEnterPassword, setReEnterPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
@@ -75,6 +76,7 @@ const SignupScreen = ({ navigation }) => {
                 handleSignup2(referal, username, password);
             } else {
                 navigation.navigate("Signup");
+                setErrorMessage(response.data['message']);
             }
         } catch (error) {
             // Handle errors, e.g., display an error message to the user
@@ -89,6 +91,9 @@ const SignupScreen = ({ navigation }) => {
                     <Text style={styles.text}>Sign up</Text>
                     
                 </View>
+                {errorMessage && (
+                    <Text style={styles.errorText}>{errorMessage}</Text>
+                )}
                 <View style={styles.inputContainer}>
                     <TextInput
                         style={styles.input}
@@ -135,17 +140,20 @@ const SignupScreen = ({ navigation }) => {
                 <View style={styles.inputContainer}>
                     <TextInput
                         style={styles.input}
-                        placeholder="Re - Enter Password"
-                        secureTextEntry={true}
+                        placeholder="Re-Enter Password"
+                        secureTextEntry={!showPassword}
                         onChangeText={(text) => setReEnterPassword(text)}
                     />
-                    <FontAwesomeIcon
-                        icon={faLock}
-                        size={20}
-                        color="black"
-                        style={styles.icon}
-                    />
+                    <TouchableOpacity onPress={toggleShowPassword}>
+                        <FontAwesomeIcon
+                            icon={showPassword ? faEye : faEyeSlash}
+                            size={20}
+                            color="black"
+                            style={styles.icon}
+                        />
+                    </TouchableOpacity>
                 </View>
+
                 <View style={styles.checkboxContainer}>
                     <CheckBox
                         checked={isChecked}
@@ -154,7 +162,7 @@ const SignupScreen = ({ navigation }) => {
                     <Text style={styles.remember}>Remember Password </Text>
                 </View>
                 <TouchableOpacity onPress={handleSignup} style={styles.loginButton}>
-                    <Text style={styles.loginButtonText}>Create New Account</Text>
+                    <Text style={styles.loginButtonText}>Sign Up</Text>
                 </TouchableOpacity>
                 <View
                     onPress={handleLoginPress}
@@ -187,7 +195,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#1977F3",
         padding: 10,
         borderRadius: 10,
-        width: 150,
+        width: 100,
         alignSelf: "center",
         marginTop: 30,
     },
@@ -210,7 +218,12 @@ const styles = StyleSheet.create({
         justifyContent: "space-center",
         marginVertical: 10,
     },
-
+    errorText: {
+        color: "red",
+        fontSize: 16,
+        textAlign: "center",
+        marginTop: 10,
+    },
     container: {
         flex: 1,
         backgroundColor: "#1977F3",

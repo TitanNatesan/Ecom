@@ -1,6 +1,6 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .serializer import Signup,ProductSerial, AddressSerial,UserSerial
+from .serializer import Signup,ProductSerial, AddressSerial,UserSerial,OrderSerializer,OrderDetailSerializer
 from .models import Users, Products, Address,EachItem,Cart,Orders
 from rest_framework import status,generics
 from django.db.models import Q
@@ -20,11 +20,14 @@ def login(request):   # {"username":"TitanNatesan","password":"1234567890"}
     if request.method == "POST":
         username = request.data.get('username')
         password = request.data.get('password')
-        user = Users.objects.filter(username=username, password=password).first()
-        if user:
-            return Response(1)
-        else:
-            return Response({'message': 'Login failed'}, status=status.HTTP_401_UNAUTHORIZED)
+        try:
+            user = Users.objects.get(username=username, password=password)
+            if user:
+                return Response(1)
+            else:
+                return Response({'message': 'Login failed'}, status=status.HTTP_401_UNAUTHORIZED)
+        except Users.DoesNotExist:
+            return Response({"message":"Invalid Credentials"})
         
 
 @api_view(["POST"])
@@ -34,7 +37,7 @@ def signup1(request):   # {"username":"natesan","password":"12345678","referal":
         try:
             referal = Users.objects.get(username=data['referal'])
         except Users.DoesNotExist:
-            return Response("Referal Dosent Exist")
+            return Response({'message':"Referal Dosent Exist"})
         if data.get('username') and data.get('password') and data.get('referal'):
             return Response(1)
         return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -50,7 +53,7 @@ def signup(request):
         try:
             referal = Users.objects.get(username=data['referal'])
         except Users.DoesNotExist:
-            return Response("Referal Doesnt Exist")
+            return Response({'message':"Referal Dosent Exist"})
         
         if user_serializer.is_valid() and address_serializer.is_valid():
             user_instance = user_serializer.save()
@@ -65,7 +68,7 @@ def signup(request):
             referal.down_leaf.add(user)
             referal.save()
             return Response(1)
-        return Response({"error": "Invalid data provided."}, status=400)
+        return Response({"message": "Invalid data provided."}, status=400)
 
 
 @api_view(["POST",'GET'])
@@ -247,7 +250,6 @@ def placeOrder(request):
             return Response({"detail": "Cart Not Found"}, status=status.HTTP_404_NOT_FOUND)
         
         allOrders = Orders.objects.all()
-        print(request.data)
         each = EachItem.objects.get(user=user,product=product)
         order = Orders.objects.create(user=user,order_id=str(user.username)+getDateAndTime())
         order.ordered_product = product
@@ -374,10 +376,8 @@ def viewProduct(request, pi):
     if request.method == "GET":
         product = get_object_or_404(Products, product_id=pi)
         
-        # Get the absolute URL for the product image
         image_url = request.build_absolute_uri(product.images.url)
         
-        # Add the absolute image URL to the product data
         product_data = {
             "product_id": product.product_id,
             "name": product.name,
@@ -404,7 +404,6 @@ def viewProduct(request, pi):
 def viewProducts(request):
     products = Products.objects.all()
     
-    # Get the absolute URL for each product image
     product_data_list = []
     for product in products:
         image_url = request.build_absolute_uri(product.images.url)
@@ -456,3 +455,39 @@ def generate_and_send_otp(request):
         request.session['otp'] = otp
         return Response("OTP sent successfully. Check your email.")
     return Response(0)
+
+
+@api_view(["POST"])
+def getOrder(request):
+    if request.method == "POST":
+        try:
+            user = Users.objects.get(username=request.data['username'])
+            orders = Orders.objects.filter(user=user)
+            products = [i.ordered_product for i in orders]
+
+            order_data = []
+            for order, product in zip(orders, products):
+                order_dict = {
+                    "order_id": order.order_id,
+                    "quantity": order.quantity,
+                    "delivery_charges": order.delivery_charges,
+                    "total_cost": order.total_cost,
+                    "ordered_date": order.ordered_date,
+                    "delivery_type": order.delivery_type,
+                    "status": order.status,
+                    "payment_method": order.payment_method,
+                    "expected_delivery": order.expected_delivery,
+                    "name": product.name,
+                    "description": product.description,
+                    "images": product.images.url if product.images else None,  # Adjust based on your model
+                    "mrp": product.mrp,
+                    "discount": product.discount,
+                    "sellingPrice": product.sellingPrice,
+                }
+                order_data.append(order_dict)
+
+            return Response(order_data)
+        except Users.DoesNotExist:
+            return Response("User not found")
+        except Orders.DoesNotExist:
+            return Response({"message": "No Order Placed"})

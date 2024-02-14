@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
     width: "95%",
     marginRight: "2%",
     marginBottom: 20,
-    backgroundColor: "#FF7F7F88",
+    backgroundColor: "#F7F7F7",
     opacity: 1,
     borderRadius: 1,
     borderWidth: 1,

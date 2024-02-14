@@ -19,7 +19,7 @@ import {
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import BottomBar from "../Pages/BottomBar";
-import ProductItem from "../Pages/ProductItem";
+import GiftProductItem from "../Pages/Giftproductitem";
 import FilterPage from "../Pages/Filter";
 import axios from "axios";
 import { useRoute } from "@react-navigation/native";
@@ -114,7 +114,7 @@ const Gifts = ({ navigation }) => {
       fetchProducts();
     }
   }, [item]);
-
+  console.log("Gifts page")
   return (
     <View style={styles.containerw}>
       <ScrollView vertical showsVerticalScrollIndicator={false}>
@@ -134,11 +134,11 @@ const Gifts = ({ navigation }) => {
                   handleSearch(text), setSearchQuery(text);
                 }}
               />
-              <FontAwesomeIcon
+              {/* <FontAwesomeIcon
                 icon={faUsersViewfinder}
                 size={20}
                 color="black"
-              />
+              /> */}
             </View>
             <StatusBar style="dark-content" />
           </View>
@@ -154,16 +154,16 @@ const Gifts = ({ navigation }) => {
                     setSelectedCategory(
                       item.text === "Gifts" ? "Gifts" : null
                     );
-                    navigation.navigate("AProduct", { item });
+                    // navigation.navigate("AProduct", { item });
                   }}
                 >
                   <View
                     style={[
                       styles.product,
                       item.text === "Gifts" && {
-                        backgroundColor: selectedCategory === "Gifts" ? "#1977F33A" : "#FF7272",
-                        borderTopEndRadius:10,
-                        borderBottomEndRadius:10,
+                        backgroundColor: selectedCategory === "Gifts" ? "#FF7272" : "#FF7272",
+                        borderTopEndRadius: 10,
+                        borderBottomEndRadius: 10,
                       },
                     ]}
                   >
@@ -191,7 +191,7 @@ const Gifts = ({ navigation }) => {
                 style={styles.productItem}
                 onPress={() => handleProductPress(product, index)}
               >
-                <ProductItem product={product} />
+                <GiftProductItem product={product} />
               </TouchableOpacity>
             ))}
           </View>
