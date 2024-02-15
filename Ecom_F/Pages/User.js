@@ -9,8 +9,10 @@ import {
   TextInput,
 } from 'react-native';
 import BottomBar from './BottomBar';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import axios from 'axios';
 import { useUserContext } from './UserContext';
+import { faHome, faBars, faShoppingCart, faUser } from '@fortawesome/free-solid-svg-icons';
 
 const userimg = require("../Streetmall/Dashboard/ICON2.png");
 
@@ -138,7 +140,7 @@ const User = ({ navigation }) => {
               <Text style={styles.buttonText} >Your Account</Text>
             </TouchableOpacity>
           )}
-          <TouchableOpacity style={styles.button} onPress={()=>navigation.navigate("Cart")}>
+          <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("Cart")}>
             <Text style={styles.buttonText}>Your Cart</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.button} >
@@ -180,7 +182,29 @@ const User = ({ navigation }) => {
 
       </ScrollView>
 
-      <BottomBar navigation={navigation} />
+      <View style={styles.navbar}>
+        <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+          <View style={[styles.navbarIcon, styles.navbarIconHome1]}>
+            <FontAwesomeIcon icon={faHome} size={25} color={'#1977F3'} />
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('Category')}>
+          <View style={[styles.navbarIcon, styles.navbarIconHome1]}>
+            <FontAwesomeIcon icon={faBars} size={20} color={'#1977F3'} />
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('Cart')}>
+          <View style={[styles.navbarIcon, styles.navbarIconHome1]}>
+            <FontAwesomeIcon icon={faShoppingCart} size={20} color={'#1977F3'} />
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('User')}>
+          <View style={[styles.navbarIcon, styles.navbarIconHome]}>
+            <FontAwesomeIcon icon={faUser} size={20} color={'white'} />
+          </View>
+        </TouchableOpacity>
+      </View>
+      {/* Blue Bar */}
       <View style={styles.blueBar}></View>
     </View>
   );
@@ -213,6 +237,43 @@ const styles = StyleSheet.create({
   containerw: {
     flex: 1,
     backgroundColor: '#ffffff',
+  },
+  navbar: {
+    position: 'absolute',
+    bottom: 0,
+    width: '100%',
+    height: '8%',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    backgroundColor: 'white',
+    paddingBottom: '5%',
+    elevation: 10,
+  },
+  navbarIcon: {
+    width: 15,
+    height: 15,
+    tintColor: '#1977F3',
+  },
+  navbarIconHome: {
+    backgroundColor: '#1977F3',
+    width: 60,
+    height: 60,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderTopLeftRadius: -10,
+    borderBottomRightRadius: 21,
+    borderBottomLeftRadius: 21,
+    elevation: 5,
+  },
+  navbarIconHome1: {
+    width: 60,
+    height: 60,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderTopLeftRadius: -10,
+    borderBottomRightRadius: 21,
+    borderBottomLeftRadius: 21,
   },
   blueBar: {
     backgroundColor: '#1977F3',

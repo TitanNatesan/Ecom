@@ -39,7 +39,7 @@ const BottomBar = ({ navigation, initialPage }) => {
       </TouchableOpacity>
     </View>
   );
-};
+};  ``
 
 const styles = StyleSheet.create({
   navbar: {

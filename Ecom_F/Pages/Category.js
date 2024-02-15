@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import BottomBar from './BottomBar';
 const backl = require("../Streetmall/1Home/lg.png");
+import { faHome, faBars, faShoppingCart, faUser } from '@fortawesome/free-solid-svg-icons';
 
 
 
@@ -88,9 +89,28 @@ const Category = ({ navigation }) => {
                 </View>
                 <Text> {'\n'} </Text><Text> {'\n'} </Text><Text> {'\n'} </Text>
             </ScrollView>
-            {/* Bottom Bar */}
-            <BottomBar navigation={navigation} initialPage="Category" />
-
+            <View style={styles.navbar}>
+                <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+                    <View style={[styles.navbarIcon, styles.navbarIconHome1]}>
+                        <FontAwesomeIcon icon={faHome} size={25} color={'#1977F3'} />
+                    </View>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => navigation.navigate('Category')}>
+                    <View style={[styles.navbarIcon, styles.navbarIconHome]}>
+                        <FontAwesomeIcon icon={faBars} size={20} color={'white'} />
+                    </View>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => navigation.navigate('Cart')}>
+                    <View style={[styles.navbarIcon, styles.navbarIconHome1]}>
+                        <FontAwesomeIcon icon={faShoppingCart} size={20} color={'#1977F3'} />
+                    </View>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => navigation.navigate('User')}>
+                    <View style={[styles.navbarIcon, styles.navbarIconHome1]}>
+                        <FontAwesomeIcon icon={faUser} size={20} color={'#1977F3'} />
+                    </View>
+                </TouchableOpacity>
+            </View>
             {/* Blue Bar */}
             <View style={styles.blueBar}></View>
         </View>
@@ -117,6 +137,43 @@ const styles = StyleSheet.create({
     },
     all: {
         backgroundColor: '#D3E6FD',
+    },
+    navbar: {
+        position: 'absolute',
+        bottom: 0,
+        width: '100%',
+        height: '8%',
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        alignItems: 'center',
+        backgroundColor: 'white',
+        paddingBottom: '5%',
+        elevation: 10,
+    },
+    navbarIcon: {
+        width: 15,
+        height: 15,
+        tintColor: '#1977F3',
+    },
+    navbarIconHome: {
+        backgroundColor: '#1977F3',
+        width: 60,
+        height: 60,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderTopLeftRadius: -10,
+        borderBottomRightRadius: 21,
+        borderBottomLeftRadius: 21,
+        elevation: 5,
+    },
+    navbarIconHome1: {
+        width: 60,
+        height: 60,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderTopLeftRadius: -10,
+        borderBottomRightRadius: 21,
+        borderBottomLeftRadius: 21,
     },
     category: {
         backgroundColor: '#FFAC2F',
@@ -173,7 +230,7 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         margin: 'auto',
         color: "#000",
-        
+
 
     },
     productImage: {

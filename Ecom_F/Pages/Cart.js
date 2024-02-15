@@ -6,14 +6,15 @@ import { faUsersViewfinder, faMapMarkerAlt, faCheckCircle, faMagnifyingGlass } f
 import BottomBar from './BottomBar';
 import axios from "axios";
 import { useUserContext } from "./UserContext";
- 
+import { faHome, faBars, faShoppingCart, faUser } from '@fortawesome/free-solid-svg-icons';
+
 const Cart = ({ navigation }) => {
     const [refreshKey, setRefreshKey] = useState(0);
     const [cartData, setCartData] = useState("");
     const [cartItem, setCartItem] = useState("");
     const [productIds, setPI] = useState([]);
     const [allProducts, setAllProducts] = useState([]); // Use state to store fetched products
-    const { userID,BASE_URL } = useUserContext();
+    const { userID, BASE_URL } = useUserContext();
 
     useEffect(() => {
         const fetchCartData = async () => {
@@ -29,7 +30,7 @@ const Cart = ({ navigation }) => {
         };
 
         fetchCartData();
-    }, [userID,refreshKey]);
+    }, [userID, refreshKey]);
 
     const fetchProducts = async (productIds) => {
         try {
@@ -67,17 +68,17 @@ const Cart = ({ navigation }) => {
         };
 
         fetchAllProducts();
-    }, [productIds,refreshKey]);
+    }, [productIds, refreshKey]);
 
 
     const goToPaymentPage = (product) => {
-        navigation.navigate('Payment',{product});
+        navigation.navigate('Payment', { product });
     };
 
     const handleDelete = async (userID, product_id) => {
         try {
             const response = await axios.post(`${BASE_URL}/api/updateCart/-/`, {
-                username: userID, 
+                username: userID,
                 product_id: product_id,
             }, {
                 headers: {
@@ -144,7 +145,7 @@ const Cart = ({ navigation }) => {
 
                         <View key={product.product_id} style={styles.productContainer}>
                             <View style={styles.leftContainer}>
-                                <Image style={styles.productImage} source={{uri: product.images}} />
+                                <Image style={styles.productImage} source={{ uri: product.images }} />
                                 <View style={styles.productCountContainer}>
                                     <TouchableOpacity onPress={() => handleDelete(userID, product.product_id)} style={styles.deleteButton}>
                                         <Icon name="trash-o" size={15} color="black" />
@@ -164,29 +165,88 @@ const Cart = ({ navigation }) => {
                                 {product.freeDelivery && <Text style={styles.productDetaildel}>Eligible for FREE Delivery</Text>}
                                 {product.freestock && <Text style={styles.productDetailst}>In Stock</Text>}
                                 <TouchableOpacity onPress={() => goToPaymentPage(product)}>
-                                    <Text  style={styles.buyNowBut}>Buy Now</Text>
+                                    <Text style={styles.buyNowBut}>Buy Now</Text>
                                 </TouchableOpacity>
-                            </View> 
+                            </View>
                         </View>
                     ))}
                 </View>
             </ScrollView>
-            <BottomBar navigation={navigation} />
+            <View style={styles.navbar}>
+                <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+                    <View style={[styles.navbarIcon, styles.navbarIconHome1]}>
+                        <FontAwesomeIcon icon={faHome} size={25} color={'#1977F3'} />
+                    </View>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => navigation.navigate('Category')}>
+                    <View style={[styles.navbarIcon, styles.navbarIconHome1]}>
+                        <FontAwesomeIcon icon={faBars} size={20} color={'#1977F3'} />
+                    </View>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => navigation.navigate('Cart')}>
+                    <View style={[styles.navbarIcon, styles.navbarIconHome]}>
+                        <FontAwesomeIcon icon={faShoppingCart} size={20} color={'white'} />
+                    </View>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => navigation.navigate('User')}>
+                    <View style={[styles.navbarIcon, styles.navbarIconHome1]}>
+                        <FontAwesomeIcon icon={faUser} size={20} color={'#1977F3'} />
+                    </View>
+                </TouchableOpacity>
+            </View>
+            {/* Blue Bar */}
             <View style={styles.blueBar}></View>
         </View>
     );
 };
 
 const styles = StyleSheet.create({
-     buyNowBut: {
-        width:100,
+    buyNowBut: {
+        width: 100,
         backgroundColor: '#003478',
         borderRadius: 16,
         padding: 13,
         alignItems: 'center',
-        color:"white",
+        color: "white",
         marginTop: 8,
-        textAlign:"center",
+        textAlign: "center",
+    },
+    navbar: {
+        position: 'absolute',
+        bottom: 0,
+        width: '100%',
+        height: '8%',
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        alignItems: 'center',
+        backgroundColor: 'white',
+        paddingBottom: '5%',
+        elevation: 10,
+    },
+    navbarIcon: {
+        width: 15,
+        height: 15,
+        tintColor: '#1977F3',
+    },
+    navbarIconHome: {
+        backgroundColor: '#1977F3',
+        width: 60,
+        height: 60,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderTopLeftRadius: -10,
+        borderBottomRightRadius: 21,
+        borderBottomLeftRadius: 21,
+        elevation: 5,
+    },
+    navbarIconHome1: {
+        width: 60,
+        height: 60,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderTopLeftRadius: -10,
+        borderBottomRightRadius: 21,
+        borderBottomLeftRadius: 21,
     },
     containerw: {
         flex: 1,
@@ -309,7 +369,7 @@ const styles = StyleSheet.create({
     rightContainer: {
         width: '60%',
         marginLeft: 25,
-        marginTop:15,
+        marginTop: 15,
     },
     productImage: {
         width: '100%',
@@ -374,8 +434,8 @@ const styles = StyleSheet.create({
     productCountText: {
         fontSize: 18,
         fontWeight: 'bold',
-        textAlign:"justify",
-        marginHorizontal:10,
+        textAlign: "justify",
+        marginHorizontal: 10,
     },
     sbuttonText: {
         color: 'black',
