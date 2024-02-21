@@ -8,7 +8,6 @@ import {
   TouchableOpacity,
   TextInput,
 } from 'react-native';
-import BottomBar from './BottomBar';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import axios from 'axios';
 import { useUserContext } from './UserContext';
@@ -17,7 +16,7 @@ import { faHome, faBars, faShoppingCart, faUser } from '@fortawesome/free-solid-
 const userimg = require("../Streetmall/Dashboard/ICON2.png");
 
 const User = ({ navigation }) => {
-  const { userID, updateUserID, BASE_URL } = useUserContext();
+  const { userID, updateUserID, BASE_URL,setLogin } = useUserContext();
   const [userData, setUserData] = useState({
     name: "",
     phone: "",
@@ -116,8 +115,9 @@ const User = ({ navigation }) => {
   }
 
   const logout = () => {
-    navigation.navigate('Login');
     updateUserID("");
+    setLogin(false);
+    navigation.navigate('Login', { screen: 'SignInScreen' });    
   }
 
   return (

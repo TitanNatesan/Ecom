@@ -134,8 +134,7 @@ const Cart = ({ navigation }) => {
                 </View>
                 <View style={{ alignItems: 'center' }}>
                     <TouchableOpacity onPress={goToPaymentPage} >
-                        <Text style={{ backgroundColor: '#003478', borderRadius: 10, padding: 10, paddingHorizontal: 40, color: 'white', textAlign: 'center' }}>
-                            Proceed to Buy
+                        <Text style={{ backgroundColor: 'transparent', borderRadius: 10, padding: 10, paddingHorizontal: 40, color: 'white', textAlign: 'center' }}>
                         </Text>
                     </TouchableOpacity>
                 </View>

@@ -10,7 +10,7 @@ import { useUserContext } from './UserContext';
 library.add(faCircleRight, faUser);
 
 const Signup2Screen = ({ navigation }) => {
-    const { userID, updateUserID,BASE_URL } = useUserContext();
+    const { userID, updateUserID,BASE_URL,setLogin } = useUserContext();
 
     const route = useRoute();
     const { referal, username, password } = route.params;
@@ -27,6 +27,7 @@ const Signup2Screen = ({ navigation }) => {
 
     const navLogin = () => {
         updateUserID(username); 
+        setLogin(true);
         navigation.navigate('Home', { username });
     };
 
@@ -50,6 +51,11 @@ const Signup2Screen = ({ navigation }) => {
     };
     const handleSignup2 = async () => {
         console.log("buttonTapped")
+        if (!name || !email || !mobileNumber || !door_number || !addressLine1 || !addressLine2 || !cityName || !pincode) {
+            setErrorMessage("All Fields are Required to fill");
+            return;
+        }
+
         try {
             const response = await axios.post(`${BASE_URL}/api/signup/`, reqData,
                 {
@@ -60,17 +66,12 @@ const Signup2Screen = ({ navigation }) => {
             console.log('Request Sent:', response.data);
             if (response.data == "1") {
                 navLogin();
-            }
-            else {
+            } else {
                 setErrorMessage(response.data['message']);
-                navigation.navigate('Signup');
             }
-        }
-        catch (error) {
-            // Handle errors, e.g., display an error message to the user
+        } catch (error) {
             console.error('Signup failed:', error.message);
             setErrorMessage(error.message);
-
         }
     };
 

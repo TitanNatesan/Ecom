@@ -1,15 +1,31 @@
 import React, { useState } from "react";
-import { StyleSheet, View, Image, Text, TextInput, StatusBar, ScrollView, TouchableOpacity, ImageBackground } from "react-native";
-import { faMagnifyingGlass, faUsersViewfinder } from "@fortawesome/free-solid-svg-icons";
+import {
+  StyleSheet,
+  View,
+  Image,
+  Text,
+  TextInput,
+  StatusBar,
+  ScrollView,
+  TouchableOpacity,
+} from "react-native";
+import {
+  faMagnifyingGlass,
+  faUsersViewfinder,
+} from "@fortawesome/free-solid-svg-icons";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import Carousel, { Pagination } from 'react-native-snap-carousel';
-import { Dimensions } from 'react-native';
-import BottomBar from './BottomBar';
+import Carousel, { Pagination } from "react-native-snap-carousel";
+import { Dimensions } from "react-native";
 import { useRoute } from "@react-navigation/native";
-import { faHome, faBars, faShoppingCart, faUser } from '@fortawesome/free-solid-svg-icons';
+import {
+  faHome,
+  faBars,
+  faShoppingCart,
+  faUser,
+} from "@fortawesome/free-solid-svg-icons";
 
-const { width: screenWidth } = Dimensions.get('window');
+const { width: screenWidth } = Dimensions.get("window");
 const giftbox = require("../Streetmall/1Home/gift.gif");
 const laptop = require("../Streetmall/1Home/Laptop.png");
 const mobile = require("../Streetmall/1Home/Mobiles.png");
@@ -21,33 +37,31 @@ const Offer = require("../assets/offer.png");
 const dress = require("../assets/dress.jpg");
 const shoe = require("../assets/shoe799.jpg");
 
-const Ac = require("../Streetmall/5Deals/app1.png")
-const fridge = require("../Streetmall/5Deals/app2.png")
-const MO = require("../Streetmall/5Deals/app3.png")
-const Washingmachine = require("../Streetmall/5Deals/app4.png")
-const Nike = require("../Streetmall/5Deals/nike.png")
-const Puma = require("../Streetmall/5Deals/puma.png")
-const Bata = require("../Streetmall/5Deals/bata.png")
-
-
+const Ac = require("../Streetmall/5Deals/app1.png");
+const fridge = require("../Streetmall/5Deals/app2.png");
+const MO = require("../Streetmall/5Deals/app3.png");
+const Washingmachine = require("../Streetmall/5Deals/app4.png");
+const Nike = require("../Streetmall/5Deals/nike.png");
+const Puma = require("../Streetmall/5Deals/puma.png");
+const Bata = require("../Streetmall/5Deals/bata.png");
 
 library.add(faMagnifyingGlass, faUsersViewfinder);
 
 const Home = ({ navigation }) => {
   const handleLoginPress = () => {
-    navigation.navigate('Category', { username });
+    navigation.navigate("Category", { username });
   };
   const route = useRoute();
   const username = route.params;
 
   const handleDealsPress = () => {
-    navigation.navigate('Deals', { username });
+    navigation.navigate("Deals", { username });
   };
 
   const [activeSlide, setActiveSlide] = useState(0);
 
   const carouselItems = [
-    { image: giftbox, text: "Gifts" },
+    { image: giftbox, text: "Special Products" },
     { image: mobile, text: "Mobiles" },
     { image: watch, text: "Watches" },
     { image: laptop, text: "Laptops" },
@@ -69,38 +83,59 @@ const Home = ({ navigation }) => {
 
   return (
     <View style={styles.containerw}>
-      <ScrollView style={{ marginBottom: "20%" }} vertical showsVerticalScrollIndicator={false}>
+      <ScrollView
+        style={{ marginBottom: "20%" }}
+        vertical
+        showsVerticalScrollIndicator={false}
+      >
         <View>
           <View style={styles.container}>
             <View style={styles.topbarinput}>
-              <FontAwesomeIcon icon={faMagnifyingGlass} size={20} color="black" />
-              <TextInput placeholder="Search Sunlight.in" style={styles.inputBox} onPressIn={() => navigation.navigate("AProduct", { item: { text: "" } })} />
+              <FontAwesomeIcon
+                icon={faMagnifyingGlass}
+                size={20}
+                color="black"
+              />
+              <TextInput
+                placeholder="Search Sunlight.in"
+                style={styles.inputBox}
+                onPressIn={() =>
+                  navigation.navigate("AProduct", { item: { text: "" } })
+                }
+              />
               {/* <FontAwesomeIcon icon={faUsersViewfinder} size={20} color="black" /> */}
             </View>
             <StatusBar style="dark-content" />
           </View>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             <View style={styles.productsbar}>
-              {carouselItems.map((item, index) => (
-                item.text === "Gifts" ? (
+              {carouselItems.map((item, index) =>
+                item.text === "Special Products" ? (
                   <View key={index} style={styles.productcont}>
-                    <TouchableOpacity onPress={() => navigation.navigate("Gifts", { item })} >
-                      <Image style={styles.productImagegt} source={item.image} />
+                    <TouchableOpacity
+                      onPress={() => navigation.navigate("Gifts", { item })}
+                    >
+                      <Image
+                        style={styles.productImagegt}
+                        source={item.image}
+                      />
                       <Text style={styles.protxtgt}>{item.text}</Text>
                     </TouchableOpacity>
                   </View>
                 ) : (
-                  <TouchableOpacity onPress={() => navigation.navigate("AProduct", { item })}>
+                  <TouchableOpacity
+                    onPress={() => navigation.navigate("AProduct", { item })}
+                  >
                     <View key={index} style={styles.product}>
                       <Image style={styles.productImage} source={item.image} />
                       <Text>{item.text}</Text>
                     </View>
                   </TouchableOpacity>
                 )
-              ))}
+              )}
             </View>
           </ScrollView>
-          <View style={{ marginTop: 20, }}>
+          <View style={{ marginTop: 20 }}>
             <Carousel
               data={carouselItems1}
               renderItem={renderCarouselItem}
@@ -121,7 +156,9 @@ const Home = ({ navigation }) => {
               inactiveDotScale={0.6}
             />
           </View>
-          <Text style={styles.applianceHeaderText}>Appliances for Home | up to 50 % off </Text>
+          <Text style={styles.applianceHeaderText}>
+            Appliances for Home | up to 50 % off{" "}
+          </Text>
           <View>
             <View style={styles.appliances}>
               <View style={styles.applianceContainer}>
@@ -133,7 +170,10 @@ const Home = ({ navigation }) => {
                 </TouchableOpacity>
                 <TouchableOpacity onPress={handleDealsPress}>
                   <View style={styles.individual}>
-                    <Image source={Washingmachine} style={styles.applianceImage} />
+                    <Image
+                      source={Washingmachine}
+                      style={styles.applianceImage}
+                    />
                     <Text style={styles.applianceText}>Washing Machine</Text>
                   </View>
                 </TouchableOpacity>
@@ -177,7 +217,12 @@ const Home = ({ navigation }) => {
                   </View>
                 </TouchableOpacity>
               </View>
-              <View style={[styles.applianceContainertop, { backgroundColor: '#E8F2FE' }]}>
+              <View
+                style={[
+                  styles.applianceContainertop,
+                  { backgroundColor: "#E8F2FE" },
+                ]}
+              >
                 <Text style={styles.topbrand}>Top Brands</Text>
                 <Image source={Nike} style={styles.nike} />
                 <Image source={Puma} style={styles.puma} />
@@ -196,24 +241,28 @@ const Home = ({ navigation }) => {
 
       {/* Bottom Bar */}
       <View style={styles.navbar}>
-        <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+        <TouchableOpacity onPress={() => navigation.navigate("Home")}>
           <View style={[styles.navbarIcon, styles.navbarIconHome]}>
-            <FontAwesomeIcon icon={faHome} size={25} color={'white'} />
+            <FontAwesomeIcon icon={faHome} size={25} color={"white"} />
           </View>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('Category')}>
+        <TouchableOpacity onPress={() => navigation.navigate("Category")}>
           <View style={[styles.navbarIcon, styles.navbarIconHome1]}>
-            <FontAwesomeIcon icon={faBars} size={20} color={'#1977F3'} />
+            <FontAwesomeIcon icon={faBars} size={20} color={"#1977F3"} />
           </View>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('Cart')}>
+        <TouchableOpacity onPress={() => navigation.navigate("Cart")}>
           <View style={[styles.navbarIcon, styles.navbarIconHome1]}>
-            <FontAwesomeIcon icon={faShoppingCart} size={20} color={'#1977F3'} />
+            <FontAwesomeIcon
+              icon={faShoppingCart}
+              size={20}
+              color={"#1977F3"}
+            />
           </View>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('User')}>
+        <TouchableOpacity onPress={() => navigation.navigate("User")}>
           <View style={[styles.navbarIcon, styles.navbarIconHome1]}>
-            <FontAwesomeIcon icon={faUser} size={20} color={'#1977F3'} />
+            <FontAwesomeIcon icon={faUser} size={20} color={"#1977F3"} />
           </View>
         </TouchableOpacity>
       </View>
@@ -226,50 +275,50 @@ const Home = ({ navigation }) => {
 const styles = StyleSheet.create({
   containerw: {
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: "#ffffff",
   },
   navbar: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 0,
-    width: '100%',
-    height: '8%',
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    backgroundColor: 'white',
-    paddingBottom: '5%',
+    width: "100%",
+    height: "8%",
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
+    backgroundColor: "white",
+    paddingBottom: "5%",
     elevation: 10,
   },
   navbarIcon: {
     width: 15,
     height: 15,
-    tintColor: '#1977F3',
+    tintColor: "#1977F3",
   },
   navbarIconHome: {
-    backgroundColor: '#1977F3',
+    backgroundColor: "#1977F3",
     width: 60,
     height: 60,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     borderTopLeftRadius: -10,
     borderBottomRightRadius: 21,
     borderBottomLeftRadius: 21,
     elevation: 5,
   },
   navbarIconHome1: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     width: 60,
     height: 60,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     borderTopLeftRadius: -10,
     borderBottomRightRadius: 21,
     borderBottomLeftRadius: 21,
   },
   blueBar: {
-    backgroundColor: '#1977F3',
+    backgroundColor: "#1977F3",
     height: 15,
-    position: 'absolute',
+    position: "absolute",
     bottom: 60,
     left: 0,
     right: 0,
@@ -281,7 +330,7 @@ const styles = StyleSheet.create({
     paddingBottom: 15,
   },
   applianceHeaderText: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginLeft: 6,
   },
   individual: {
@@ -290,22 +339,22 @@ const styles = StyleSheet.create({
   applianceContainertop: {
     padding: 10,
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'space-around',
+    alignItems: "center",
+    justifyContent: "space-around",
   },
   topbrand: {
-    backgroundColor: '#FFAC2F',
+    backgroundColor: "#FFAC2F",
     width: 90,
-    justifyContent: 'center',
+    justifyContent: "center",
     borderRadius: 10,
     padding: 5,
   },
   appliances: {
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    alignItems: 'stretch',
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+    alignItems: "stretch",
     paddingHorizontal: 10,
-    backgroundColor: '#E2E4E5',
+    backgroundColor: "#E2E4E5",
   },
   applianceImage: {
     width: 90,
@@ -315,30 +364,28 @@ const styles = StyleSheet.create({
   nike: {
     width: 50,
     height: 30,
-    justifyContent: 'center',
+    justifyContent: "center",
     marginLeft: 5,
     marginBottom: 5,
   },
   puma: {
     width: 50,
     height: 30,
-    justifyContent: 'center',
+    justifyContent: "center",
     marginLeft: 5,
     marginBottom: 5,
-
   },
   bata: {
     width: 70,
     height: 16,
-    justifyContent: 'center',
+    justifyContent: "center",
     marginLeft: 5,
     marginBottom: 5,
-
   },
   applianceContainer: {
     flex: 1,
     paddingHorizontal: 5,
-    alignItems: 'center',
+    alignItems: "center",
     padding: 10,
     MarginRight: 2,
   },
@@ -358,41 +405,44 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   productsbar: {
-    flexDirection: 'row',
+    flexDirection: "row",
     marginTop: 10,
     paddingVertical: 10,
-    backgroundColor: '#1977F33A',
+    backgroundColor: "#1977F33A",
   },
   product: {
     marginRight: 25,
-    alignItems: 'center',
+    alignItems: "center",
   },
   productcont: {
     marginRight: 25,
     paddingEnd: 10,
     width: 70,
-    alignItems: 'center',
+    alignItems: "center",
     backgroundColor: "#FF7272",
     borderTopEndRadius: 10,
     borderBottomEndRadius: 10,
   },
   backgroundImage: {
-    width: '115%',
+    width: "115%",
     height: 90,
-    alignItems: 'center',
+    alignItems: "center",
   },
   productImagegt: {
     width: 65,
     height: 60,
     borderRadius: 10,
-    left: '10%',
+    left: "10%",
     objectFit: "contain",
   },
   protxtgt: {
-    color: '#FF3535',
-    alignSelf: 'center',
-    margin: 'auto',
-  },
+    color: "black",
+    alignSelf: "center",
+    margin: "auto",
+    fontSize: 11,
+    justifyContent: "center",
+    display: "flex",
+marginLeft: 5, },
   productImage: {
     width: 65,
     height: 70,
@@ -400,33 +450,33 @@ const styles = StyleSheet.create({
     objectFit: "contain",
   },
   carouselItem: {
-    alignItems: 'center',
+    alignItems: "center",
   },
   carouselImage: {
     width: screenWidth,
     height: 200,
   },
   paginationContainer: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 20,
-    width: '100%',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
   },
   paginationDot: {
     width: 10,
     height: 10,
     borderRadius: 5,
     marginHorizontal: 8,
-    backgroundColor: 'rgba(255, 172, 47, 1)',
+    backgroundColor: "rgba(255, 172, 47, 1)",
   },
   paginationInactiveDot: {
     width: 10,
     height: 10,
     borderRadius: 5,
     marginHorizontal: 8,
-    backgroundColor: 'rgba(23, 37, 50, 1)',
+    backgroundColor: "rgba(23, 37, 50, 1)",
   },
 });
 

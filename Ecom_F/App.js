@@ -17,8 +17,8 @@ import Category from './Pages/Category';
 import Menswear from './Pages/Menswear';
 import BottomBar from './Pages/BottomBar';
 import Womenswear from './Pages/Womenswear';
-import Groceries from './Pages/Groceries';
-import Order from './Pages/orders';
+import Groceries from './Pages/Groceries'; 
+import Order from './Pages/Orders';
 import ResetPasswordScreen from './Pages/Resetpassword';
 import Sproduct from './Pages/Singleproduct';
 import AllProduct from './Pages/Allproducts';
@@ -43,7 +43,7 @@ export default function App() {
   return (
     <UserProvider>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="Login">
+        <Stack.Navigator initialRouteName={'Login'}>
           <Stack.Screen name="Order" component={Order} options={{headerShown: false}} />
           <Stack.Screen name="Signup" component={SignUpScreen} options={{ headerShown: false }} />
           <Stack.Screen name="Signup2" component={SignUp2Screen} options={{ headerShown: false }} />

@@ -50,13 +50,13 @@ const Gifts = ({ navigation }) => {
   };
 
   const carouselItems = [
-    { image: giftbox, text: "Gifts" },
+    { image: giftbox, text: "Special Products" },
     { image: mobile, text: "Mobiles" },
     { image: watch, text: "Watches" },
     { image: laptop, text: "Laptops" },
     { image: car, text: "Car" },
   ];
-
+  const [isSearchResult, setIsSearchResult] = useState(false); // Added state for tracking search results
   const topBrands = [
     brand1,
     brand2,
@@ -98,12 +98,12 @@ const Gifts = ({ navigation }) => {
 
   const handleSearch = async (text) => {
     try {
-      const response = await axios.get(
-        `${BASE_URL}/api/search/?query=${text}`
-      );
+      const response = await axios.get(`${BASE_URL}/api/search/?query=${text}`);
       setProducts(response.data);
+      setIsSearchResult(true);
     } catch (error) {
       console.error("Error searching:", error);
+      setIsSearchResult(false);
     }
   };
 
@@ -114,7 +114,7 @@ const Gifts = ({ navigation }) => {
       fetchProducts();
     }
   }, [item]);
-  console.log("Gifts page")
+  console.log("Special Products page");
   return (
     <View style={styles.containerw}>
       <ScrollView vertical showsVerticalScrollIndicator={false}>
@@ -142,41 +142,35 @@ const Gifts = ({ navigation }) => {
             </View>
             <StatusBar style="dark-content" />
           </View>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-          >
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             <View style={styles.productsbar}>
-              {carouselItems.map((item, index) => (
-                <TouchableOpacity
-                  key={index}
-                  onPress={() => {
-                    setSelectedCategory(
-                      item.text === "Gifts" ? "Gifts" : null
-                    );
-                    // navigation.navigate("AProduct", { item });
-                  }}
-                >
-                  <View
-                    style={[
-                      styles.product,
-                      item.text === "Gifts" && {
-                        backgroundColor: selectedCategory === "Gifts" ? "#FF7272" : "#FF7272",
-                        borderTopEndRadius: 10,
-                        borderBottomEndRadius: 10,
-                      },
-                    ]}
-                  >
-                    <Image
-                      style={styles.productImage}
-                      source={item.image}
-                    />
-                    <Text>{item.text}</Text>
+              {carouselItems.map((item, index) =>
+                item.text === "Special Products" ? (
+                  <View key={index} style={styles.productcont}>
+                    <TouchableOpacity
+                      onPress={() => navigation.navigate("Gifts", { item })}
+                    >
+                      <Image
+                        style={styles.productImagegt}
+                        source={item.image}
+                      />
+                      <Text style={styles.protxtgt}>{item.text}</Text>
+                    </TouchableOpacity>
                   </View>
-                </TouchableOpacity>
-              ))}
+                ) : (
+                  <TouchableOpacity
+                    onPress={() => navigation.navigate("AProduct", { item })}
+                  >
+                    <View key={index} style={styles.product}>
+                      <Image style={styles.productImage} source={item.image} />
+                      <Text>{item.text}</Text>
+                    </View>
+                  </TouchableOpacity>
+                )
+              )}
             </View>
           </ScrollView>
+
           <View style={styles.topBrandsContainer}>
             {topBrands.map((brand, index) => (
               <View key={index} style={styles.brandContainer}>
@@ -184,7 +178,7 @@ const Gifts = ({ navigation }) => {
               </View>
             ))}
           </View>
-          <View style={styles.productsContainer}>
+          <View style={[styles.productsContainer]}>
             {products.map((product, index) => (
               <TouchableOpacity
                 key={product.product_id}
@@ -196,8 +190,8 @@ const Gifts = ({ navigation }) => {
             ))}
           </View>
         </View>
-        <Text> {'\n'} </Text>
-        <Text> {'\n'} </Text>
+        <Text> {"\n"} </Text>
+        <Text> {"\n"} </Text>
       </ScrollView>
       <TouchableOpacity
         style={styles.filtericon}
@@ -227,6 +221,46 @@ const styles = StyleSheet.create({
   containerw: {
     flex: 1,
     backgroundColor: "#ffffff",
+  },
+  productsbar: {
+    flexDirection: "row",
+    marginTop: 10,
+    paddingVertical: 10,
+    backgroundColor: "#1977F33A",
+  },
+  product: {
+    marginRight: 25,
+    alignItems: "center",
+  },
+  productcont: {
+    marginRight: 25,
+    paddingEnd: 10,
+    width: 70,
+    alignItems: "center",
+    backgroundColor: "#FF7272",
+    borderTopEndRadius: 10,
+    borderBottomEndRadius: 10,
+  },
+  backgroundImage: {
+    width: "115%",
+    height: 90,
+    alignItems: "center",
+  },
+  productImagegt: {
+    width: 65,
+    height: 60,
+    borderRadius: 10,
+    left: "10%",
+    objectFit: "contain",
+  },
+  protxtgt: {
+    color: "black",
+    alignSelf: "center",
+    margin: "auto",
+    fontSize: 11,
+    justifyContent: "center",
+    display: "flex",
+    marginLeft: 5,
   },
   productItem: {
     marginBottom: 10,
@@ -260,6 +294,23 @@ const styles = StyleSheet.create({
     padding: 10,
     paddingHorizontal: 20,
   },
+  productcont: {
+    marginRight: 25,
+    paddingEnd: 10,
+    width: 70,
+    alignItems: "center",
+    backgroundColor: "#FF7272",
+    borderTopEndRadius: 10,
+    borderBottomEndRadius: 10,
+  },
+  productcon: {
+    marginRight: 25,
+    paddingEnd: 10,
+    width: 70,
+    alignItems: "center",
+    borderTopEndRadius: 10,
+    borderBottomEndRadius: 10,
+  },
   container: {
     paddingTop: 120,
     backgroundColor: "#1977F3",
@@ -289,6 +340,22 @@ const styles = StyleSheet.create({
     marginRight: 25,
     alignItems: "center",
     overflow: "hidden", // Clip the background image to the container
+  },
+  productImagegt: {
+    width: 65,
+    height: 60,
+    borderRadius: 10,
+    left: "10%",
+    objectFit: "contain",
+  },
+  protxtgt: {
+    color: "black",
+    alignSelf: "center",
+    margin: "auto",
+    fontSize: 11,
+    justifyContent: "center",
+    display: "flex",
+    marginLeft: 5,
   },
   productImage: {
     width: 75,

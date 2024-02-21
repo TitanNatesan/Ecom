@@ -35,12 +35,16 @@ def signup1(request):   # {"username":"natesan","password":"12345678","referal":
     if request.method == "POST":
         data = request.data
         try:
-            referal = Users.objects.get(username=data['referal'])
+            referal = Users.objects.get(username=data['referal'].strip())
+            user = Users.objects.filter(username=data['username'].strip()).exists()
+            if user:
+                return Response({'message':"Username already Exist"})
+
         except Users.DoesNotExist:
             return Response({'message':"Referal Dosent Exist"})
-        if data.get('username') and data.get('password') and data.get('referal'):
+        if data['username'].strip() and data['password'].strip() and data['referal'].strip():
             return Response(1)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response({'message':"All Fields are Required to fill"})
 
 
 @api_view(['POST'])
@@ -52,6 +56,21 @@ def signup(request):
         address_serializer = AddressSerial(data=address)
         try:
             referal = Users.objects.get(username=data['referal'])
+            user = Users.objects.filter(
+                username=data['username'].strip(),
+            ).exists()
+            if user:
+                return Response({'message':"Username already Exist"})
+            user = Users.objects.filter(
+                phone = data['phone'].strip(),
+            ).exists()
+            if user:
+                return Response({'message':"Phone Number already Exist"})
+            user = Users.objects.filter(
+                email = data['email'].strip()
+            ).exists()
+            if user:
+                return Response({'message':"Email already Exist"})
         except Users.DoesNotExist:
             return Response({'message':"Referal Dosent Exist"})
         

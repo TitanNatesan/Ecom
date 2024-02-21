@@ -236,8 +236,8 @@ blueBar: {
     color: '#888888',
   },
   claimimg: {
-    width: '58%',
-    height: '3%',
+    width: '60%',
+    height: '2%',
   },
   chtext: {
     alignSelf: 'center',

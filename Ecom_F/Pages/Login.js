@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { StatusBar } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
     StyleSheet,
     Text,
@@ -14,96 +13,43 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import Icon from "react-native-vector-icons/FontAwesome";
 
 import {
-    faCircleRight,
-    faLock,
     faUser,
+    faLock,
     faEye,
     faEyeSlash,
-    faSquare,
-    faCheckSquare,
 } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 import { useUserContext } from "./UserContext";
 import Round from "../Streetmall/3_Login/Ellipse391.png";
 import signInImage from "../Streetmall/3_Login/ASSETS.png";
-library.add(
-    faCircleRight,
-    faUser,
-    faLock,
-    faEye,
-    faEyeSlash,
-    faSquare,
-    faCheckSquare
-);
+
+library.add(faUser, faLock, faEye, faEyeSlash);
 
 const SignInScreen = ({ navigation }) => {
     const [password, setPassword] = useState("");
     const [username, setUserName] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const [errorMessage, setErrorMessage] = useState(null);
-    const { updateUserID,BASE_URL } = useUserContext();
-    const [rememberPassword, setRememberPassword] = useState(false);
+    const [key,setKey]=useState(0);
+    const { updateUserID, BASE_URL, setLogin, login } = useUserContext();
 
     useEffect(() => {
-
-        const retrieveCredentials = async () => {
-            try {
-                const storedRememberPassword = await AsyncStorage.getItem("rememberPassword");
-                const storedUsername = await AsyncStorage.getItem("username");
-                const storedPassword = await AsyncStorage.getItem("password");
-
-                if (storedRememberPassword) {
-                    setRememberPassword(storedRememberPassword === 'true');
-                }
-                else{
-                    console.log("Not Fount");
-                }
-
-                if (storedUsername && storedPassword) {
-                    setUserName(storedUsername);
-                    setPassword(storedPassword);
-                }
-            } catch (error) {
-                console.error("Error retrieving credentials:", error);
-            }
-        };
-
-        retrieveCredentials();
-    }, []);
-
-    const storeCredentials = async () => {
-        try {
-            if (rememberPassword) {
-                await AsyncStorage.setItem("username", username);
-                await AsyncStorage.setItem("password", password);
-            } else {
-                await AsyncStorage.removeItem("username");
-                await AsyncStorage.removeItem("password");
-            }
-        } catch (error) {
-            console.error("Error storing credentials:", error);
+        if (login) {
+            navigation.navigate("Home");
         }
-    };
-
-    useEffect(() => {
-        storeCredentials();
-    }, [username, password, rememberPassword]);
+    }, [login, navigation]);
 
     const togglePasswordVisibility = () => {
         setShowPassword((prevShowPassword) => !prevShowPassword);
     };
 
-    const handleRememberPassword = () => {
-        setRememberPassword(!rememberPassword);
+    const navSignup = () => {
+        navigation.navigate("Signup");
     };
 
-    const navSignup = () =>{
-        navigation.navigate("Signup");
-    }
-
     const navHome = () => {
-        navigation.navigate("Home", { username });
         updateUserID(username);
+        navigation.navigate("Home", { username });
     };
 
     const navreset = () => {
@@ -128,23 +74,20 @@ const SignInScreen = ({ navigation }) => {
             console.log("Login Response:", response.data);
 
             if (response.data === 1) {
-                if (rememberPassword) {
-                    storeCredentials(); // Store credentials only if rememberPassword is true and login response is 1
-                }
+                setLogin(true);
                 navHome();
+                setKey((prevKey) => prevKey + 1);
+                setErrorMessage(null);
             } else {
-                setErrorMessage(response.data['message']);
-
+                setErrorMessage(response.data["message"]);
             }
         } catch (error) {
             console.error("Login failed:", error.message);
         }
     };
 
-
-
     return (
-        <View style={styles.container}>
+        <View style={styles.container} key={key}>
             <Text style={styles.welcome}>Welcome</Text>
             <Text style={styles.back}>back!</Text>
             <Image style={styles.round} source={Round} />
@@ -193,23 +136,6 @@ const SignInScreen = ({ navigation }) => {
                         marginTop: 20,
                     }}
                 >
-                    <TouchableOpacity onPress={handleRememberPassword}>
-                        <View
-                            style={{
-                                flexDirection: "row",
-                                alignItems: "center",
-                                justifyContent: "space-evenly",
-                            }}
-                        >
-                            <Icon
-                                name={rememberPassword ? "check-square" : "square-o"}
-                                size={20}
-                            />
-                            <Text style={{ marginLeft: 5, color: "#6B5E5E" }}>
-                                Remember Password
-                            </Text>
-                        </View>
-                    </TouchableOpacity>
                     <TouchableOpacity onPress={navreset}>
                         <Text style={{ color: "#1977F3" }}>Forget Password</Text>
                     </TouchableOpacity>
@@ -253,15 +179,10 @@ const styles = StyleSheet.create({
         top: 0,
         zIndex: 10,
     },
-    forgetPassword: {
-        color: "#1977F3",
-        fontSize: 16,
-    },
     center: {
         alignItems: "center",
         marginBottom: 10, // Adjusted spacing
     },
-
     welcome: {
         position: "absolute",
         top: 50,
@@ -277,78 +198,6 @@ const styles = StyleSheet.create({
         fontSize: 30,
         fontWeight: "bold",
         color: "#1977F3",
-    },
-    checkboxContainer: {
-        flexDirection: "row",
-        alignSelf: "center", // Center horizontally
-        alignItems: "center", // Center vertically
-        marginBottom: 10, // Adjusted spacing
-    },
-    checkbox: {
-        borderRadius: 5,
-        padding: 8,
-        marginRight: 10,
-    },
-    rememberText: {
-        color: "#1977F3",
-        fontSize: 16,
-    },
-    buttons: {
-        flexDirection: "row",
-        justifyContent: "space-around",
-        marginTop: 10,
-    },
-    loginButton: {
-        backgroundColor: "#1977F3",
-        padding: 10,
-        borderRadius: 10,
-        width: 120,
-        alignSelf: "center",
-        marginTop: 20,
-    },
-
-    flexibleButton: {
-        flex: 1,
-        marginHorizontal: 10,
-    },
-    loginButtonText: {
-        color: "white",
-        fontSize: 16,
-        fontWeight: "bold",
-        textAlign: "center",
-    },
-    loginButton2: {
-        backgroundColor: "white",
-        padding: 10,
-        borderRadius: 10,
-        width: "80%",
-        alignSelf: "center",
-        marginTop: 10,
-    },
-
-    loginButtonText2: {
-        color: "#1977F3",
-        fontSize: 16,
-        fontWeight: "900",
-        textAlign: "center",
-    },
-    containerremember: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        marginLeft: 50,
-    },
-    forget: {
-        color: "#1977F3",
-        flex: 1,
-        alignSelf: "center",
-        top: 20,
-        bottom: 20,
-    },
-    container: {
-        flex: 1,
-        backgroundColor: "#1977F3",
-        justifyContent: "center",
     },
     errorText: {
         color: "red",
@@ -394,6 +243,25 @@ const styles = StyleSheet.create({
     },
     icon: {
         marginRight: 10,
+    },
+    container: {
+        flex: 1,
+        backgroundColor: "#1977F3",
+        justifyContent: "center",
+    },
+    loginButton: {
+        backgroundColor: "#1977F3",
+        padding: 10,
+        borderRadius: 10,
+        width: 120,
+        alignSelf: "center",
+        marginTop: 20,
+    },
+    loginButtonText: {
+        color: "white",
+        fontSize: 16,
+        fontWeight: "bold",
+        textAlign: "center",
     },
 });
 

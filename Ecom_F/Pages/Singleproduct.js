@@ -26,11 +26,11 @@ library.add(faMagnifyingGlass, faUsersViewfinder);
 const SingleProductPage = ({ navigation }) => {
   const route = useRoute();
   const { product } = route.params;
-  console.log(product)
+  console.log(product);
   const navCart = () => {
-    navigation.navigate("Cart")
-  }
-
+    navigation.navigate("Cart");
+  };
+  const [cartMessage, setCartMessage] = useState("");
   const [userData, setUserData] = useState({
     name: "",
     phone: "",
@@ -47,7 +47,7 @@ const SingleProductPage = ({ navigation }) => {
   });
 
   const [isBL, setIsBL] = useState(false);
-  const { userID,BASE_URL } = useUserContext()
+  const { userID, BASE_URL } = useUserContext();
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -68,14 +68,13 @@ const SingleProductPage = ({ navigation }) => {
           down_leaf: user.down_leaf,
         });
         setIsBL(user.role == "Business Leader");
-        console.log(setUserData)
+        console.log(setUserData);
       } catch (error) {
         console.log("Error fetching data:", error);
       }
     };
     fetchData();
   }, []);
-
 
   const addToCart = async () => {
     try {
@@ -87,21 +86,51 @@ const SingleProductPage = ({ navigation }) => {
         },
         {
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
         }
       );
       console.log(response.data);
       if (response.data == 1) {
-        navCart();
+        setCartMessage("Item added to cart");
+        setTimeout(() => {
+          setCartMessage(""); // Clear the message after 3 seconds
+        }, 3000);
+        // navCart();
       }
       // Handle the response accordingly (e.g., show a success message)
     } catch (error) {
-      console.error('Error adding to cart:', error.message);
+      console.error("Error adding to cart:", error.message);
       // Handle the error accordingly (e.g., show an error message)
     }
   };
 
+
+  const buynowhand = async () => {
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/api/cart/${userID}/`,
+        {
+          product_id: product.product_id,
+          username: userID,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log(response.data);
+      if (response.data == 1) {
+        
+        navCart();
+      }
+      // Handle the response accordingly (e.g., show a success message)
+    } catch (error) {
+      console.error("Error adding to cart:", error.message);
+      // Handle the error accordingly (e.g., show an error message)
+    }
+  };
 
   const renderStars = (rating) => {
     const stars = [];
@@ -117,7 +146,12 @@ const SingleProductPage = ({ navigation }) => {
 
     if (hasHalfStar) {
       stars.push(
-        <FontAwesomeIcon key="half" icon={faStarHalf} size={16} color="#FFD700" />
+        <FontAwesomeIcon
+          key="half"
+          icon={faStarHalf}
+          size={16}
+          color="#FFD700"
+        />
       );
     }
 
@@ -154,6 +188,11 @@ const SingleProductPage = ({ navigation }) => {
           <StatusBar style="auto" />
         </View>
         <View style={styles.productDetails}>
+          {cartMessage.length > 0 && (
+            <View style={styles.cartMessageContainer}>
+              <Text style={styles.cartMessageText}>{cartMessage}</Text>
+            </View>
+          )}
           <View style={styles.productHeader}>
             <Text style={styles.productName}>{product.name}</Text>
             <View style={styles.ratingContainer}>
@@ -163,25 +202,28 @@ const SingleProductPage = ({ navigation }) => {
           </View>
           <Image style={styles.productImage} source={{ uri: product.images }} />
           <View style={styles.priOfferContainer}>
-            <Text style={styles.productPrice}>{`₹${product.sellingPrice}`}</Text>
+            <Text
+              style={styles.productPrice}
+            >{`₹${product.sellingPrice}`}</Text>
             <Text style={styles.offerText}>{product.discount}%</Text>
           </View>
         </View>
-        
+
         <View style={styles.deliveryInfoContainer}>
-          {product.mrp && (
-            <Text style={styles.RealPrice}>${product.mrp}</Text>
-            )}
+          {product.mrp && <Text style={styles.RealPrice}>${product.mrp}</Text>}
           {product.freeDelivery && (
             <Text style={styles.deliveryInfoText}>Free Delivery</Text>
-            )}
-            {isBL && (
-              <Text style={styles.ble}>{product.BLE}{"\n"}</Text>
-            )}
+          )}
+          {isBL && (
+            <Text style={styles.ble}>
+              {product.BLE}
+              {"\n"}
+            </Text>
+          )}
         </View>
         <View>
           <Text style={styles.inStockInfoText}>
-            {product.stock ? 'In Stock' : 'Out of Stock'}
+            {product.stock ? "In Stock" : "Out of Stock"}
           </Text>
         </View>
 
@@ -190,7 +232,7 @@ const SingleProductPage = ({ navigation }) => {
           <TouchableOpacity style={styles.addToCartButton} onPress={addToCart}>
             <Text style={styles.abButtonText}>Add to Cart</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.buyNowButton} onPress={addToCart}>
+          <TouchableOpacity style={styles.buyNowButton} onPress={buynowhand}>
             <Text style={styles.abButtonText}>Buy Now</Text>
           </TouchableOpacity>
         </View>
@@ -213,12 +255,8 @@ const SingleProductPage = ({ navigation }) => {
           <View style={styles.detailsListContainer}>
             {product.specification.map((spec, index) => (
               <View key={index} style={styles.detailsListItem}>
-                <Text style={styles.detailsListItemLabel}>
-                  {spec.label}
-                </Text>
-                <Text style={styles.detailsListItemValue}>
-                  {spec.value}
-                </Text>
+                <Text style={styles.detailsListItemLabel}>{spec.label}</Text>
+                <Text style={styles.detailsListItemValue}>{spec.value}</Text>
               </View>
             ))}
           </View>
@@ -228,9 +266,9 @@ const SingleProductPage = ({ navigation }) => {
             </Text>
           ))}
         </View>
-        <Text> {'\n'} </Text>
-        <Text> {'\n'} </Text>
-        <Text> {'\n'} </Text>
+        <Text> {"\n"} </Text>
+        <Text> {"\n"} </Text>
+        <Text> {"\n"} </Text>
       </ScrollView>
       <BottomBar navigation={navigation} />
       <View style={styles.blueBar}></View>
@@ -241,12 +279,26 @@ const SingleProductPage = ({ navigation }) => {
 const styles = StyleSheet.create({
   containerw: {
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: "#ffffff",
+  },
+  cartMessageContainer: {
+    position: "absolute",
+    top: 10,
+    left: 10,
+    right: 10,
+    backgroundColor: "rgba(0, 128, 0, 0.8)",
+    padding: 10,
+    borderRadius: 5,
+    zIndex: 999,
+  },
+  cartMessageText: {
+    color: "#fff",
+    textAlign: "center",
   },
   blueBar: {
-    backgroundColor: '#1977F3',
+    backgroundColor: "#1977F3",
     height: 15,
-    position: 'absolute',
+    position: "absolute",
     bottom: 60,
     left: 0,
     right: 0,
@@ -270,31 +322,31 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   detailsListItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginBottom: 5,
   },
   detailsListItemLabel: {
     fontSize: 16,
-    fontWeight: 'bold',
-    color: '#333',
+    fontWeight: "bold",
+    color: "#333",
   },
   ble: {
-    backgroundColor: '#871818',
+    backgroundColor: "#871818",
     borderRadius: 14,
     padding: 2,
     marginTop: 5,
-    width: '15%',
-    color: 'white',
+    width: "15%",
+    color: "white",
     fontSize: 12,
     paddingLeft: 5,
-    marginHorizontal:10,
-    marginBottom:10,
+    marginHorizontal: 10,
+    marginBottom: 10,
     textAlign: "center",
   },
   detailsListItemValue: {
     fontSize: 16,
-    color: '#666',
+    color: "#666",
   },
 
   specificationsContainer: {
@@ -304,7 +356,7 @@ const styles = StyleSheet.create({
   },
   specificationsHeader: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 8,
   },
   specificationsItem: {
@@ -318,63 +370,63 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   proceedButton: {
-    backgroundColor: '#FF9900',
+    backgroundColor: "#FF9900",
     borderRadius: 16,
     padding: 13,
-    alignItems: 'center',
+    alignItems: "center",
     marginTop: 8,
   },
   buttonText: {
-    color: 'white',
-    fontWeight: 'bold',
+    color: "white",
+    fontWeight: "bold",
     fontSize: 17,
   },
   productImage: {
-    width: '100%',
+    width: "100%",
     height: 300,
   },
   productDetails: {
     padding: 16,
   },
   productHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   productName: {
     flex: 1,
     fontSize: 14,
-    fontWeight: '100',
+    fontWeight: "100",
     marginBottom: 8,
-    flexWrap: 'wrap',
+    flexWrap: "wrap",
   },
   priOfferContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-start",
   },
   ratingContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   ratingText: {
     marginLeft: 4,
     fontSize: 16,
   },
   offerText: {
-    backgroundColor: '#871818',
+    backgroundColor: "#871818",
     borderRadius: 14,
     padding: 2,
     marginTop: 5,
-    width: '15%',
-    color: 'white',
+    width: "15%",
+    color: "white",
     fontSize: 12,
     paddingLeft: 5,
     textAlign: "center",
   },
   productPrice: {
     fontSize: 35,
-    color: 'black',
+    color: "black",
     padding: 10,
   },
   RealPrice: {
@@ -382,64 +434,64 @@ const styles = StyleSheet.create({
     textDecorationLine: "line-through",
   },
   deliveryInfoContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     paddingHorizontal: 26,
-    marginTop: '-5%',
+    marginTop: "-5%",
   },
   deliveryInfoText: {
     fontSize: 17,
-    color: '#1977F3',
+    color: "#1977F3",
     paddingLeft: 10,
   },
   DateInfoText: {
     fontSize: 17,
-    paddingLeft: '3%',
+    paddingLeft: "3%",
   },
   inStockInfoText: {
     fontSize: 17,
-    marginTop: '1%',
+    marginTop: "1%",
     paddingHorizontal: 26,
-    marginBottom: '6%',
-    color: '#478509',
-    fontWeight: '600',
+    marginBottom: "6%",
+    color: "#478509",
+    fontWeight: "600",
   },
   buttonsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'flex-start', // Adjust the alignment as needed
+    flexDirection: "row",
+    justifyContent: "flex-start", // Adjust the alignment as needed
     paddingHorizontal: 16,
     marginBottom: 16,
   },
   addToCartButton: {
     flex: 1, // This button takes more space
-    backgroundColor: '#0047A6',
+    backgroundColor: "#0047A6",
     borderRadius: 15,
     padding: 13,
-    alignItems: 'center',
+    alignItems: "center",
     marginRight: 8, // Adjust the margin if needed
   },
   buyNowButton: {
     flex: 1, // This button takes less space
-    backgroundColor: '#FF9C09',
+    backgroundColor: "#FF9C09",
     borderRadius: 15,
     padding: 13,
-    alignItems: 'center',
+    alignItems: "center",
   },
   abButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
+    color: "white",
+    fontWeight: "bold",
     fontSize: 15,
   },
   secureTransactionContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     padding: 2,
     paddingBottom: 10,
   },
   secureTransactionText: {
     fontSize: 15,
     marginLeft: 4,
-    color: '#003478',
+    color: "#003478",
   },
   detailsContainer: {
     paddingHorizontal: 16,
@@ -447,15 +499,14 @@ const styles = StyleSheet.create({
   },
   detailsHeader: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 8,
   },
   detailsText: {
     fontSize: 16,
-    textAlign: 'justify',
+    textAlign: "justify",
     marginBottom: 16,
   },
-
-})
+});
 
 export default SingleProductPage;

@@ -77,9 +77,10 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 190,
     borderColor: "white",
+    objectFit: "contain",
   },
   productDetails: {
-    padding: 16,
+    padding: 1,
   },
   productHeader: {
     flexDirection: "row",
