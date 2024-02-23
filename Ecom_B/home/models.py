@@ -13,7 +13,7 @@ class Users(models.Model):
     username = models.CharField(max_length=100,primary_key=True)
     referal = models.CharField(max_length=100)
     age = models.IntegerField(blank= True, null=True)
-    phone = PhoneNumberField()
+    phone = PhoneNumberField() 
     email = models.EmailField(max_length=254,blank=True)
     profile_pic = models.ImageField(upload_to='profilePic/', blank=True, null=True) 
     dob = models.DateField(blank=True,null=True)
@@ -142,7 +142,7 @@ class PaymentDetails(models.Model):
 class Orders(models.Model):
     user = models.ForeignKey(Users, on_delete=models.PROTECT)
     order_id = models.CharField(max_length=50, unique=True, primary_key=True)
-    ordered_product = models.ForeignKey(Products,on_delete=models.CASCADE,null=True)
+    ordered_product =models.ManyToManyField(Products)
     quantity = models.PositiveIntegerField(null=True,blank=True)
     delivery_partner = models.ForeignKey(DeliveryPartner, on_delete=models.PROTECT,null=True,blank=True)
     delivery_charges = models.IntegerField(null=True,blank=True)

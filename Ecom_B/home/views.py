@@ -5,13 +5,17 @@ from .models import Users, Products, Address,EachItem,Cart,Orders
 from rest_framework import status,generics
 from django.db.models import Q
 import base64
-from django.http import JsonResponse
+from django.http import JsonResponse 
 import random,os
 from django.shortcuts import get_object_or_404
 from datetime import datetime, timedelta
+from django.utils import timezone
 from django.core.mail import send_mail
 from django.conf import settings
 from decimal import Decimal
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 BASE_DIR = settings.BASE_DIR 
 
@@ -39,13 +43,11 @@ def signup1(request):   # {"username":"natesan","password":"12345678","referal":
             user = Users.objects.filter(username=data['username'].strip()).exists()
             if user:
                 return Response({'message':"Username already Exist"})
-
         except Users.DoesNotExist:
             return Response({'message':"Referal Dosent Exist"})
         if data['username'].strip() and data['password'].strip() and data['referal'].strip():
             return Response(1)
         return Response({'message':"All Fields are Required to fill"})
-
 
 @api_view(['POST'])
 def signup(request):
@@ -56,26 +58,30 @@ def signup(request):
         address_serializer = AddressSerial(data=address)
         try:
             referal = Users.objects.get(username=data['referal'])
-            user = Users.objects.filter(
-                username=data['username'].strip(),
-            ).exists()
+            user = Users.objects.filter(username=str(data['username']).strip()).exists()
             if user:
-                return Response({'message':"Username already Exist"})
-            user = Users.objects.filter(
-                phone = data['phone'].strip(),
-            ).exists()
+                return Response({'message': "Username already Exist"})
+            user = Users.objects.filter(phone=str(data['phone']).strip()).exists()
             if user:
-                return Response({'message':"Phone Number already Exist"})
-            user = Users.objects.filter(
-                email = data['email'].strip()
-            ).exists()
+                return Response({'message': "Phone Number already Exist"})
+            user = Users.objects.filter(email=str(data['email']).strip()).exists()
             if user:
-                return Response({'message':"Email already Exist"})
+                return Response({'message': "Email already Exist"})
         except Users.DoesNotExist:
-            return Response({'message':"Referal Dosent Exist"})
-        
+            return Response({'message': "Referal Doesn't Exist"})
+
         if user_serializer.is_valid() and address_serializer.is_valid():
             user_instance = user_serializer.save()
+
+            # Generate and send OTP to the provided email
+            otp = generate_otp()
+            send_email(user_instance.email, 'Your OTP', f'Your OTP is: {otp}\n Do not share this OTP\n The above OTP will expire in 5 mins')
+
+            # Update user instance with OTP and OTP sent time
+            user_instance.last_OTP = otp
+            user_instance.OTP_sent_time = timezone.now()
+            user_instance.save()
+
             address_data = address_serializer.validated_data
             address_data['user'] = user_instance
             address_instance = Address(**address_data)
@@ -86,9 +92,59 @@ def signup(request):
             user = Users.objects.get(username=data['username'])
             referal.down_leaf.add(user)
             referal.save()
+
             return Response(1)
         return Response({"message": "Invalid data provided."}, status=400)
 
+
+from datetime import timedelta
+
+@api_view(['POST'])
+def verifyOTP(request):
+    if request.method == 'POST':
+        data = request.data
+        try:
+            user = Users.objects.get(username=data['username'])
+        except Users.DoesNotExist:
+            return Response({"message":"User not found"})
+
+        last_otp = data.get('otp')
+        otp = 0
+        for i in last_otp:
+            otp*=10
+            otp+=int(i)
+
+        print(data)
+        if not last_otp:
+            return Response({'message':"Last OTP is required"})
+
+        if user.last_OTP == otp:
+            current_time = timezone.now()
+            otp_sent_time = user.OTP_sent_time
+
+            if (current_time - otp_sent_time) < timedelta(minutes=5):
+                return Response("Pass")
+            else:
+                return Response({"message":"OTP has expired. Please request a new one."})
+        else:
+            return Response({'message':"Invalid OTP"})
+
+    return Response({"message":"Invalid request"})
+
+@api_view(['POST'])
+def resendOtp(request):
+    if request.method == "POST":
+        try:
+            user = Users.objects.get(username=request.data['username'])
+            print(user.last_OTP)
+            user.last_OTP = generate_otp()
+            user.OTP_sent_time = timezone.now()
+            user.save()
+            send_email(user.email, 'Your OTP', f'Your OTP is: {user.last_OTP}\n Do not share this OTP\n The above OTP will expire in 5 mins')
+            print(user.last_OTP)
+        except Users.DoesNotExist:
+            return Response("UserName Not Found")
+        return Response("Sent")
 
 @api_view(["POST",'GET'])
 def cart(request, username):
@@ -210,6 +266,7 @@ def updateCart(request,opr):     # {"username":"TitanNatesan","product_id":"phon
             each.save()
         else:
             each.delete() 
+            return Response("Deleted")
         return Response("Updated")
 
 
@@ -242,11 +299,11 @@ def address(request,username):
 def placeOrder(request):
     '''
     {
-  "user": "qwertyuiop",  
-  "product_id":"phone1",
-  "delivery_type": "Regular Delivery",
-  "pay_method": "UPI"
-}
+      "user": "qwertyuiop",
+      "product_id": "phone1",
+      "delivery_type": "Regular Delivery",
+      "pay_method": "UPI"
+    }
     '''
     if request.method == "POST":
         try:
@@ -267,39 +324,116 @@ def placeOrder(request):
             )
             each.save()
             return Response({"detail": "Cart Not Found"}, status=status.HTTP_404_NOT_FOUND)
-        
-        allOrders = Orders.objects.all()
-        each = EachItem.objects.get(user=user,product=product)
-        order = Orders.objects.create(user=user,order_id=str(user.username)+getDateAndTime())
+
+        each = EachItem.objects.get(user=user, product=product)
+        order = Orders.objects.create(user=user, order_id=str(user.username) + getDateAndTime())
         order.ordered_product = product
-        order.quantity = each.quantity 
-        order.total_cost = each.quantity*product.sellingPrice
-        order.delivery_charges = 0 if (each.quantity*product.sellingPrice)>200 else 40
+        order.quantity = each.quantity
+        order.total_cost = each.quantity * product.sellingPrice
+        order.delivery_charges = 0 if (each.quantity * product.sellingPrice) > 200 else 40
         order.delivery_type = request.data['delivery_type']
         order.status = "Placed"
         order.payment_method = request.data['pay_method']
-        order.expected_delivery = add_working_days(str(datetime.now().date()),7)
+        order.expected_delivery = add_working_days(str(datetime.now().date()), 7)
         order.save()
         each.delete()
 
-        while user.referal!='null':
+        while user.referal != 'null':
             user = Users.objects.get(username=user.referal)
             if user.role == "General Manager":
-                user.earning += product.sellingPrice * (product.GME)/Decimal(100) * Decimal(order.quantity)
+                user.earning += product.sellingPrice * (product.GME) / Decimal(100) * Decimal(order.quantity)
                 user.save()
             elif user.role == "Regional Manager":
-                user.earning += product.sellingPrice * (product.RME)/Decimal(100) * Decimal(order.quantity)
+                user.earning += product.sellingPrice * (product.RME) / Decimal(100) * Decimal(order.quantity)
                 user.save()
-            elif user.role =="Team Manager":
-                user.earning += product.sellingPrice * (product.TME)/Decimal(100) * Decimal(order.quantity)
+            elif user.role == "Team Manager":
+                user.earning += product.sellingPrice * (product.TME) / Decimal(100) * Decimal(order.quantity)
                 user.save()
-            elif user.role == 'Business Leader' :
-                user.earning += product.sellingPrice * (product.BLE)/Decimal(100) * Decimal(order.quantity)
+            elif user.role == 'Business Leader':
+                user.earning += product.sellingPrice * (product.BLE) / Decimal(100) * Decimal(order.quantity)
                 user.save()
             else:
                 break
 
         return Response(1)
+
+
+@api_view(["POST"])
+def placeOrders(request):
+    '''
+    {
+      "user": "qwertyuiop",
+      "product_ids": ["phone1", "laptop2"],
+      "delivery_type": "Regular Delivery",
+      "pay_method": "UPI"
+    }
+    '''
+    if request.method == "POST":
+        try:
+            user = Users.objects.get(username=request.data['user'])
+        except Users.DoesNotExist:
+            return Response({"detail": "User Not Found"}, status=status.HTTP_404_NOT_FOUND)
+        
+        oid = ''
+        
+        for product_id in request.data['product_ids']:
+            try:
+                product = Products.objects.get(product_id=product_id)
+            except Products.DoesNotExist:
+                return Response({"detail": "Product Not Found"}, status=status.HTTP_404_NOT_FOUND)
+            try:
+                each = EachItem.objects.get(user=user, product=product)
+            except EachItem.DoesNotExist:
+                each = EachItem(
+                    user=user,
+                    product=product,
+                    quantity=1
+                )
+                each.save()
+                return Response({"detail": "Cart Not Found"}, status=status.HTTP_404_NOT_FOUND)
+
+            each = EachItem.objects.get(user=user, product=product)
+            if oid == '':
+                order = Orders.objects.create(user=user, order_id=str(user.username) + getDateAndTime())
+                oid = str(user.username) + getDateAndTime()
+                order.ordered_product.add(product)
+                order.quantity = each.quantity
+                order.total_cost = each.quantity * product.sellingPrice
+                order.delivery_charges = 0 if (each.quantity * product.sellingPrice) > 200 else 40
+                order.delivery_type = request.data['delivery_type']
+                order.status = "Placed"
+                order.payment_method = request.data['pay_method']
+                order.expected_delivery = add_working_days(str(datetime.now().date()), 7)
+                order.save()
+                each.delete()
+            else:
+                order.objects.get(order_id=oid)
+                order.ordered_product.add(product)
+                order.quantity += each.quantity
+                order.total_cost += each.quantity * product.sellingPrice
+                order.delivery_charges = 0 if (order.total_cost) > 200 else 40
+                order.save()
+                each.delete()
+
+            while user.referal != 'null':
+                user = Users.objects.get(username=user.referal)
+                if user.role == "General Manager":
+                    user.earning += product.sellingPrice * (product.GME) / Decimal(100) * Decimal(order.quantity)
+                    user.save()
+                elif user.role == "Regional Manager":
+                    user.earning += product.sellingPrice * (product.RME) / Decimal(100) * Decimal(order.quantity)
+                    user.save()
+                elif user.role == "Team Manager":
+                    user.earning += product.sellingPrice * (product.TME) / Decimal(100) * Decimal(order.quantity)
+                    user.save()
+                elif user.role == 'Business Leader':
+                    user.earning += product.sellingPrice * (product.BLE) / Decimal(100) * Decimal(order.quantity)
+                    user.save()
+                else:
+                    break
+
+        return JsonResponse({"detail": "Orders placed successfully"})
+
 
 
 def getDateAndTime():
@@ -510,3 +644,20 @@ def getOrder(request):
             return Response("User not found")
         except Orders.DoesNotExist:
             return Response({"message": "No Order Placed"})
+
+def send_email(receiver_email, subject, body):
+    sender_email = "hbtldevelopment@gmail.com"
+    sender_password = "tows jopx hgib sshm"
+
+    message = MIMEMultipart()
+    message['From'] = sender_email
+    message['To'] = receiver_email
+    message['Subject'] = subject
+
+    message.attach(MIMEText(body, 'plain'))
+
+    with smtplib.SMTP('smtp.gmail.com', 587) as server:
+        server.starttls()  # Use TLS for security
+        server.login(sender_email, sender_password)
+
+        server.sendmail(sender_email, receiver_email, message.as_string())

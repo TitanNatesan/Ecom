@@ -28,7 +28,7 @@ const Signup2Screen = ({ navigation }) => {
     const navLogin = () => {
         updateUserID(username); 
         setLogin(true);
-        navigation.navigate('Home', { username });
+        navigation.navigate('CodeVerification');
     };
 
     const reqData = {

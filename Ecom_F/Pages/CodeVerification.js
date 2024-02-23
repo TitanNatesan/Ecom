@@ -1,16 +1,18 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { StyleSheet, Text, View, Image, TextInput, TouchableOpacity } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { faCircleRight, faLock, faUser } from '@fortawesome/free-solid-svg-icons';
+import { useUserContext } from './UserContext';
+import axios from 'axios';
 
 const CodeVerify = require('../Streetmall/2OTP/Group351.png');
 library.add(faCircleRight, faUser, faLock);
 
 const CodeVerification = ({ navigation }) => {
-    const handleHomePress = () => {
-        navigation.navigate('Home');
-    };
+    const { userID, BASE_URL } = useUserContext();
+    const [error, setError] = useState(null);
+    const [inputOTP, setInputOTP] = useState('');
 
     const inputs = Array(4).fill(null);
     const refs = inputs.map(() => useRef(null));
@@ -23,14 +25,61 @@ const CodeVerification = ({ navigation }) => {
         }
     };
 
+    const verifyOTP = async () => {
+        try {
+            const response = await axios.post(
+                `${BASE_URL}/api/verify/`,
+                {
+                    username: userID,
+                    otp: inputOTP,
+                },
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                }
+            );
+
+            if (response.data === "Pass") {
+                navigation.navigate('Home');
+            } else {
+                setError(response.data['message']);
+                console.error('OTP verification failed:', response.data);
+            }
+        } catch (error) {
+            console.error('Error during OTP verification: ', error);
+        }
+    };
+
+    const resendOTP = async () => {
+        try {
+            const response = await axios.post(
+                `${BASE_URL}/api/resend/`,
+                {
+                    username: userID,
+                },
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                }
+            );
+            if (response.data == 'Sent') {
+                console.log("Hi");
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     return (
         <View style={styles.container}>
-            <Text style={styles.last} >Last Step!</Text>
+            <Text style={styles.last}>Last Step!</Text>
             <Image style={styles.tinyLogo} source={CodeVerify} />
             <View style={styles.allsignIn}>
                 <View style={styles.rowContainer}>
                     <Text style={styles.text}>Code Verification</Text>
-                    <TouchableOpacity onPress={handleHomePress}>
+                    <TouchableOpacity onPress={verifyOTP}>
                         <FontAwesomeIcon icon={faCircleRight} size={50} color="#1977F3" />
                     </TouchableOpacity>
                 </View>
@@ -42,18 +91,26 @@ const CodeVerification = ({ navigation }) => {
                             ref={refs[index]}
                             style={styles.inputContainer}
                             maxLength={1}
-                            keyboardType='numeric'
+                            keyboardType="numeric"
+                            value={inputOTP[index] || ''}
+                            onChangeText={(text) => {
+                                setInputOTP((prevOTP) => {
+                                    const newOTP = [...prevOTP];
+                                    newOTP[index] = text;
+                                    return newOTP;
+                                });
+                            }}
                             onKeyPress={({ nativeEvent }) => handleKeyPress(index, nativeEvent.key)}
                         />
                     ))}
                 </View>
                 <View style={styles.buttons}>
-                    <TouchableOpacity style={styles.loginButton} onPress={handleHomePress}>
+                    <TouchableOpacity style={styles.loginButton} onPress={verifyOTP}>
                         <Text style={styles.loginButtonText}>Verify</Text>
                     </TouchableOpacity>
                 </View>
             </View>
-            {/* <StatusBar style="auto" /> */}
+            <Text style={styles.errorText}>{error}</Text>
         </View>
     );
 };
@@ -68,6 +125,12 @@ const styles = StyleSheet.create({
         paddingBottom: 130,
         borderTopEndRadius: 30,
         borderTopLeftRadius: 30,
+    },
+    errorText: {
+        color: 'red',
+        textAlign: 'center',
+        marginTop: 10,
+        marginBottom: 1,
     },
     last: {
         position: 'absolute',
@@ -139,7 +202,6 @@ const styles = StyleSheet.create({
         width: 40,
         height: 40,
     },
-
     icon: {
         marginRight: 10,
     },

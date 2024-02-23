@@ -13,9 +13,12 @@ urlpatterns = [
     path('updateCart/<str:opr>/',views.updateCart,name= "UpdateCart"),
     path("order/address/<str:username>/",views.address,name="view address"), 
     path("order/placeorder/",views.placeOrder,name="Order"), 
+    path("order/placeOrders/",views.placeOrders,name="Orders"),
     path("user/<str:username>/",views.viewUser,name = "User Data"),
     path('search/', views.ProductsSearchView.as_view(), name='products-search'),
     path('getorder/',views.getOrder,name="Get Order"),
+    path('verify/',views.verifyOTP,name="Verify OTP"),
+    path("resend/",views.resendOtp,name="Resend OTP"),
 ]  
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -77,6 +77,8 @@ const SignInScreen = ({ navigation }) => {
                 setLogin(true);
                 navHome();
                 setKey((prevKey) => prevKey + 1);
+                setPassword('')
+                setUserName('')
                 setErrorMessage(null);
             } else {
                 setErrorMessage(response.data["message"]);

@@ -87,6 +87,9 @@ const Cart = ({ navigation }) => {
             });
             console.log("Deleted");
             setRefreshKey(prevKey => prevKey + 1);
+            if (response.data=='Deleted'){
+                setAllProducts([])
+            }
         } catch (error) {
             console.log("Unable To Update", error);
         }
