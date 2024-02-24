@@ -1,22 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { StatusBar } from "react-native";
 import {
-    StyleSheet,
-    Text,
-    View,
-    Image,
-    TextInput,
-    TouchableOpacity,
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  TextInput,
+  TouchableOpacity,
 } from "react-native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
-import Icon from "react-native-vector-icons/FontAwesome";
+import AsyncStorage from "@react-native-async-storage/async-storage"; // Import AsyncStorage
 
 import {
-    faUser,
-    faLock,
-    faEye,
-    faEyeSlash,
+  faUser,
+  faLock,
+  faEye,
+  faEyeSlash,
 } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 import { useUserContext } from "./UserContext";
@@ -26,67 +26,77 @@ import signInImage from "../Streetmall/3_Login/ASSETS.png";
 library.add(faUser, faLock, faEye, faEyeSlash);
 
 const SignInScreen = ({ navigation }) => {
-    const [password, setPassword] = useState("");
-    const [username, setUserName] = useState("");
-    const [showPassword, setShowPassword] = useState(false);
-    const [errorMessage, setErrorMessage] = useState(null);
-    const [key,setKey]=useState(0);
-    const { updateUserID, BASE_URL, setLogin, login } = useUserContext();
+  const [password, setPassword] = useState("");
+  const [username, setUserName] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(null);
+  const [key, setKey] = useState(0);
+  const { updateUserID, BASE_URL, setLogin, login } = useUserContext();
 
-    useEffect(() => {
-        if (login) {
-            navigation.navigate("Home");
+  useEffect(() => {
+    if (login) {
+      navigation.navigate("Home");
+    }
+  }, [login, navigation]);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword((prevShowPassword) => !prevShowPassword);
+  };
+
+  const navSignup = () => {
+    navigation.navigate("Signup");
+  };
+
+  const navHome = () => {
+    updateUserID(username);
+    navigation.navigate("Home", { username });
+  };
+
+  const navreset = () => {
+    navigation.navigate("Resetpass");
+  };
+
+  const saveCredentialsToCache = async (username, password) => {
+    try {
+      await AsyncStorage.setItem("username", username);
+      await AsyncStorage.setItem("password", password);
+    } catch (error) {
+      console.error("Error saving credentials to cache:", error);
+    }
+  };
+
+  const LoginReq = async () => {
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/api/login/`,
+        {
+          username: username,
+          password: password,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
         }
-    }, [login, navigation]);
+      );
 
-    const togglePasswordVisibility = () => {
-        setShowPassword((prevShowPassword) => !prevShowPassword);
-    };
+      console.log("Login Response:", response.data);
 
-    const navSignup = () => {
-        navigation.navigate("Signup");
-    };
-
-    const navHome = () => {
-        updateUserID(username);
-        navigation.navigate("Home", { username });
-    };
-
-    const navreset = () => {
-        navigation.navigate("Resetpass");
-    };
-
-    const LoginReq = async () => {
-        try {
-            const response = await axios.post(
-                `${BASE_URL}/api/login/`,
-                {
-                    username: username,
-                    password: password,
-                },
-                {
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                }
-            );
-
-            console.log("Login Response:", response.data);
-
-            if (response.data === 1) {
-                setLogin(true);
-                navHome();
-                setKey((prevKey) => prevKey + 1);
-                setPassword('')
-                setUserName('')
-                setErrorMessage(null);
-            } else {
-                setErrorMessage(response.data["message"]);
-            }
-        } catch (error) {
-            console.error("Login failed:", error.message);
-        }
-    };
+      if (response.data === 1) {
+        setLogin(true);
+        saveCredentialsToCache(username, password); // Save credentials to cache
+        navHome();
+        setKey((prevKey) => prevKey + 1);
+        setPassword("");
+        setUserName("");
+        setErrorMessage(null);
+      } else {
+        setErrorMessage(response.data["message"]);
+      }
+    } catch (error) {
+      console.error("Login failed:", error.message);
+    }
+  };
 
     return (
         <View style={styles.container} key={key}>

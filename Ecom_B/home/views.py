@@ -661,3 +661,21 @@ def send_email(receiver_email, subject, body):
         server.login(sender_email, sender_password)
 
         server.sendmail(sender_email, receiver_email, message.as_string())
+
+
+@api_view(['POST'])
+def reset_password(request):
+    if request.method == "POST":
+        data = request.data
+        try:
+            user = Users.objects.get(username=data['username'])
+        except Users.DoesNotExist:
+            return Response("User not found")
+        new_password = data['new_password']
+        if user.password==data['old_password']:
+            user.password = new_password
+            user.save()
+            return Response(1)
+        else:
+            return Response({"message":"Password MisMatch"})
+    return Response("Invalid request")

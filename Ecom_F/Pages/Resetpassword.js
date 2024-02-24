@@ -12,17 +12,19 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faCircleRight, faUser, faLock, faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";  // Import axios
-import Round from "../Streetmall/3_Login/Ellipse391.png";
 import signInImage from "../Streetmall/3_Login/ASSETS.png";
+import { useUserContext } from "./UserContext";
 
 library.add(faCircleRight, faUser, faLock, faEye, faEyeSlash);
 
 const ResetPasswordScreen = ({ navigation }) => {
-    const [username, setUsername] = useState("");
-    const [newPassword, setNewPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
-    const [showPassword, setShowPassword] = useState(false);
-    const [errorMessage, setErrorMessage] = useState("");
+  const [username, setUsername] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [currentPassword, setCurrentPassword] = useState("");
+  const { userID } = useUserContext();
 
     const handleResetPassword = async () => {
         try {
@@ -34,18 +36,16 @@ const ResetPasswordScreen = ({ navigation }) => {
                 return;
             }
 
-            // Make a POST request to your backend API
             const response = await axios.post("http://64.227.134.220:8000/api/resetpass/", {
                 username: username,
-                new_password: newPassword,
+                old_password:currentPassword,
+              new_password: newPassword,
+                
             });
 
-            // Check the response from the server
-            if (response.data === "Password changed successfully") {
-                // Password changed successfully, navigate to Login screen
+            if (response.data === 1) {
                 navigation.navigate("Login");
             } else {
-                // Handle other response scenarios if needed
                 setErrorMessage("Password reset failed. Please try again.");
             }
         } catch (error) {
@@ -59,52 +59,89 @@ const ResetPasswordScreen = ({ navigation }) => {
     };
 
     return (
-        <View style={styles.container}>
-            <Image style={styles.background} source={signInImage} />
-            <View style={styles.overlay} />
-            <Text style={styles.heading}>Reset Password</Text>
-            <View style={styles.allsignIn}>
-                {errorMessage !== "" && (
-                    <Text style={styles.errorText}>{errorMessage}</Text>
-                )}
-                <View style={styles.inputContainer}>
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Username"
-                        onChangeText={(text) => setUsername(text)}
-                        value={username}
-                    />
-                </View>
-                <View style={styles.inputContainer}>
-                    <TextInput
-                        style={styles.input}
-                        placeholder="New Password"
-                        secureTextEntry={!showPassword}
-                        onChangeText={(text) => setNewPassword(text)}
-                        value={newPassword}
-                    />
-                    <TouchableOpacity onPress={togglePasswordVisibility} style={styles.icon}>
-                        <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} size={20} color="white" />
-                    </TouchableOpacity>
-                </View>
-                <View style={styles.inputContainer}>
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Confirm Password"
-                        secureTextEntry={!showPassword}
-                        onChangeText={(text) => setConfirmPassword(text)}
-                        value={confirmPassword}
-                    />
-                    <TouchableOpacity onPress={togglePasswordVisibility} style={styles.icon}>
-                        <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} size={20} color="white" />
-                    </TouchableOpacity>
-                </View>
-                <TouchableOpacity onPress={handleResetPassword} style={styles.confirmButton}>
-                    <Text style={styles.confirmButtonText}>Confirm</Text>
-                </TouchableOpacity>
-            </View>
-            <StatusBar style="auto" />
+      <View style={styles.container}>
+        <Image style={styles.background} source={signInImage} />
+        <View style={styles.overlay} />
+        <Text style={styles.heading}>Reset Password</Text>
+        <View style={styles.allsignIn}>
+          {errorMessage !== "" && (
+            <Text style={styles.errorText}>{errorMessage}</Text>
+          )}
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.input}
+              placeholder="Username"
+              onChangeText={(text) => setUsername(text)}
+              value={username}
+            />
+          </View>
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.input}
+              placeholder="Current Password"
+              secureTextEntry={!showPassword}
+              value={currentPassword}
+              onChangeText={(text) => setCurrentPassword(text)}
+            />
+
+            <TouchableOpacity
+              onPress={togglePasswordVisibility}
+              style={styles.icon}
+            >
+              <FontAwesomeIcon
+                icon={showPassword ? faEyeSlash : faEye}
+                size={20}
+                color="white"
+              />
+            </TouchableOpacity>
+          </View>
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.input}
+              placeholder="New Password"
+              secureTextEntry={!showPassword}
+              onChangeText={(text) => setNewPassword(text)}
+              value={newPassword}
+            />
+            <TouchableOpacity
+              onPress={togglePasswordVisibility}
+              style={styles.icon}
+            >
+              <FontAwesomeIcon
+                icon={showPassword ? faEyeSlash : faEye}
+                size={20}
+                color="white"
+              />
+            </TouchableOpacity>
+          </View>
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.input}
+              placeholder="Confirm Password"
+              secureTextEntry={!showPassword}
+              onChangeText={(text) => setConfirmPassword(text)}
+              value={confirmPassword}
+            />
+            <TouchableOpacity
+              onPress={togglePasswordVisibility}
+              style={styles.icon}
+            >
+              <FontAwesomeIcon
+                icon={showPassword ? faEyeSlash : faEye}
+                size={20}
+                color="white"
+              />
+            </TouchableOpacity>
+          </View>
+          <TouchableOpacity
+            onPress={handleResetPassword}
+            style={styles.confirmButton}
+          >
+            <Text style={styles.confirmButtonText}>Confirm</Text>
+          </TouchableOpacity>
         </View>
+        <StatusBar style="auto" />
+      </View>
     );
 };
 

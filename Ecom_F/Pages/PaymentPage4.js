@@ -11,16 +11,16 @@ import { useUserContext } from "./UserContext";
 const Trackbar = require('../Streetmall/14_Checkout_page/step3.png');
 
 const PaymentPage4 = ({ navigation }) => {
- 
+
   const route = useRoute();
   const { selectedDeliveryOption, selectedPaymentOption, product } = route.params;
-  const { userID,BASE_URL } = useUserContext();
+  const { userID, BASE_URL } = useUserContext();
   const postData = async () => {
-    if (selectedPaymentOption == "Paytm" || "Net Banking"){
+    if (selectedPaymentOption == "Paytm" || "Net Banking") {
       var pay_method = "UPI";
     }
     else {
-      var pay_method = selectedPaymentOption=="Credit/Debit Card"?"Card":"COD";
+      var pay_method = selectedPaymentOption == "Credit/Debit Card" ? "Card" : "COD";
     }
     const data = {
       user: userID,
@@ -29,9 +29,13 @@ const PaymentPage4 = ({ navigation }) => {
       pay_method: pay_method,
     };
     try {
-      const response = await axios.post(`${BASE_URL}/api/order/placeorder/`, data);
-      
-      if (response.data==1){
+      const response = await axios.post(`${BASE_URL}/api/order/placeorder/`, data, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.data == 1) {
         goToConfirmedPage();
       }
 
