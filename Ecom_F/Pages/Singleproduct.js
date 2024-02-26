@@ -7,6 +7,8 @@ import {
   ScrollView,
   TextInput,
   Image,
+  KeyboardAvoidingView,
+  Platform,
   TouchableOpacity,
 } from "react-native";
 import {
@@ -105,7 +107,6 @@ const SingleProductPage = ({ navigation }) => {
     }
   };
 
-
   const buynowhand = async () => {
     try {
       const response = await axios.post(
@@ -122,7 +123,6 @@ const SingleProductPage = ({ navigation }) => {
       );
       console.log(response.data);
       if (response.data == 1) {
-        
         navCart();
       }
       // Handle the response accordingly (e.g., show a success message)
@@ -171,105 +171,135 @@ const SingleProductPage = ({ navigation }) => {
 
   return (
     <View style={styles.containerw}>
-      <ScrollView vertical showsVerticalScrollIndicator={false}>
-        <View style={styles.container}>
-          <View style={styles.topbarinput}>
-            <FontAwesomeIcon icon={faMagnifyingGlass} size={20} color="black" />
-            <TextInput
-              placeholder="Search Sunlight.in"
-              style={styles.inputBox}
-            />
-            {/* <FontAwesomeIcon
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={{ flex: 1 }}
+      >
+        <ScrollView vertical showsVerticalScrollIndicator={false}>
+          <View style={styles.container}>
+            <Text
+              style={{
+                fontSize: 30,
+                color: "#fff",
+                textAlign: "center",
+                alignItems: "center",
+                display: "flex",
+                marginTop: -20,
+                marginBottom: 10,
+              }}
+            >
+              StreetMall
+            </Text>
+            <View style={styles.topbarinput}>
+              <FontAwesomeIcon
+                icon={faMagnifyingGlass}
+                size={20}
+                color="black"
+              />
+              <TextInput
+                placeholder="Search streetmall.com"
+                style={styles.inputBox}
+              />
+              {/* <FontAwesomeIcon
               icon={faUsersViewfinder}
               size={20}
               color="black"
             /> */}
-          </View>
-          <StatusBar style="auto" />
-        </View>
-        <View style={styles.productDetails}>
-          {cartMessage.length > 0 && (
-            <View style={styles.cartMessageContainer}>
-              <Text style={styles.cartMessageText}>{cartMessage}</Text>
             </View>
-          )}
-          <View style={styles.productHeader}>
-            <Text style={styles.productName}>{product.name}</Text>
-            <View style={styles.ratingContainer}>
-              {renderStars(product.rating)}
-              <Text style={styles.ratingText}>{product.rating}</Text>
-            </View>
+            <StatusBar style="auto" />
           </View>
-          <Image style={styles.productImage} source={{ uri: product.images }} />
-          <View style={styles.priOfferContainer}>
-            <Text
-              style={styles.productPrice}
-            >{`₹${product.sellingPrice}`}</Text>
-            <Text style={styles.offerText}>{product.discount}%</Text>
-          </View>
-        </View>
-
-        <View style={styles.deliveryInfoContainer}>
-          {product.mrp && <Text style={styles.RealPrice}>${product.mrp}</Text>}
-          {product.freeDelivery && (
-            <Text style={styles.deliveryInfoText}>Free Delivery</Text>
-          )}
-          {isBL && (
-            <Text style={styles.ble}>
-              {product.BLE}
-              {"\n"}
-            </Text>
-          )}
-        </View>
-        <View>
-          <Text style={styles.inStockInfoText}>
-            {product.stock ? "In Stock" : "Out of Stock"}
-          </Text>
-        </View>
-
-        {/* Buttons */}
-        <View style={styles.buttonsContainer}>
-          <TouchableOpacity style={styles.addToCartButton} onPress={addToCart}>
-            <Text style={styles.abButtonText}>Add to Cart</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.buyNowButton} onPress={buynowhand}>
-            <Text style={styles.abButtonText}>Buy Now</Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* Secure Transaction Section */}
-        <View style={styles.secureTransactionContainer}>
-          <FontAwesomeIcon icon={faLock} size={15} color="#003478" />
-          <Text style={styles.secureTransactionText}>Secure Transaction</Text>
-        </View>
-
-        {/* Product Details */}
-        <View style={styles.detailsContainer}>
-          <Text style={styles.detailsHeader}>Product Details</Text>
-          <Text style={styles.detailsText}>{product.description}</Text>
-        </View>
-
-        {/* Specifications */}
-        <View style={styles.specificationsContainer}>
-          <Text style={styles.specificationsHeader}>Specifications</Text>
-          <View style={styles.detailsListContainer}>
-            {product.specification.map((spec, index) => (
-              <View key={index} style={styles.detailsListItem}>
-                <Text style={styles.detailsListItemLabel}>{spec.label}</Text>
-                <Text style={styles.detailsListItemValue}>{spec.value}</Text>
+          <View style={styles.productDetails}>
+            {cartMessage.length > 0 && (
+              <View style={styles.cartMessageContainer}>
+                <Text style={styles.cartMessageText}>{cartMessage}</Text>
               </View>
+            )}
+            <View style={styles.productHeader}>
+              <Text style={styles.productName}>{product.name}</Text>
+              <View style={styles.ratingContainer}>
+                {renderStars(product.rating)}
+                <Text style={styles.ratingText}>{product.rating}</Text>
+              </View>
+            </View>
+            <Image
+              style={styles.productImage}
+              source={{ uri: product.images }}
+            />
+            <View style={styles.priOfferContainer}>
+              <Text
+                style={styles.productPrice}
+              >{`₹${product.sellingPrice}`}</Text>
+              <Text style={styles.offerText}>{product.discount}%</Text>
+            </View>
+          </View>
+
+          <View style={styles.deliveryInfoContainer}>
+            {product.mrp && (
+              <Text style={styles.RealPrice}>${product.mrp}</Text>
+            )}
+            {product.freeDelivery && (
+              <Text style={styles.deliveryInfoText}>Free Delivery</Text>
+            )}
+            {isBL && (
+              <Text style={styles.ble}>
+                {product.BLE}
+                {"\n"}
+              </Text>
+            )}
+          </View>
+          <View>
+            <Text style={styles.inStockInfoText}>
+              {product.stock ? "In Stock" : "Out of Stock"}
+            </Text>
+          </View>
+
+          {/* Buttons */}
+          <View style={styles.buttonsContainer}>
+            <TouchableOpacity
+              style={styles.addToCartButton}
+              onPress={addToCart}
+            >
+              <Text style={styles.abButtonText}>Add to Cart</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.buyNowButton} onPress={buynowhand}>
+              <Text style={styles.abButtonText}>Buy Now</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Secure Transaction Section */}
+          <View style={styles.secureTransactionContainer}>
+            <FontAwesomeIcon icon={faLock} size={15} color="#003478" />
+            <Text style={styles.secureTransactionText}>Secure Transaction</Text>
+          </View>
+
+          {/* Product Details */}
+          <View style={styles.detailsContainer}>
+            <Text style={styles.detailsHeader}>Product Details</Text>
+            <Text style={styles.detailsText}>{product.description}</Text>
+          </View>
+
+          {/* Specifications */}
+          <View style={styles.specificationsContainer}>
+            <Text style={styles.specificationsHeader}>Specifications</Text>
+            <View style={styles.detailsListContainer}>
+              {product.specification.map((spec, index) => (
+                <View key={index} style={styles.detailsListItem}>
+                  <Text style={styles.detailsListItemLabel}>{spec.label}</Text>
+                  <Text style={styles.detailsListItemValue}>{spec.value}</Text>
+                </View>
+              ))}
+            </View>
+            {product.specification_list.map((spec, index) => (
+              <Text key={index} style={styles.specificationsItem}>
+                {spec}
+              </Text>
             ))}
           </View>
-          {product.specification_list.map((spec, index) => (
-            <Text key={index} style={styles.specificationsItem}>
-              {spec}
-            </Text>
-          ))}
-        </View>
-        <Text> {"\n"} </Text>
-        <Text> {"\n"} </Text>
-        <Text> {"\n"} </Text>
-      </ScrollView>
+          <Text> {"\n"} </Text>
+          <Text> {"\n"} </Text>
+          <Text> {"\n"} </Text>
+        </ScrollView>
+      </KeyboardAvoidingView>
       <BottomBar navigation={navigation} />
       <View style={styles.blueBar}></View>
     </View>
@@ -283,14 +313,17 @@ const styles = StyleSheet.create({
   },
   cartMessageContainer: {
     position: "absolute",
-    top: 10,
-    left: 10,
-    right: 10,
+    top: "10%",
+    left: "9%",
     backgroundColor: "rgba(0, 128, 0, 0.8)",
     padding: 10,
     borderRadius: 5,
     zIndex: 999,
+    textAlign: "center",
+    width: 300,
+    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
   },
+
   cartMessageText: {
     color: "#fff",
     textAlign: "center",
@@ -298,7 +331,7 @@ const styles = StyleSheet.create({
   blueBar: {
     backgroundColor: "#1977F3",
     height: 15,
-    position: "absolute",
+    position: "sticky",
     bottom: 60,
     left: 0,
     right: 0,
@@ -384,6 +417,7 @@ const styles = StyleSheet.create({
   productImage: {
     width: "100%",
     height: 300,
+    objectFit: "contain",
   },
   productDetails: {
     padding: 16,

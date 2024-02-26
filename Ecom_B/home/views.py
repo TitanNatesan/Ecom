@@ -113,8 +113,7 @@ def verifyOTP(request):
         for i in last_otp:
             otp*=10
             otp+=int(i)
-
-        print(data)
+        print(otp)
         if not last_otp:
             return Response({'message':"Last OTP is required"})
 
@@ -325,9 +324,11 @@ def placeOrder(request):
             each.save()
             return Response({"detail": "Cart Not Found"}, status=status.HTTP_404_NOT_FOUND)
 
-        each = EachItem.objects.get(user=user, product=product)
         order = Orders.objects.create(user=user, order_id=str(user.username) + getDateAndTime())
-        order.ordered_product = product
+        
+       
+        each = EachItem.objects.get(user=user, product=product)
+        order.ordered_product.add(product)
         order.quantity = each.quantity
         order.total_cost = each.quantity * product.sellingPrice
         order.delivery_charges = 0 if (each.quantity * product.sellingPrice) > 200 else 40
@@ -362,59 +363,48 @@ def placeOrder(request):
 def placeOrders(request):
     '''
     {
-      "user": "qwertyuiop",
-      "product_ids": ["phone1", "laptop2"],
-      "delivery_type": "Regular Delivery",
-      "pay_method": "UPI"
-    }
+"user": "hbtldeveloper",
+"product_ids": ["shoe1", "phone2"],
+"delivery_type": "Regular Delivery",
+"pay_method": "UPI"
+}
     '''
+    product_ids = request.data['product_ids']
+
     if request.method == "POST":
         try:
             user = Users.objects.get(username=request.data['user'])
         except Users.DoesNotExist:
-            return Response({"detail": "User Not Found"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"detail": "User Not Found"})
         
-        oid = ''
+        order = Orders.objects.create(
+            user=user, 
+            order_id=str(user.username) + getDateAndTime(),
+            delivery_type = request.data['delivery_type'],
+            status='Placed',
+            quantity=0,
+            total_cost=0,
+            payment_method=request.data['pay_method'],
+            expected_delivery=add_working_days(str(datetime.now().date()), 7),
+        )
         
-        for product_id in request.data['product_ids']:
+        for product_id in product_ids:
             try:
                 product = Products.objects.get(product_id=product_id)
-            except Products.DoesNotExist:
-                return Response({"detail": "Product Not Found"}, status=status.HTTP_404_NOT_FOUND)
-            try:
                 each = EachItem.objects.get(user=user, product=product)
-            except EachItem.DoesNotExist:
-                each = EachItem(
-                    user=user,
-                    product=product,
-                    quantity=1
-                )
-                each.save()
-                return Response({"detail": "Cart Not Found"}, status=status.HTTP_404_NOT_FOUND)
 
-            each = EachItem.objects.get(user=user, product=product)
-            if oid == '':
-                order = Orders.objects.create(user=user, order_id=str(user.username) + getDateAndTime())
-                oid = str(user.username) + getDateAndTime()
-                order.ordered_product.add(product)
-                order.quantity = each.quantity
-                order.total_cost = each.quantity * product.sellingPrice
-                order.delivery_charges = 0 if (each.quantity * product.sellingPrice) > 200 else 40
-                order.delivery_type = request.data['delivery_type']
-                order.status = "Placed"
-                order.payment_method = request.data['pay_method']
-                order.expected_delivery = add_working_days(str(datetime.now().date()), 7)
-                order.save()
-                each.delete()
-            else:
-                order.objects.get(order_id=oid)
                 order.ordered_product.add(product)
                 order.quantity += each.quantity
                 order.total_cost += each.quantity * product.sellingPrice
-                order.delivery_charges = 0 if (order.total_cost) > 200 else 40
+                order.delivery_charges = 0 if order.total_cost > 200 else 40
                 order.save()
                 each.delete()
 
+            except Products.DoesNotExist:
+                return Response({"detail": "Product Not Found"})
+            except EachItem.DoesNotExist:
+                return Response({"detail": "Each Item Not Found"})
+            
             while user.referal != 'null':
                 user = Users.objects.get(username=user.referal)
                 if user.role == "General Manager":
@@ -431,8 +421,8 @@ def placeOrders(request):
                     user.save()
                 else:
                     break
-
-        return JsonResponse({"detail": "Orders placed successfully"})
+            
+        return Response(1)
 
 
 
@@ -457,9 +447,25 @@ def viewUser(request,username):
         addressData = request.data.pop("address")
         try:
             user = Users.objects.get(username=userdata['username'])
+            try:
+                euse = Users.objects.get(email=userdata['email'])
+                if euse == user:
+                    user.email = userdata['email']
+                else:
+                    return Response({"message":"Email Already Taken"})
+            except Users.DoesNotExist:
+                user.email = userdata['email']
+
+            try:
+                puse = Users.objects.get(phone=userdata['phone'])
+                if puse == user:
+                    user.phone = userdata['phone']
+                else:
+                    return Response({"message":"Phone no. Already Taken"})
+            except Users.DoesNotExist:
+                user.phone = userdata['phone']
+
             user.name = userdata['name']
-            user.phone = userdata['phone']
-            user.email = userdata['email']
             user.save()
             try:
                 address = Address.objects.get(user=user)
@@ -591,23 +597,42 @@ def get_base64_encoded_image(img_path):
 def generate_otp():
     return ''.join(random.choices('0123456789', k=4))
 
-def send_otp_email(email, otp):
-    subject = 'Your OTP'
-    message = f'Your OTP is: {otp}\n Do not share this OTP'
-    from_email = 'mukilan@gmail.com'  # Update with your email
-    send_mail(subject, message, from_email, [email])
 
-@api_view(['POST'])
-def generate_and_send_otp(request):
-    print("111")
-    if request.method == 'POST':
-        email = request.POST.data['email']
-        otp = generate_otp()
-        send_otp_email(email, otp)
-        print("otp sent",otp)
-        request.session['otp'] = otp
-        return Response("OTP sent successfully. Check your email.")
-    return Response(0)
+# @api_view(["POST"])
+# def getOrder(request):
+#     if request.method == "POST":
+#         try:
+#             user = Users.objects.get(username=request.data['username'])
+#             orders = Orders.objects.filter(user=user)
+#             products = [i.ordered_product for i in orders]
+
+#             order_data = []
+#             for order, product in zip(orders, products):
+#                 order_dict = {
+#                     "order_id": order.order_id,
+#                     "quantity": order.quantity,
+#                     "delivery_charges": order.delivery_charges,
+#                     "total_cost": order.total_cost,
+#                     "ordered_date": order.ordered_date,
+#                     "delivery_type": order.delivery_type,
+#                     "status": order.status,
+#                     "payment_method": order.payment_method,
+#                     "expected_delivery": order.expected_delivery,
+#                     "name": order.order_id,
+#                     "description": order.ordered_product,
+#                     "images": product.images.url if product.images else None,  # Adjust based on your model
+#                     "mrp": product.mrp,
+#                     "discount": product.discount,
+#                     "sellingPrice": product.sellingPrice,
+#                 }
+#                 order_data.append(order_dict)
+
+#             return Response(order_data)
+#         except Users.DoesNotExist:
+#             return Response("User not found")
+#         except Orders.DoesNotExist:
+#             return Response({"message": "No Order Placed"})
+        
 
 
 @api_view(["POST"])
@@ -616,10 +641,19 @@ def getOrder(request):
         try:
             user = Users.objects.get(username=request.data['username'])
             orders = Orders.objects.filter(user=user)
-            products = [i.ordered_product for i in orders]
 
             order_data = []
-            for order, product in zip(orders, products):
+            for order in orders:
+                # Select one product associated with the order
+                product = order.ordered_product.first()
+
+                if product:
+                    # Select any one image URL from the product images
+                    product_image_url = product.images.url if product.images else None
+                    print(product_image_url)
+                else:
+                    product_image_url = None  # Set to None if no product is associated
+
                 order_dict = {
                     "order_id": order.order_id,
                     "quantity": order.quantity,
@@ -627,23 +661,24 @@ def getOrder(request):
                     "total_cost": order.total_cost,
                     "ordered_date": order.ordered_date,
                     "delivery_type": order.delivery_type,
-                    "status": order.status,
+                    "status": order.status, 
                     "payment_method": order.payment_method,
+                    'name':order.order_id,
                     "expected_delivery": order.expected_delivery,
-                    "name": product.name,
-                    "description": product.description,
-                    "images": product.images.url if product.images else None,  # Adjust based on your model
-                    "mrp": product.mrp,
-                    "discount": product.discount,
-                    "sellingPrice": product.sellingPrice,
+                    "images": product_image_url,  # Include the product image URL in the order_dict
                 }
                 order_data.append(order_dict)
 
             return Response(order_data)
+
         except Users.DoesNotExist:
             return Response("User not found")
         except Orders.DoesNotExist:
             return Response({"message": "No Order Placed"})
+
+
+
+
 
 def send_email(receiver_email, subject, body):
     sender_email = "hbtldevelopment@gmail.com"
@@ -669,13 +704,41 @@ def reset_password(request):
         data = request.data
         try:
             user = Users.objects.get(username=data['username'])
+            new_password = data['new_password']
+            old_password = data['old_password']
+            if user.password==old_password:
+                user.password = new_password
+                user.save()
+                return Response(1)
+            else:
+                return Response({"message":"Check Your Current Password"})
         except Users.DoesNotExist:
-            return Response("User not found")
-        new_password = data['new_password']
-        if user.password==data['old_password']:
+            return Response({"message":"User not found"})
+    return Response("Invalid request")
+
+@api_view(['POST'])
+def resetpass(request):
+    if request.method == "POST":
+        data = request.data
+        try:
+            user = Users.objects.get(username=data['username'])
+            new_password = data['new_password']
             user.password = new_password
             user.save()
             return Response(1)
-        else:
-            return Response({"message":"Password MisMatch"})
+        except Users.DoesNotExist:
+            return Response({"message":"User not found"})
     return Response("Invalid request")
+
+@api_view(['POST'])
+def forgetPass(request):
+    if request.method=='POST':
+        try:
+            user = Users.objects.get(username=request.data['username'])
+            otp = generate_otp()
+            send_email(user.email, 'Your OTP', f'Your OTP is: {otp}\n Do not share this OTP\n The above OTP will expire in 5 mins')
+            user.last_OTP = otp
+            user.save()
+            return Response("Sent")
+        except Users.DoesNotExist:
+            return Response("Invalid Username")

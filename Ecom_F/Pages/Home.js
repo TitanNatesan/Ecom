@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   StyleSheet,
   View,
@@ -36,7 +36,7 @@ const banner = require("../Streetmall/10_Category/Banner.png");
 const Offer = require("../assets/offer.png");
 const dress = require("../assets/dress.jpg");
 const shoe = require("../assets/shoe799.jpg");
-
+import AsyncStorage from "@react-native-async-storage/async-storage";
 const Ac = require("../Streetmall/5Deals/app1.png");
 const fridge = require("../Streetmall/5Deals/app2.png");
 const MO = require("../Streetmall/5Deals/app3.png");
@@ -44,6 +44,7 @@ const Washingmachine = require("../Streetmall/5Deals/app4.png");
 const Nike = require("../Streetmall/5Deals/nike.png");
 const Puma = require("../Streetmall/5Deals/puma.png");
 const Bata = require("../Streetmall/5Deals/bata.png");
+import { useUserContext } from "./UserContext";
 
 library.add(faMagnifyingGlass, faUsersViewfinder);
 
@@ -51,6 +52,22 @@ const Home = ({ navigation }) => {
   const handleLoginPress = () => {
     navigation.navigate("Category", { username });
   };
+  const {updateUserID,userID}=useUserContext();
+  useEffect(() => {
+    const changeUserdata = async () => {
+      try {
+        const storedUsername = await AsyncStorage.getItem("username");
+        const storedPassword = await AsyncStorage.getItem("password");
+        if (storedUsername && storedPassword){
+          updateUserID(storedUsername);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    changeUserdata();
+  }, [])
+
   const route = useRoute();
   const username = route.params;
 
@@ -90,6 +107,19 @@ const Home = ({ navigation }) => {
       >
         <View>
           <View style={styles.container}>
+            <Text
+              style={{
+                fontSize: 30,
+                color: "#fff",
+                fontWeight: "bold",
+                textAlign: "center",
+                alignItems: "center",
+                display: "flex",
+                marginTop: -40,
+              }}
+            >
+              StreetMall
+            </Text>
             <View style={styles.topbarinput}>
               <FontAwesomeIcon
                 icon={faMagnifyingGlass}
@@ -97,7 +127,7 @@ const Home = ({ navigation }) => {
                 color="black"
               />
               <TextInput
-                placeholder="Search Sunlight.in"
+                placeholder="Search streetmall.com"
                 style={styles.inputBox}
                 onPressIn={() =>
                   navigation.navigate("AProduct", { item: { text: "" } })
@@ -135,16 +165,16 @@ const Home = ({ navigation }) => {
               )}
             </View>
           </ScrollView>
-          <View style={{ marginTop: 20 }}>
+          <View style={{ marginTop: 10 }}>
             <Carousel
               data={carouselItems1}
               renderItem={renderCarouselItem}
               sliderWidth={screenWidth}
               itemWidth={screenWidth}
               autoplay={true}
+              onSnapToItem={(index) => setActiveSlide(index)}
               loop
               autoplayInterval={2000}
-              onSnapToItem={(index) => setActiveSlide(index)}
             />
             <Pagination
               dotsLength={carouselItems1.length}
@@ -325,7 +355,7 @@ const styles = StyleSheet.create({
   },
 
   container: {
-    paddingTop: 120,
+    paddingTop: 80,
     backgroundColor: "#1977F3",
     paddingBottom: 15,
   },
@@ -393,6 +423,7 @@ const styles = StyleSheet.create({
   topbarinput: {
     justifyContent: "center",
     marginHorizontal: 20,
+    marginTop: 20,
     borderRadius: 10,
     flexDirection: "row",
     alignItems: "center",
@@ -406,8 +437,7 @@ const styles = StyleSheet.create({
   },
   productsbar: {
     flexDirection: "row",
-    marginTop: 10,
-    paddingVertical: 10,
+    marginTop: 5,
     backgroundColor: "#1977F33A",
   },
   product: {
@@ -442,7 +472,8 @@ const styles = StyleSheet.create({
     fontSize: 11,
     justifyContent: "center",
     display: "flex",
-marginLeft: 5, },
+    marginLeft: 5,
+  },
   productImage: {
     width: 65,
     height: 70,

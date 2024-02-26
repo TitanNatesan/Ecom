@@ -9,6 +9,8 @@ import {
   StatusBar,
   ScrollView,
   TouchableOpacity,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import {
   faMagnifyingGlass,
@@ -21,6 +23,9 @@ import {
   faCar,
   faBiking,
   faPepperHot,
+  faLaptop,
+  faStopwatch,
+  faMobile,
 } from "@fortawesome/free-solid-svg-icons";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -42,14 +47,14 @@ const watch = require("../Streetmall/1Home/Watch.png");
 library.add(faMagnifyingGlass, faUsersViewfinder);
 
 const data = [
-  { icon: faShirt, text: "Men's Wear" },
-  { icon: faChildDress, text: "Women's Wear" },
+  { icon: faShirt, text: "Men's wear" },
+  { icon: faChildDress, text: "Women's wear" },
   { icon: faChild, text: "Kids Wear" },
-  { icon: faBlenderPhone, text: "Home Appliances" },
-  { icon: faShoePrints, text: "Shoes" },
-  { icon: faCar, text: "Cars" },
-  { icon: faBiking, text: "Bike" },
-  { icon: faPepperHot, text: "Groceries" },
+  { icon: faBlenderPhone, text: "Home appliances" },
+  { icon: faLaptop, text: "Laptop" },
+  { icon: faCar, text: "Car" },
+  { icon: faStopwatch, text: "Watch" },
+  { icon: faMobile, text: "Mobile" },
 ];
 
 const Category = ({ navigation }) => {
@@ -65,74 +70,105 @@ const Category = ({ navigation }) => {
 
   return (
     <View style={styles.containerw}>
-      <ScrollView
-        style={styles.all}
-        vertical
-        showsVerticalScrollIndicator={false}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={{ flex: 1 }}
       >
-        <View style={styles.container}>
-          <View style={styles.topbarinput}>
-            <FontAwesomeIcon icon={faMagnifyingGlass} size={20} color="black" />
-            <TextInput
-              placeholder="Search Sunlight.in"
-              style={styles.inputBox}
-            />
-            {/* <FontAwesomeIcon icon={faUsersViewfinder} size={20} color="black" /> */}
-          </View>
-          <StatusBar barStyle="dark-content" />
-        </View>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          <View style={styles.productsbar}>
-            {carouselItems.map((item, index) =>
-              item.text === "Special Products" ? (
-                <View
-                  key={index}
-                  style={[
-                    styles.productcont,
-                    { color: "#fff", backgroundColor: "#FF7272" },
-                  ]}
-                >
-                  <TouchableOpacity
-                    onPress={() => navigation.navigate("Gifts", { item })}
-                  >
-                    <Image style={styles.productImagegt} source={item.image} />
-                    <Text style={styles.protxtgt}>{item.text}</Text>
-                  </TouchableOpacity>
-                </View>
-              ) : (
-                <TouchableOpacity
-                  onPress={() => navigation.navigate("AProduct", { item })}
-                >
-                  <View key={index} style={styles.product}>
-                    <Image style={styles.productImage} source={item.image} />
-                    <Text>{item.text}</Text>
-                  </View>
-                </TouchableOpacity>
-              )
-            )}
-          </View>
-        </ScrollView>
-
-        <Text style={styles.category}>Shop by Category</Text>
-        <View style={styles.categoryContainer}>
-          {data.map((item, index) => (
-            <TouchableOpacity
-              key={index}
-              style={styles.categoryItem}
-              onPress={() => {
-                navigation.navigate("AProduct", { item });
+        <ScrollView
+          style={styles.all}
+          vertical
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.container}>
+            <Text
+              style={{
+                fontSize: 30,
+                color: "#fff",
+                textAlign: "center",
+                alignItems: "center",
+                display: "flex",
+                marginTop: -10,
+                marginBottom: 10,
               }}
             >
-              <FontAwesomeIcon icon={item.icon} size={20} color="black" />
-              <Text style={styles.categoryLabel}>{item.text}</Text>
-              <FontAwesomeIcon icon={faChevronRight} size={20} color="black" />
-            </TouchableOpacity>
-          ))}
-        </View>
-        <Text> {"\n"} </Text>
-        <Text> {"\n"} </Text>
-        <Text> {"\n"} </Text>
-      </ScrollView>
+              StreetMall
+            </Text>
+
+            <View style={styles.topbarinput}>
+              <FontAwesomeIcon
+                icon={faMagnifyingGlass}
+                size={20}
+                color="black"
+              />
+              <TextInput
+                placeholder="Search streetmall.com"
+                style={styles.inputBox}
+              />
+              {/* <FontAwesomeIcon icon={faUsersViewfinder} size={20} color="black" /> */}
+            </View>
+            <StatusBar barStyle="dark-content" />
+          </View>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            <View style={styles.productsbar}>
+              {carouselItems.map((item, index) =>
+                item.text === "Special Products" ? (
+                  <View
+                    key={index}
+                    style={[
+                      styles.productcont,
+                      { color: "#fff", backgroundColor: "#FF7272" },
+                    ]}
+                  >
+                    <TouchableOpacity
+                      onPress={() => navigation.navigate("Gifts", { item })}
+                    >
+                      <Image
+                        style={styles.productImagegt}
+                        source={item.image}
+                      />
+                      <Text style={styles.protxtgt}>{item.text}</Text>
+                    </TouchableOpacity>
+                  </View>
+                ) : (
+                  <TouchableOpacity
+                    onPress={() => navigation.navigate("AProduct", { item })}
+                  >
+                    <View key={index} style={styles.product}>
+                      <Image style={styles.productImage} source={item.image} />
+                      <Text>{item.text}</Text>
+                    </View>
+                  </TouchableOpacity>
+                )
+              )}
+            </View>
+          </ScrollView>
+
+          <Text style={styles.category}>Shop by Category</Text>
+          <View style={styles.categoryContainer}>
+            {data.map((item, index) => (
+              <TouchableOpacity
+                key={index}
+                style={styles.categoryItem}
+                onPress={() => {
+                  navigation.navigate("AProduct", { item });
+                }}
+              >
+                <FontAwesomeIcon icon={item.icon} size={20} color="black" />
+                <Text style={styles.categoryLabel}>{item.text}</Text>
+                <FontAwesomeIcon
+                  icon={faChevronRight}
+                  size={20}
+                  color="black"
+                />
+              </TouchableOpacity>
+            ))}
+          </View>
+          <Text> {"\n"} </Text>
+          <Text> {"\n"} </Text>
+          <Text> {"\n"} </Text>
+        </ScrollView>
+      </KeyboardAvoidingView>
+      <View style={styles.blueBar}></View>
       <View style={styles.navbar}>
         <TouchableOpacity onPress={() => navigation.navigate("Home")}>
           <View style={[styles.navbarIcon, styles.navbarIconHome1]}>
@@ -159,8 +195,6 @@ const Category = ({ navigation }) => {
           </View>
         </TouchableOpacity>
       </View>
-      {/* Blue Bar */}
-      <View style={styles.blueBar}></View>
     </View>
   );
 };
@@ -171,15 +205,15 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff",
   },
   container: {
-    paddingTop: 120,
+    paddingTop: 100,
     backgroundColor: "#1977F3",
     paddingBottom: 15,
   },
   blueBar: {
     backgroundColor: "#1977F3",
     height: 15,
-    position: "absolute",
-    bottom: 60,
+    position: "sticky",
+    bottom: 0,
     left: 0,
     right: 0,
   },
@@ -187,8 +221,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#D3E6FD",
   },
   navbar: {
-    position: "absolute",
-    bottom: 0,
+    position: "sticky",
     width: "100%",
     height: "8%",
     flexDirection: "row",

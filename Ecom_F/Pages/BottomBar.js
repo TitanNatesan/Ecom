@@ -43,16 +43,12 @@ const BottomBar = ({ navigation, initialPage }) => {
 
 const styles = StyleSheet.create({
   navbar: {
-    position: 'absolute',
-    bottom: 0,
     width: '100%',
     height: '8%',
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
     backgroundColor: 'white',
-    paddingBottom: '5%',
-    elevation: 10,
   },
   navbarIcon: {
     width: 15,

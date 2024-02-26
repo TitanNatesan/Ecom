@@ -19,6 +19,9 @@ urlpatterns = [
     path('getorder/',views.getOrder,name="Get Order"),
     path('verify/',views.verifyOTP,name="Verify OTP"),
     path("resend/",views.resendOtp,name="Resend OTP"),
-]  
+    path("forgetpass/",views.forgetPass,name='Forget Password'),
+    path("resetpass/",views.reset_password,name='Reset Password'),
+    path("resetPass/",views.resetpass,name='Forget Password')
+]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

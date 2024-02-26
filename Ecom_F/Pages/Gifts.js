@@ -10,6 +10,8 @@ import {
   ImageBackground,
   TouchableOpacity,
   Modal,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import {
   faMagnifyingGlass,
@@ -117,100 +119,121 @@ const Gifts = ({ navigation }) => {
   console.log("Special Products page");
   return (
     <View style={styles.containerw}>
-      <ScrollView vertical showsVerticalScrollIndicator={false}>
-        <View>
-          <View style={styles.container}>
-            <View style={styles.topbarinput}>
-              <FontAwesomeIcon
-                icon={faMagnifyingGlass}
-                size={20}
-                color="black"
-              />
-              <TextInput
-                placeholder="Search Sunlight.in"
-                style={styles.inputBox}
-                value={searchQuery}
-                onChangeText={(text) => {
-                  handleSearch(text), setSearchQuery(text);
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={{ flex: 1 }}
+      >
+        <ScrollView vertical showsVerticalScrollIndicator={false}>
+          <View>
+            <View style={styles.container}>
+              <Text
+                style={{
+                  fontSize: 30,
+                  color: "#fff",
+                  textAlign: "center",
+                  alignItems: "center",
+                  display: "flex",
+                  marginTop: -20,
+                  marginBottom: 10,
                 }}
-              />
-              {/* <FontAwesomeIcon
+              >
+                StreetMall
+              </Text>
+              <View style={styles.topbarinput}>
+                <FontAwesomeIcon
+                  icon={faMagnifyingGlass}
+                  size={20}
+                  color="black"
+                />
+                <TextInput
+                  placeholder="Search streetmall.com"
+                  style={styles.inputBox}
+                  value={searchQuery}
+                  onChangeText={(text) => {
+                    handleSearch(text), setSearchQuery(text);
+                  }}
+                />
+                {/* <FontAwesomeIcon
                 icon={faUsersViewfinder}
                 size={20}
                 color="black"
               /> */}
-            </View>
-            <StatusBar style="dark-content" />
-          </View>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            <View style={styles.productsbar}>
-              {carouselItems.map((item, index) =>
-                item.text === "Special Products" ? (
-                  <View key={index} style={styles.productcont}>
-                    <TouchableOpacity
-                      onPress={() => navigation.navigate("Gifts", { item })}
-                    >
-                      <Image
-                        style={styles.productImagegt}
-                        source={item.image}
-                      />
-                      <Text style={styles.protxtgt}>{item.text}</Text>
-                    </TouchableOpacity>
-                  </View>
-                ) : (
-                  <TouchableOpacity
-                    onPress={() => navigation.navigate("AProduct", { item })}
-                  >
-                    <View key={index} style={styles.product}>
-                      <Image style={styles.productImage} source={item.image} />
-                      <Text>{item.text}</Text>
-                    </View>
-                  </TouchableOpacity>
-                )
-              )}
-            </View>
-          </ScrollView>
-
-          <View style={styles.topBrandsContainer}>
-            {topBrands.map((brand, index) => (
-              <View key={index} style={styles.brandContainer}>
-                <Image style={styles.brandImage} source={brand} />
               </View>
-            ))}
+              <StatusBar style="dark-content" />
+            </View>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              <View style={styles.productsbar}>
+                {carouselItems.map((item, index) =>
+                  item.text === "Special Products" ? (
+                    <View key={index} style={styles.productcont}>
+                      <TouchableOpacity
+                        onPress={() => navigation.navigate("Gifts", { item })}
+                      >
+                        <Image
+                          style={styles.productImagegt}
+                          source={item.image}
+                        />
+                        <Text style={styles.protxtgt}>{item.text}</Text>
+                      </TouchableOpacity>
+                    </View>
+                  ) : (
+                    <TouchableOpacity
+                      onPress={() => navigation.navigate("AProduct", { item })}
+                    >
+                      <View key={index} style={styles.product}>
+                        <Image
+                          style={styles.productImage}
+                          source={item.image}
+                        />
+                        <Text>{item.text}</Text>
+                      </View>
+                    </TouchableOpacity>
+                  )
+                )}
+              </View>
+            </ScrollView>
+
+            <View style={styles.topBrandsContainer}>
+              {topBrands.map((brand, index) => (
+                <View key={index} style={styles.brandContainer}>
+                  <Image style={styles.brandImage} source={brand} />
+                </View>
+              ))}
+            </View>
+            <View style={[styles.productsContainer]}>
+              {products.map((product, index) => (
+                <TouchableOpacity
+                  key={product.product_id}
+                  style={styles.productItem}
+                  onPress={() => handleProductPress(product, index)}
+                >
+                  <GiftProductItem product={product} />
+                </TouchableOpacity>
+              ))}
+            </View>
           </View>
-          <View style={[styles.productsContainer]}>
-            {products.map((product, index) => (
-              <TouchableOpacity
-                key={product.product_id}
-                style={styles.productItem}
-                onPress={() => handleProductPress(product, index)}
-              >
-                <GiftProductItem product={product} />
-              </TouchableOpacity>
-            ))}
-          </View>
-        </View>
-        <Text> {"\n"} </Text>
-        <Text> {"\n"} </Text>
-      </ScrollView>
-      <TouchableOpacity
-        style={styles.filtericon}
-        onPress={handleFilterIconClick}
-      >
-        <FontAwesomeIcon
-          icon={faFilterCircleDollar}
-          size={20}
-          color="#003478"
-        />
-      </TouchableOpacity>
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={isFilterModalVisible}
-        onRequestClose={handleCloseFilterModal}
-      >
-        <FilterPage closeModal={handleCloseFilterModal} />
-      </Modal>
+          <Text> {"\n"} </Text>
+          <Text> {"\n"} </Text>
+        </ScrollView>
+        <TouchableOpacity
+          style={styles.filtericon}
+          onPress={handleFilterIconClick}
+        >
+          <FontAwesomeIcon
+            icon={faFilterCircleDollar}
+            size={20}
+            color="#003478"
+          />
+        </TouchableOpacity>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={isFilterModalVisible}
+          onRequestClose={handleCloseFilterModal}
+        >
+          <FilterPage closeModal={handleCloseFilterModal} />
+        </Modal>
+      </KeyboardAvoidingView>
       <BottomBar navigation={navigation} initialPage="Home" />
       <View style={styles.blueBar}></View>
     </View>
@@ -282,7 +305,7 @@ const styles = StyleSheet.create({
   blueBar: {
     backgroundColor: "#1977F3",
     height: 15,
-    position: "absolute",
+    position: "sticky",
     bottom: 60,
     left: 0,
     right: 0,

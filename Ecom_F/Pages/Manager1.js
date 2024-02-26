@@ -41,65 +41,124 @@ const Manager1 = ({ navigation }) => {
     }, []);
 
     return (
-        <View style={styles.containerw}>
-            <ScrollView style={styles.all} vertical showsVerticalScrollIndicator={false}>
-                <View style={styles.container} >
-                    <FontAwesomeIcon icon={faCircleUser} style={{ color: '#fff', marginLeft: '5%', }} size={30} />
-                    <Text style={{ marginLeft: '3%', color: '#fff', }}>{userData.name} ({userData.role})</Text>
-                </View>
-                <View>
-                    <View style={{ flexDirection: 'row', width: '100%', justifyContent: 'space-evenly', alignItems: 'center', marginVertical: 20 }}>
-                        <Text style={{ padding: 10 }}>Referred</Text>
-                        <Text style={{ backgroundColor: '#FFAC2F', color: '#fff', width: 150, textAlign: 'center', paddingVertical: 10, borderRadius: 10 }}>{data.length}</Text>
-                    </View>
-
-                    <View style={{ flexDirection: 'row', width: '100%', justifyContent: 'space-evenly', alignItems: 'center', marginVertical: 20 }}>
-                        <Text style={{ padding: 10 }}>Income</Text>
-                        <Text style={{ backgroundColor: '#FFAC2F', color: '#fff', width: 150, textAlign: 'center', paddingVertical: 10, borderRadius: 10 }}>{userData.earning}/-</Text>
-                    </View>
-                </View>
-
-                <Text style={styles.category}>{userPos}</Text>
-                <View style={styles.categoryContainer}>
-                    {data.map((item, index) => (
-                        <TouchableOpacity
-                            key={index}
-                            style={styles.categoryItem}
-                            onPress={() => navigation.navigate('Manager2', { item })}
-                        >
-                            <FontAwesomeIcon icon={item.icon} size={20} color="black" />
-                            <Text style={styles.categoryLabel}>{item.label}</Text>
-                            <FontAwesomeIcon icon={faChevronRight} size={20} color="black" />
-                        </TouchableOpacity>
-                    ))}
-                </View>
-                <Text> {'\n'} </Text><Text> {'\n'} </Text><Text> {'\n'} </Text>
-            </ScrollView>
-            <View style={styles.navbar}>
-                <TouchableOpacity onPress={() => navigation.navigate('Home')}>
-                    <View style={[styles.navbarIcon, styles.navbarIconHome1]}>
-                        <FontAwesomeIcon icon={faHome} size={25} color={'#1977F3'} />
-                    </View>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => navigation.navigate('Category')}>
-                    <View style={[styles.navbarIcon, styles.navbarIconHome1]}>
-                        <FontAwesomeIcon icon={faBars} size={20} color={'#1977F3'} />
-                    </View>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => navigation.navigate('Cart')}>
-                    <View style={[styles.navbarIcon, styles.navbarIconHome1]}>
-                        <FontAwesomeIcon icon={faShoppingCart} size={20} color={'#1977F3'} />
-                    </View>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => navigation.navigate('User')}>
-                    <View style={[styles.navbarIcon, styles.navbarIconHome1]}>
-                        <FontAwesomeIcon icon={faUser} size={20} color={'#1977F3'} />
-                    </View>
-                </TouchableOpacity>
+      <View style={styles.containerw}>
+        <ScrollView
+          style={styles.all}
+          vertical
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.container}>
+            <FontAwesomeIcon
+              icon={faCircleUser}
+              style={{ color: "#fff", marginLeft: "5%" }}
+              size={30}
+            />
+            <Text style={{ marginLeft: "3%", color: "#fff" }}>
+              {userData.name} ({userData.role})
+            </Text>
+          </View>
+          <View>
+            <View
+              style={{
+                flexDirection: "row",
+                width: "100%",
+                justifyContent: "space-evenly",
+                alignItems: "center",
+                marginVertical: 20,
+              }}
+            >
+              <Text style={{ padding: 10 }}>Referred</Text>
+              <Text
+                style={{
+                  backgroundColor: "#FFAC2F",
+                  color: "#fff",
+                  width: 150,
+                  textAlign: "center",
+                  paddingVertical: 10,
+                  borderRadius: 10,
+                }}
+              >
+                {data.length}
+              </Text>
             </View>
-            {/* Blue Bar */}
-            <View style={styles.blueBar}></View>
+
+            <View
+              style={{
+                flexDirection: "row",
+                width: "100%",
+                justifyContent: "space-evenly",
+                alignItems: "center",
+                marginVertical: 20,
+              }}
+            >
+              <Text style={{ padding: 10 }}>Income</Text>
+              <Text
+                style={{
+                  backgroundColor: "#FFAC2F",
+                  color: "#fff",
+                  width: 150,
+                  textAlign: "center",
+                  paddingVertical: 10,
+                  borderRadius: 10,
+                }}
+              >
+                {userData.earning}/-
+              </Text>
+            </View>
+          </View>
+
+          <Text style={styles.category}>{userPos}</Text>
+          <View style={styles.categoryContainer}>
+            {data.map((item, index) => (
+              <TouchableOpacity
+                key={index}
+                style={styles.categoryItem}
+                onPress={() => navigation.navigate("Manager2", { item })}
+              >
+                <FontAwesomeIcon icon={item.icon} size={20} color="black" />
+                <Text style={styles.categoryLabel}>{item.label}</Text>
+                <FontAwesomeIcon
+                  icon={faChevronRight}
+                  size={20}
+                  color="black"
+                />
+              </TouchableOpacity>
+            ))}
+          </View>
+          <Text> {"\n"} </Text>
+          <Text> {"\n"} </Text>
+          <Text> {"\n"} </Text>
+        </ScrollView>
+        <View style={styles.blueBar}></View>
+
+        <View style={styles.navbar}>
+          <TouchableOpacity onPress={() => navigation.navigate("Home")}>
+            <View style={[styles.navbarIcon, styles.navbarIconHome1]}>
+              <FontAwesomeIcon icon={faHome} size={25} color={"#1977F3"} />
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate("Category")}>
+            <View style={[styles.navbarIcon, styles.navbarIconHome1]}>
+              <FontAwesomeIcon icon={faBars} size={20} color={"#1977F3"} />
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate("Cart")}>
+            <View style={[styles.navbarIcon, styles.navbarIconHome1]}>
+              <FontAwesomeIcon
+                icon={faShoppingCart}
+                size={20}
+                color={"#1977F3"}
+              />
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate("User")}>
+            <View style={[styles.navbarIcon, styles.navbarIconHome1]}>
+              <FontAwesomeIcon icon={faUser} size={20} color={"#1977F3"} />
+            </View>
+          </TouchableOpacity>
         </View>
+        {/* Blue Bar */}
+      </View>
     );
 };
 
@@ -117,7 +176,7 @@ const styles = StyleSheet.create({
         paddingBottom: 15,
     },
     navbar: {
-        position: 'absolute',
+        position: 'sticky',
         bottom: 0,
         width: '100%',
         height: '8%',

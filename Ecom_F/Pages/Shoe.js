@@ -63,7 +63,7 @@ const Shoe = ({ navigation }) => {
           <View style={styles.topbarinput}>
             <FontAwesomeIcon icon={faMagnifyingGlass} size={20} color="black" />
             <TextInput
-              placeholder="Search Sunlight.in"
+              placeholder="Search streetmall.com"
               style={styles.inputBox}
             />
             {/* <FontAwesomeIcon icon={faUsersViewfinder} size={20} color="black" /> */}

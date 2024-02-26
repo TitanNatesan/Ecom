@@ -127,7 +127,7 @@ const AllProductPage = ({ navigation }) => {
                 color="black"
               />
               <TextInput
-                placeholder="Search Sunlight.in"
+                placeholder="Search streetmall.com"
                 style={styles.inputBox}
               />
               {/* <FontAwesomeIcon icon={faUsersViewfinder} size={20} color="black" /> */}

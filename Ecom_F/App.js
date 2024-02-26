@@ -33,17 +33,105 @@ import Manager2 from './Pages/Manager2';
 import { AppRegistry } from 'react-native';
 import { name as appName } from './app.json';
 import { UserProvider } from './Pages/UserContext';
-import React from 'react';
+import React, { useState } from 'react';
+import AsyncStorage from "@react-native-async-storage/async-storage"; 
+import { useEffect } from 'react';
+import Forgetpassword from './Pages/Forgetpassword';
+import axios from 'axios';
 
 
 const Stack = createStackNavigator();
 
-export default function App() {
 
-  return (
+const checkIfLoggedIn = async () => {
+  try {
+    const storedUsername = await AsyncStorage.getItem("username");
+    const storedPassword = await AsyncStorage.getItem("password");
+
+    if (storedUsername && storedPassword) {
+      try {
+        const response = await axios.post(
+          `http://192.168.37.132:8000/api/login/`,
+          {
+            username: storedUsername,
+            password: storedPassword,
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        console.log("Login Response:", response.data);
+
+        if (response.data === 1) {
+          return true;
+        } else if (response.data['message'] === "Invalid Credentials") {
+          return false;
+        }
+      } catch (error) {
+        console.error("Login failed:", error.message);
+        return false;
+      }
+    }
+    return false;
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
+};
+
+export default function App() { 
+
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const checkAutoLogin = async () => {
+      try {            
+        const storedUsername = await AsyncStorage.getItem("username");
+        const storedPassword = await AsyncStorage.getItem("password");
+
+        if (storedUsername && storedPassword) {
+          try {
+            const response = await axios.post(
+              `http://192.168.37.132:8000/api/login/`,
+              {
+                username: storedUsername, 
+                password: storedPassword,
+              }, 
+              {
+                headers: {
+                  "Content-Type": "application/json",
+                },
+              }  
+            );
+
+            console.log("Login Response:", response.data);
+      
+            if (response.data === 1) {
+              setIsLoggedIn(true);
+            } else if (response.data['message'] === "Invalid Credentials") {
+              setIsLoggedIn(false);
+            }
+          } catch (error) {  
+            console.error("Login failed:", error.message);
+            setIsLoggedIn(false);
+          }
+        }
+      } catch (error) {
+        console.error(error);
+        setIsLoggedIn(false);
+      }
+    };
+
+    checkAutoLogin();
+  }, []);
+
+  return ( 
     <UserProvider>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName={'Login'}>
+        <Stack.Navigator initialRouteName={isLoggedIn?"Home":"Login"}>
           <Stack.Screen name="Order" component={Order} options={{headerShown: false}} />
           <Stack.Screen name="Signup" component={SignUpScreen} options={{ headerShown: false }} />
           <Stack.Screen name="Signup2" component={SignUp2Screen} options={{ headerShown: false }} />
@@ -73,6 +161,7 @@ export default function App() {
           <Stack.Screen name="Manager1" component={Manager1} options={{ headerShown: false }} />
           <Stack.Screen name="Manager2" component={Manager2} options={{ headerShown: false }} />
           <Stack.Screen name="BottomBar" component={BottomBar} />
+          <Stack.Screen name="Forget" component={Forgetpassword} options={{headerShown:false}}/>
           <Stack.Screen name="Resetpass" component={ResetPasswordScreen} options={{ headerShown: false }} />
         </Stack.Navigator>
       </NavigationContainer>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, ScrollView } from 'react-native';
+import { StyleSheet, View, Text, ScrollView,KeyboardAvoidingView,Platform } from 'react-native';
 import { faCircleUser } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import BottomBar from './BottomBar';
@@ -56,56 +56,78 @@ const Manager2 = ({ navigation }) => {
     }, []);
 
     return (
-        <View style={styles.containerw}>
-            <View style={styles.all}>
-                <View style={styles.container} >
-                    <FontAwesomeIcon icon={faCircleUser} style={styles.icon} size={30} />
-                    <Text style={styles.headerText}>{userData.name} | {userData.role}</Text>
+      <View style={styles.containerw}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={{ flex: 1 }}
+        >
+          <View style={styles.all}>
+            <View style={styles.container}>
+              <FontAwesomeIcon
+                icon={faCircleUser}
+                style={styles.icon}
+                size={30}
+              />
+              <Text style={styles.headerText}>
+                {userData.name} | {userData.role}
+              </Text>
+            </View>
+
+            <ScrollView
+              style={styles.scrollContainer}
+              showsVerticalScrollIndicator={false}
+            >
+              <View style={styles.infoContainer}>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    paddingVertical: 10,
+                  }}
+                >
+                  <Text style={styles.infoLabel}>Name:</Text>
+                  <Text style={styles.infoText}>{userData.name}</Text>
                 </View>
 
-                <ScrollView style={styles.scrollContainer} showsVerticalScrollIndicator={false}>
-                    <View style={styles.infoContainer}>
-                        <View style={{
-                            flexDirection: 'row',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                            paddingVertical: 10,
-                        }}>
-                            <Text style={styles.infoLabel}>Name:</Text>
-                            <Text style={styles.infoText}>{userData.name}</Text>
-                        </View>
+                <View style={styles.infoSection}>
+                  <Text style={styles.infoLabel}>Mobile Number:</Text>
+                  <Text style={styles.infoText}>{userData.phone}</Text>
+                </View>
 
-
-                        <View style={styles.infoSection}>
-                            <Text style={styles.infoLabel}>Mobile Number:</Text>
-                            <Text style={styles.infoText}>{userData.phone}</Text>
-                        </View>
-
-                        <View style={styles.addressContainer}>
-                            <Text style={styles.infoLabel}>Address:</Text>
-                            <View style={styles.addressDetails}>
-                                <Text>Address Line 1:</Text>
-                                <Text style={styles.infoText}>{userData.addressLine1}, {userData.addressLine2}</Text>
-                            </View>
-                            <View style={styles.addressDetails}>
-                                <Text>Address Line 2:</Text>
-                                <View style={styles.addressSubDetails}>
-                                    <Text style={{ color: '#666', }}>CityName: {userData.city}</Text>
-                                    <Text style={{ color: '#666' }}>PinCode: {userData.postalCode}</Text>
-                                </View>
-                            </View>
-                            <View style={styles.infoSection}>
-                                <Text style={styles.infoLabel}>Referred:</Text>
-                                <Text style={styles.referredText}>{userData.down_leaf.length}</Text>
-                            </View>
-                        </View>
+                <View style={styles.addressContainer}>
+                  <Text style={styles.infoLabel}>Address:</Text>
+                  <View style={styles.addressDetails}>
+                    <Text>Address Line 1:</Text>
+                    <Text style={styles.infoText}>
+                      {userData.addressLine1}, {userData.addressLine2}
+                    </Text>
+                  </View>
+                  <View style={styles.addressDetails}>
+                    <Text>Address Line 2:</Text>
+                    <View style={styles.addressSubDetails}>
+                      <Text style={{ color: "#666" }}>
+                        CityName: {userData.city}
+                      </Text>
+                      <Text style={{ color: "#666" }}>
+                        PinCode: {userData.postalCode}
+                      </Text>
                     </View>
-
-                </ScrollView>
-            </View>
-            <BottomBar navigation={navigation} initialPage="Category" />
-            <View style={styles.blueBar}></View>
-        </View>
+                  </View>
+                  <View style={styles.infoSection}>
+                    <Text style={styles.infoLabel}>Referred:</Text>
+                    <Text style={styles.referredText}>
+                      {userData.down_leaf.length}
+                    </Text>
+                  </View>
+                </View>
+              </View>
+            </ScrollView>
+          </View>
+        </KeyboardAvoidingView>
+        <BottomBar navigation={navigation} initialPage="Category" />
+        <View style={styles.blueBar}></View>
+      </View>
     );
 };
 
@@ -154,7 +176,7 @@ const styles = StyleSheet.create({
     blueBar: {
         backgroundColor: '#1977F3',
         height: 15,
-        position: 'absolute',
+        position: 'sticky',
         bottom: 60,
         left: 0,
         right: 0,

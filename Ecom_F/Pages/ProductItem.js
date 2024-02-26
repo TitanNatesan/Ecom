@@ -53,7 +53,10 @@ const ProductItem = ({ product }) => {
           </View>
         </View>
         <View style={styles.priOfferContainer}>
-          <Text style={styles.productPrice}>{`$${product.sellingPrice}`}</Text>
+          <Text style={styles.productPrice}>{`₹${parseInt(
+            product.sellingPrice,
+            10
+          )}`}</Text>
           <Text style={styles.offerText}>{product.discount}% off</Text>
         </View>
       </View>
@@ -64,40 +67,43 @@ const ProductItem = ({ product }) => {
 const styles = StyleSheet.create({
   productContainer: {
     width: "95%",
+    height: 320, // Set a fixed height for all product cards
     marginRight: "2%",
     marginBottom: 20,
-    backgroundColor: "#F7F7F7",
+    backgroundColor: "#f7f7f7",
     opacity: 1,
     borderRadius: 1,
     borderWidth: 1,
     borderColor: "#EAEAF6",
-    padding:15,
+    padding: 15,
+    overflow: "hidden", // Clip the content to the fixed height
   },
+
   productImage: {
     width: "100%",
     height: 190,
     borderColor: "white",
     objectFit: "contain",
   },
-  productDetails: {
-    padding: 1,
-  },
   productHeader: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent:"center",
+    justifyContent: "center",
   },
   productName: {
     fontSize: 16,
     marginBottom: 8,
     flexWrap: "wrap",
-    textAlign:"center",
+    textAlign: "center",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    maxHeight: 40, // Set a max height for the description
   },
   priOfferContainer: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent:'center',
-     // Added alignment
+    justifyContent: "center",
+    // Added alignment
   },
   ratingContainer: {
     flexDirection: "row",

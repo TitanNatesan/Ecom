@@ -1,20 +1,37 @@
 import React, { useState } from "react";
-import { StyleSheet, View, Text, StatusBar, ScrollView, TextInput, Image, TouchableOpacity } from "react-native";
-import { faMagnifyingGlass, faUsersViewfinder } from "@fortawesome/free-solid-svg-icons";
+import {
+  StyleSheet,
+  View,
+  Text,
+  StatusBar,
+  ScrollView,
+  TextInput,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  TouchableOpacity,
+} from "react-native";
+import {
+  faMagnifyingGlass,
+  faUsersViewfinder,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-const Trackbar = require('../Streetmall/14_Checkout_page/step2.png');
-import BottomBar from './BottomBar';
+const Trackbar = require("../Streetmall/14_Checkout_page/step2.png");
+import BottomBar from "./BottomBar";
 import { useRoute } from "@react-navigation/native";
 
-
 const PaymentPage3 = ({ navigation }) => {
-
   const route = useRoute();
-  const {userData,selectedDeliveryOption,product} = route.params;
-
+  const { userData, selectedDeliveryOption, product_ids,cdata } = route.params;
 
   const goToPaymentPage4 = () => {
-    navigation.navigate('Payment4',{userData,selectedDeliveryOption,selectedPaymentOption,product});
+    navigation.navigate("Payment4", {
+      userData,
+      cdata,
+      selectedDeliveryOption,
+      selectedPaymentOption,
+      product_ids,
+    });
   };
 
   const [selectedPaymentOption, setSelectedPaymentOption] = useState(null);
@@ -24,7 +41,10 @@ const PaymentPage3 = ({ navigation }) => {
 
   const renderPaymentOption = (optionText, bankName, imageSource) => (
     <TouchableOpacity
-      style={[styles.optionButton, selectedPaymentOption === optionText && styles.selectedOption]}
+      style={[
+        styles.optionButton,
+        selectedPaymentOption === optionText && styles.selectedOption,
+      ]}
       onPress={() => handlePaymentOptionPress(optionText)}
     >
       <View style={styles.optionContent}>
@@ -46,54 +66,94 @@ const PaymentPage3 = ({ navigation }) => {
 
   return (
     <View style={styles.containerw}>
-      <ScrollView style={styles.containerw} showsVerticalScrollIndicator={false}>
-        <View style={styles.container}>
-          <View style={styles.topbarinput}>
-            <FontAwesomeIcon icon={faMagnifyingGlass} size={20} color="black" />
-            <TextInput placeholder="Search Sunlight.in" style={styles.inputBox} />
-            {/* <FontAwesomeIcon icon={faUsersViewfinder} size={20} color="black" /> */}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={styles.containerw}
+      >
+        <ScrollView
+          style={styles.containerw}
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.container}>
+            <Text
+              style={{
+                fontSize: 30,
+                color: "#fff",
+                textAlign: "center",
+                alignItems: "center",
+                display: "flex",
+                marginTop: -10,
+              }}
+            >
+              StreetMall
+            </Text>
+            <StatusBar style="auto" />
           </View>
-          <StatusBar style="auto" />
-        </View>
-        <View>
-          <Text> {'\n'} </Text>
-          <Image style={styles.trackbar} source={Trackbar} />
-          <View style={styles.trackcont}>
-            <Text style={styles.tracktext}>Address</Text>
-            <Text style={styles.tracktext}>Delivery</Text>
-            <Text style={styles.tracktext}>Payment</Text>
-            <Text style={styles.tracktext}>Place Order</Text>
-          </View>
-          <Text> {'\n'} </Text>
-          <View style={styles.cont}>
-            <Text style={styles.title}>Choose your payment type:</Text>
+          <View>
+            <Text> {"\n"} </Text>
+            <Image style={styles.trackbar} source={Trackbar} />
+            <View style={styles.trackcont}>
+              <Text style={styles.tracktext1}>Address</Text>
+              <Text style={styles.tracktext}>Delivery</Text>
+              <Text style={styles.tracktext}>Payment</Text>
+              <Text style={styles.tracktext1}>Place Order</Text>
+            </View>
+            <Text> {"\n"} </Text>
+            <View style={styles.cont}>
+              <Text style={styles.title}>Choose your payment type:</Text>
 
-            {/* UPI */}
-            <Text style={styles.subtitle}>UPI</Text>
-            {renderPaymentOption('Paytm', 'Pay with your Paytm account', require('../Streetmall/Payment/Paytm_Logo.png'))}
+              {/* UPI */}
+              <Text style={styles.subtitle}>UPI</Text>
+              {renderPaymentOption(
+                "Paytm",
+                "Pay with your Paytm account",
+                require("../Streetmall/Payment/Paytm_Logo.png")
+              )}
 
-            {/* Credit Card */}
-            <Text style={styles.subtitle}>Credit Card</Text>
-            {renderPaymentOption('Credit/Debit Card', 'Choose your Bank', require('../Streetmall/Payment/Paytm_Logo.png'))}
+              {/* Credit Card */}
+              <Text style={styles.subtitle}>Credit Card</Text>
+              {renderPaymentOption(
+                "Credit/Debit Card",
+                "Choose your Bank",
+                require("../Streetmall/Payment/Paytm_Logo.png")
+              )}
 
-            {/* Other Options */}
-            <Text style={styles.subtitle}>Other Options</Text>
-            {renderPaymentOption('EMI', 'Choose EMI option', require('../Streetmall/Payment/Paytm_Logo.png'))}
-            {renderPaymentOption('Net Banking', 'Choose Net Banking', require('../Streetmall/Payment/Paytm_Logo.png'))}
-            {renderPaymentOption('Cash on Delivery', 'Pay when delivered', require('../Streetmall/Payment/Paytm_Logo.png'))}
+              {/* Other Options */}
+              <Text style={styles.subtitle}>Other Options</Text>
+              {renderPaymentOption(
+                "EMI",
+                "Choose EMI option",
+                require("../Streetmall/Payment/Paytm_Logo.png")
+              )}
+              {renderPaymentOption(
+                "Net Banking",
+                "Choose Net Banking",
+                require("../Streetmall/Payment/Paytm_Logo.png")
+              )}
+              {renderPaymentOption(
+                "Cash on Delivery",
+                "Pay when delivered",
+                require("../Streetmall/Payment/Paytm_Logo.png")
+              )}
+            </View>
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity
+                style={[
+                  styles.proceedButton,
+                  proceedButtonDisabled && styles.disabledButton,
+                ]}
+                disabled={proceedButtonDisabled}
+                onPress={goToPaymentPage4}
+              >
+                <Text style={styles.proceedButtonText}>Proceed</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity
-              style={[styles.proceedButton, proceedButtonDisabled && styles.disabledButton]}
-              disabled={proceedButtonDisabled}
-              onPress={goToPaymentPage4}
-            > 
-              <Text style={styles.proceedButtonText}>Proceed</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-        <Text> {'\n'} </Text><Text> {'\n'} </Text><Text> {'\n'} </Text>
-      </ScrollView>
+          <Text> {"\n"} </Text>
+          <Text> {"\n"} </Text>
+          <Text> {"\n"} </Text>
+        </ScrollView>
+      </KeyboardAvoidingView>
       <BottomBar navigation={navigation} />
       <View style={styles.blueBar}></View>
     </View>
@@ -103,12 +163,12 @@ const PaymentPage3 = ({ navigation }) => {
 const styles = StyleSheet.create({
   containerw: {
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: "#ffffff",
   },
   blueBar: {
-    backgroundColor: '#1977F3',
+    backgroundColor: "#1977F3",
     height: 15,
-    position: 'absolute',
+    position: "sticky",
     bottom: 60,
     left: 0,
     right: 0,
@@ -134,64 +194,71 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   trackbar: {
-    alignSelf: 'center',
+    alignSelf: "center",
     aspectRatio: 9,
-    resizeMode: 'contain',
+    resizeMode: "contain",
   },
   buttonContainer: {
     marginTop: 16,
   },
   proceedButton: {
-    width: '70%',
-    backgroundColor: '#FF9900',
+    width: "70%",
+    backgroundColor: "#FF9900",
     borderRadius: 16,
     padding: 11,
-    alignSelf: 'center',
+    alignSelf: "center",
     marginTop: 8,
   },
   proceedButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
+    color: "white",
+    fontWeight: "bold",
     fontSize: 17,
-    alignSelf: 'center',
+    alignSelf: "center",
   },
   trackcont: {
-    flexDirection: 'row',
-    alignSelf: 'center',
+    flexDirection: "row",
+    alignSelf: "center",
   },
   tracktext: {
     fontSize: 13,
-    fontWeight: 'bold',
-    color: '#003478',
-    paddingRight: 15,
-    paddingLeft: 35,
+    fontWeight: "bold",
+    color: "#003478",
+    marginLeft: 27,
+    marginRight: 10,
+  },
+  tracktext1: {
+    fontSize: 13,
+    fontWeight: "bold",
+    color: "#003478",
+    marginLeft: 20,
+    marginRight: 20,
   },
   cont: {
     padding: 20,
   },
   title: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 10,
     paddingBottom: 3,
   },
   optionButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#fff',
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#fff",
     borderRadius: 20,
     padding: 15,
     marginBottom: 10,
-    borderColor: '#003478',
+    borderColor: "#003478",
     borderWidth: 1,
   },
   selectedOption: {
-    backgroundColor: '#ddd',
+    backgroundColor: "#ddd",
   },
   optionContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     flex: 1,
   },
   circle: {
@@ -199,13 +266,13 @@ const styles = StyleSheet.create({
     height: 30,
     borderRadius: 15,
     borderWidth: 1,
-    borderColor: '#1977F3',
-    justifyContent: 'center',
-    alignItems: 'center',
+    borderColor: "#1977F3",
+    justifyContent: "center",
+    alignItems: "center",
     marginRight: 10,
   },
   checkmark: {
-    color: '#1977F3',
+    color: "#1977F3",
     fontSize: 18,
   },
   optionTextContainer: {
@@ -213,39 +280,39 @@ const styles = StyleSheet.create({
   },
   optionText: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   optionImage: {
     width: 30,
     height: 30,
-    resizeMode: 'contain',
+    resizeMode: "contain",
   },
   proceedButton: {
-    width: '70%',
-    backgroundColor: '#FF9900',
+    width: "70%",
+    backgroundColor: "#FF9900",
     borderRadius: 16,
     padding: 11,
-    alignSelf: 'center',
+    alignSelf: "center",
     marginTop: 8,
   },
   proceedButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
+    color: "white",
+    fontWeight: "bold",
     fontSize: 17,
-    alignSelf: 'center',
+    alignSelf: "center",
   },
   disabledButton: {
-    backgroundColor: '#ccc',
+    backgroundColor: "#ccc",
   },
   subtitle: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginTop: 15,
     marginBottom: 5,
   },
   optionSubtext: {
     fontSize: 14,
-    color: '#999',
+    color: "#999",
   },
 });
 

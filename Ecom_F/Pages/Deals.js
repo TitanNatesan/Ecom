@@ -7,6 +7,9 @@ import {
   TextInput,
   StatusBar,
   ScrollView,
+  Platform,
+  KeyboardAvoidingView,
+  TouchableOpacity,
 } from "react-native";
 import {
   faMagnifyingGlass,
@@ -36,41 +39,70 @@ const Deals = ({ navigation }) => {
     { image: laptop, text: "Laptops" },
     { image: car, text: "Car" },
   ];
+
   return (
     <View style={styles.containerw}>
-      <ScrollView vertical showsVerticalScrollIndicator={false}>
-        <View style={styles.container}>
-          <View style={styles.topbarinput}>
-            <FontAwesomeIcon icon={faMagnifyingGlass} size={20} color="black" />
-            <TextInput
-              placeholder="Search Sunlight.in"
-              style={styles.inputBox}
-            />
-            {/* <FontAwesomeIcon icon={faUsersViewfinder} size={20} color="black" /> */}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={{ flex: 1 }}
+      >
+        <ScrollView vertical showsVerticalScrollIndicator={false}>
+          <View style={styles.container}>
+            <View style={styles.topbarinput}>
+              <FontAwesomeIcon
+                icon={faMagnifyingGlass}
+                size={20}
+                color="black"
+              />
+              <TextInput
+                placeholder="Search streetmall.com"
+                style={styles.inputBox}
+              />
+            </View>
+            <StatusBar style="dark-content" />
           </View>
-          <StatusBar style="dark-content" />
-        </View>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          <View style={styles.productsbar}>
-            {carouselItems.map((item, index) => (
-              <View key={index} style={styles.product}>
-                <Image style={styles.productImage} source={item.image} />
-                <Text>{item.text}</Text>
-              </View>
-            ))}
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            <View style={styles.productsbar}>
+              {carouselItems.map((item, index) =>
+                item.text === "Special Products" ? (
+                  <View key={index} style={styles.productcont}>
+                    <TouchableOpacity
+                      onPress={() => navigation.navigate("Gifts", { item })}
+                    >
+                      <Image
+                        style={styles.productImagegt}
+                        source={item.image}
+                      />
+                      <Text style={styles.protxtgt}>{item.text}</Text>
+                    </TouchableOpacity>
+                  </View>
+                ) : (
+                  <TouchableOpacity
+                    key={index}
+                    onPress={() => navigation.navigate("AProduct", { item })}
+                  >
+                    <View style={styles.product}>
+                      <Image style={styles.productImage} source={item.image} />
+                      <Text>{item.text}</Text>
+                    </View>
+                  </TouchableOpacity>
+                )
+              )}
+            </View>
+          </ScrollView>
+          <View style={styles.deals}>
+            <Image style={styles.pic} source={dress} />
+            <Image style={styles.pic} source={Offer} />
+            <Image style={styles.pic} source={shoe} />
           </View>
         </ScrollView>
-        <View style={styles.deals}>
-          <Image style={styles.pic} source={dress} />
-          <Image style={styles.pic} source={Offer} />
-          <Image style={styles.pic} source={shoe} />
-        </View>
-      </ScrollView>
+      </KeyboardAvoidingView>
       <BottomBar navigation={navigation} />
       <View style={styles.blueBar}></View>
     </View>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     paddingTop: 120,
@@ -94,6 +126,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginVertical: 10,
+  },
+  horizontalBar: {
+    backgroundColor: "#1977F3",
+    height: 15,
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
   },
   pic: {
     margin: 5,
@@ -132,5 +172,31 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     objectFit: "contain",
   },
+  productcont: {
+    marginRight: 25,
+    paddingEnd: 10,
+    width: 70,
+    alignItems: "center",
+    backgroundColor: "#FF7272",
+    borderTopEndRadius: 10,
+    borderBottomEndRadius: 10,
+  },
+  productImagegt: {
+    width: 65,
+    height: 60,
+    borderRadius: 10,
+    left: "10%",
+    objectFit: "contain",
+  },
+  protxtgt: {
+    color: "black",
+    alignSelf: "center",
+    margin: "auto",
+    fontSize: 11,
+    justifyContent: "center",
+    display: "flex",
+    marginLeft: 5,
+  },
 });
+
 export default Deals;

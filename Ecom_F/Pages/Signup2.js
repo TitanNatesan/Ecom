@@ -28,7 +28,7 @@ const Signup2Screen = ({ navigation }) => {
     const navLogin = () => {
         updateUserID(username); 
         setLogin(true);
-        navigation.navigate('CodeVerification');
+        navigation.navigate("Home");
     };
 
     const reqData = {
@@ -50,29 +50,52 @@ const Signup2Screen = ({ navigation }) => {
         }, 
     };
     const handleSignup2 = async () => {
-        console.log("buttonTapped")
-        if (!name || !email || !mobileNumber || !door_number || !addressLine1 || !addressLine2 || !cityName || !pincode) {
-            setErrorMessage("All Fields are Required to fill");
-            return;
-        }
+      console.log("buttonTapped");
+      if (
+        !name ||
+        !email ||
+        !mobileNumber ||
+        !door_number ||
+        !addressLine1 ||
+        !addressLine2 ||
+        !cityName ||
+        !pincode
+      ) {
+        setErrorMessage("All Fields are Required to fill");
+        return;
+      }
+      if (mobileNumber.length !== 10) {
+        setErrorMessage("Phone number should be 10 digits");
+        return;
+      }
 
-        try {
-            const response = await axios.post(`${BASE_URL}/api/signup/`, reqData,
-                {
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                });
-            console.log('Request Sent:', response.data);
-            if (response.data == "1") {
-                navLogin();
-            } else {
-                setErrorMessage(response.data['message']);
-            }
-        } catch (error) {
-            console.error('Signup failed:', error.message);
-            setErrorMessage(error.message);
+      // Validate email
+      if (!email.includes("@gmail.com")) {
+        setErrorMessage("Email should be a Gmail address");
+        return;
+      }
+      // Validate email
+      if (!email.includes("@gmail.com")) {
+        setErrorMessage("Email should be a Gmail address");
+        return;
+      }
+
+      try {
+        const response = await axios.post(`${BASE_URL}/api/signup/`, reqData, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        console.log("Request Sent:", response.data);
+        if (response.data == "1") {
+          navLogin();
+        } else {
+          setErrorMessage(response.data["message"]);
         }
+      } catch (error) {
+        console.error("Signup failed:", error.message);
+        setErrorMessage(error.message);
+      }
     };
 
     return (

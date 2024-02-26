@@ -8,12 +8,18 @@ import {
   StatusBar,
   ScrollView,
   ImageBackground,
+  KeyboardAvoidingView,
+  Platform,
   TouchableOpacity,
   Modal,
 } from "react-native";
 import {
   faMagnifyingGlass,
   faUsersViewfinder,
+  faHome,
+  faBars,
+  faShoppingCart,
+  faUser,
   faFilterCircleDollar,
 } from "@fortawesome/free-solid-svg-icons";
 import { library } from "@fortawesome/fontawesome-svg-core";
@@ -115,96 +121,139 @@ const AllProductPage = ({ navigation }) => {
   console.log("all products");
   return (
     <View style={styles.containerw}>
-      <ScrollView vertical showsVerticalScrollIndicator={false}>
-        <View>
-          <View style={styles.container}>
-            <View style={styles.topbarinput}>
-              <FontAwesomeIcon
-                icon={faMagnifyingGlass}
-                size={20}
-                color="black"
-              />
-              <TextInput
-                placeholder="Search Sunlight.in"
-                style={styles.inputBox}
-                value={searchQuery}
-                onChangeText={(text) => {
-                  handleSearch(text), setSearchQuery(text);
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={{ flex: 1 }}
+      >
+        <ScrollView vertical showsVerticalScrollIndicator={false}>
+          <View>
+            <View style={styles.container}>
+              <Text
+                style={{
+                  fontSize: 30,
+                  color: "#fff",
+                  textAlign: "center",
+                  alignItems: "center",
+                  display: "flex",
+                  marginTop: -20,
+                  marginBottom: 10,
                 }}
-              />
-            </View>
-            <StatusBar style="dark-content" />
-          </View>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            <View style={styles.productsbar}>
-              {carouselItems.map((item, index) =>
-                item.text === "Special Products" ? (
-                  <View key={index} style={styles.productcont}>
-                    <TouchableOpacity
-                      onPress={() => navigation.navigate("Gifts", { item })}
-                    >
-                      <Image
-                        style={styles.productImagegt}
-                        source={item.image}
-                      />
-                      <Text style={styles.protxtgt}>{item.text}</Text>
-                    </TouchableOpacity>
-                  </View>
-                ) : (
-                  <TouchableOpacity
-                    onPress={() => navigation.navigate("AProduct", { item })}
-                  >
-                    <View key={index} style={styles.product}>
-                      <Image style={styles.productImage} source={item.image} />
-                      <Text>{item.text}</Text>
-                    </View>
-                  </TouchableOpacity>
-                )
-              )}
-            </View>
-          </ScrollView>
-          <View style={styles.topBrandsContainer}>
-            {topBrands.map((brand, index) => (
-              <View key={index} style={styles.brandContainer}>
-                <Image style={styles.brandImage} source={brand} />
-              </View>
-            ))}
-          </View>
-          <View style={styles.productsContainer}>
-            {products.map((product, index) => (
-              <TouchableOpacity
-                key={product.product_id}
-                style={styles.productItem}
-                onPress={() => handleProductPress(product, index)}
               >
-                <ProductItem product={product} />
-              </TouchableOpacity>
-            ))}
+                StreetMall
+              </Text>
+              <View style={styles.topbarinput}>
+                <FontAwesomeIcon
+                  icon={faMagnifyingGlass}
+                  size={20}
+                  color="black"
+                />
+                <TextInput
+                  placeholder="Search streetmall.com"
+                  style={styles.inputBox}
+                  value={searchQuery}
+                  onChangeText={(text) => {
+                    handleSearch(text), setSearchQuery(text);
+                  }}
+                />
+              </View>
+              <StatusBar style="dark-content" />
+            </View>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              <View style={styles.productsbar}>
+                {carouselItems.map((item, index) =>
+                  item.text === "Special Products" ? (
+                    <View key={index} style={styles.productcont}>
+                      <TouchableOpacity
+                        onPress={() => navigation.navigate("Gifts", { item })}
+                      >
+                        <Image
+                          style={styles.productImagegt}
+                          source={item.image}
+                        />
+                        <Text style={styles.protxtgt}>{item.text}</Text>
+                      </TouchableOpacity>
+                    </View>
+                  ) : (
+                    <TouchableOpacity
+                      onPress={() => navigation.navigate("AProduct", { item })}
+                    >
+                      <View key={index} style={styles.product}>
+                        <Image
+                          style={styles.productImage}
+                          source={item.image}
+                        />
+                        <Text>{item.text}</Text>
+                      </View>
+                    </TouchableOpacity>
+                  )
+                )}
+              </View>
+            </ScrollView>
+            <View style={styles.topBrandsContainer}>
+              {topBrands.map((brand, index) => (
+                <View key={index} style={styles.brandContainer}>
+                  <Image style={styles.brandImage} source={brand} />
+                </View>
+              ))}
+            </View>
+            <View style={styles.productsContainer}>
+              {products.map((product, index) => (
+                <TouchableOpacity
+                  key={product.product_id}
+                  style={styles.productItem}
+                  onPress={() => handleProductPress(product, index)}
+                >
+                  <ProductItem product={product} />
+                </TouchableOpacity>
+              ))}
+            </View>
           </View>
-        </View>
-        <Text> {"\n"} </Text>
-        <Text> {"\n"} </Text>
-      </ScrollView>
-      <TouchableOpacity
-        style={styles.filtericon}
-        onPress={handleFilterIconClick}
-      >
-        <FontAwesomeIcon
-          icon={faFilterCircleDollar}
-          size={20}
-          color="#003478"
-        />
-      </TouchableOpacity>
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={isFilterModalVisible}
-        onRequestClose={handleCloseFilterModal}
-      >
-        <FilterPage closeModal={handleCloseFilterModal} />
-      </Modal>
-      <BottomBar navigation={navigation} initialPage="Home" />
-      <View style={styles.blueBar}></View>
+          <Text> {"\n"} </Text>
+          <Text> {"\n"} </Text>
+        </ScrollView>
+        <TouchableOpacity
+          style={styles.filtericon}
+          onPress={handleFilterIconClick}
+        >
+          <FontAwesomeIcon
+            icon={faFilterCircleDollar}
+            size={20}
+            color="#003478"
+          />
+        </TouchableOpacity>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={isFilterModalVisible}
+          onRequestClose={handleCloseFilterModal}
+        >
+          <FilterPage closeModal={handleCloseFilterModal} />
+        </Modal>
+        <View style={styles.blueBar}></View>
+      </KeyboardAvoidingView>
+
+      <View style={styles.navbar}>
+        <TouchableOpacity onPress={() => navigation.navigate("Home")}>
+          <View style={[styles.navbarIcon, styles.navbarIconHome1]}>
+            <FontAwesomeIcon icon={faHome} size={25} color={"#1977F3"} />
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate("Category")}>
+          <View style={[styles.navbarIcon, styles.navbarIconHome1]}>
+            <FontAwesomeIcon icon={faBars} size={20} color={"#1977F3"} />
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate("Cart")}>
+          <View style={[styles.navbarIcon, styles.navbarIconHome]}>
+            <FontAwesomeIcon icon={faShoppingCart} size={20} color={"white"} />
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate("User")}>
+          <View style={[styles.navbarIcon, styles.navbarIconHome1]}>
+            <FontAwesomeIcon icon={faUser} size={20} color={"#1977F3"} />
+          </View>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -229,6 +278,41 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 10,
     shadowColor: "#003478",
     elevation: 4,
+  },
+  navbar: {
+    width: "100%",
+    height: "8%",
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
+    backgroundColor: "white",
+    paddingBottom: "5%",
+    position: "sticky",
+  },
+  navbarIcon: {
+    width: 15,
+    height: 15,
+    tintColor: "#1977F3",
+  },
+  navbarIconHome: {
+    backgroundColor: "#1977F3",
+    width: 60,
+    height: 60,
+    justifyContent: "center",
+    alignItems: "center",
+    borderTopLeftRadius: -10,
+    borderBottomRightRadius: 21,
+    borderBottomLeftRadius: 21,
+    elevation: 5,
+  },
+  navbarIconHome1: {
+    width: 60,
+    height: 60,
+    justifyContent: "center",
+    alignItems: "center",
+    borderTopLeftRadius: -10,
+    borderBottomRightRadius: 21,
+    borderBottomLeftRadius: 21,
   },
   productsbar: {
     flexDirection: "row",
@@ -273,8 +357,8 @@ const styles = StyleSheet.create({
   blueBar: {
     backgroundColor: "#1977F3",
     height: 15,
-    position: "absolute",
-    bottom: 60,
+    position: "sticky",
+    bottom: 0,
     left: 0,
     right: 0,
   },
