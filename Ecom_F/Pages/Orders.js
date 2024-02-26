@@ -48,7 +48,7 @@ const Order = ({ navigation }) => {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.container}>
-        <Text style={{fontSize:22,marginLeft:5,textAlign:"center",color:"white",marginTop:-30,    fontWeight: "bold",}}>Your Orders</Text>
+        <Text style={{fontSize:22,marginLeft:5,textAlign:"center",color:"white",marginTop:-30,    fontWeight: "bold",}}>YOUR ORDERS</Text>
         </View>
         <View style={styles.cont}>
           {allProducts.reverse().map((product) => (

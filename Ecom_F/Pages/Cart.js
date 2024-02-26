@@ -132,6 +132,14 @@ const Cart = ({ navigation }) => {
         }
       );
       console.log("Deleted");
+      if (response.data == "Deleted") {
+        setAllProducts([])
+        setRefreshKey((prevKey) => prevKey + 1);
+        console.log("Cart total is zero after deletion");
+      } else {
+        // Reload the page by incrementing the refreshKey
+        console.log("Deleted");
+      }
       setRefreshKey((prevKey) => prevKey + 1);
     } catch (error) {
       console.log("Unable To Update", error);
@@ -232,12 +240,14 @@ const Cart = ({ navigation }) => {
             </TouchableOpacity>
           </View>
 
-          <TouchableOpacity
+          {allProducts.length > 0 ? (<TouchableOpacity
             onPress={() => goToPaymentPage(productIds)}
             style={{ alignItems: "center", justifyContent: "center", /* add other button container styles */ }}
           >
             <Text style={styles.buynowall}>Proceed To Buy</Text>
-          </TouchableOpacity>
+          </TouchableOpacity>) : (
+            <Text style={styles.emc}>Your Cart is Empty</Text>
+          )}
 
           <View style={styles.cont}>
             {allProducts.reverse().map((product) => (
@@ -283,7 +293,7 @@ const Cart = ({ navigation }) => {
                   {product.freestock && (
                     <Text style={styles.productDetailst}>In Stock</Text>
                   )}
-                 
+
                 </View>
               </View>
             ))}
@@ -331,14 +341,24 @@ const styles = StyleSheet.create({
   buynowall: {
     width: 200,
     margin: "auto",
-    backgroundColor: "#001B95",
+    backgroundColor: "#FF9C09",
     borderRadius: 16,
     padding: 13,
     alignItems: "center",
-    color: "#C8D2FF",
+    color: "black",
     marginTop: 8,
-    fontWeight: '800',
-    fontSize: 15,
+    fontWeight: '600',
+    fontSize: 16,
+    textAlign: "center",
+  },
+  emc: {
+    width: 200,
+    padding: 13,
+    alignSelf: "center",
+    color: "black",
+    marginTop: 8,
+    fontWeight: '200',
+    fontSize: 20,
     textAlign: "center",
   },
   navbar: {
@@ -540,7 +560,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 5,
     borderRadius: 40,
-    backgroundColor: "#FFAC2F",
+    backgroundColor: "#001B95",
   },
   countButton: {
     width: "30%",
@@ -562,6 +582,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "justify",
     marginHorizontal: 10,
+    color:"white",
   },
   sbuttonText: {
     color: "black",

@@ -37,6 +37,7 @@ import React, { useState } from 'react';
 import AsyncStorage from "@react-native-async-storage/async-storage"; 
 import { useEffect } from 'react';
 import Forgetpassword from './Pages/Forgetpassword';
+import ForgetUser from './Pages/forgetuser';
 import axios from 'axios';
 
 
@@ -95,7 +96,7 @@ export default function App() {
         if (storedUsername && storedPassword) {
           try {
             const response = await axios.post(
-              `http://192.168.37.132:8000/api/login/`,
+              `http://64.227.134.220:8000/api/login/`,
               {
                 username: storedUsername, 
                 password: storedPassword,
@@ -161,6 +162,7 @@ export default function App() {
           <Stack.Screen name="Manager1" component={Manager1} options={{ headerShown: false }} />
           <Stack.Screen name="Manager2" component={Manager2} options={{ headerShown: false }} />
           <Stack.Screen name="BottomBar" component={BottomBar} />
+          <Stack.Screen name="forgetuser" component={ForgetUser}  options={{headerShown:false}} />
           <Stack.Screen name="Forget" component={Forgetpassword} options={{headerShown:false}}/>
           <Stack.Screen name="Resetpass" component={ResetPasswordScreen} options={{ headerShown: false }} />
         </Stack.Navigator>

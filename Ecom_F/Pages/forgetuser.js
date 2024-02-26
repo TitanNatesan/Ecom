@@ -44,49 +44,6 @@ const ForgetUser = ({ navigation }) => {
   const [rememberPassword, setRememberPassword] = useState(false);
   const { updateUserID, BASE_URL } = useUserContext();
 
-  useEffect(() => {
-    const checkAutoLogin = async () => {
-      try { 
-        const storedUsername = await AsyncStorage.getItem("username");
-        const storedPassword = await AsyncStorage.getItem("password");
-
-        if (storedUsername && storedPassword) {
-          setUserName(storedUsername);
-          updateUserID(storedUsername);
-          setPassword(storedPassword);
-          try {
-            const response = await axios.post(
-              `${BASE_URL}/api/login/`,
-              {
-                username: storedUsername,
-                password: storedPassword, 
-              },
-              {
-                headers: {
-                  "Content-Type": "application/json",
-                }, 
-              }
-            );
-            console.log("Login Response:", response.data);
-
-            if (response.data === 1) {
-              setUserName(storedUsername);
-              updateUserID(storedUsername);
-              setPassword(storedPassword);
-              navHome();
-            }
-          } catch (error) {
-            console.error("Login failed:", error.message);
-          }
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    checkAutoLogin();
-  }, []);
-
   const togglePasswordVisibility = () => {
     setShowPassword((prevShowPassword) => !prevShowPassword);
   };
@@ -105,6 +62,7 @@ const ForgetUser = ({ navigation }) => {
   };
   
   const navreset = async () => {
+
     if (username) {
       // Username is empty, show a message
       try {
@@ -142,7 +100,7 @@ const ForgetUser = ({ navigation }) => {
       const response = await axios.post(
         `${BASE_URL}/api/login/`,
         {
-          username: username, 
+          username: username,  
           password: password, 
         },
         {    
@@ -156,8 +114,9 @@ const ForgetUser = ({ navigation }) => {
       console.log("Login Response:", response.data);
 
       if (response.data === 1) {
-        if (rememberPassword) { saveCredentialsToCache(username, password); }
-        setRememberPassword(false)
+        updateUserID(username)
+        if (rememberPassword) { saveCredentialsToCache(username, password); }else{updateUserID(username)}
+        saveCredentialsToCache(username, password)
         setErrorMessage(null)
         navHome();
 
@@ -177,7 +136,7 @@ const ForgetUser = ({ navigation }) => {
       <Image style={styles.tinyLogo} source={signInImage} />
       <View style={styles.allsignIn}>
         <View style={styles.rowContainer}>
-          <Text style={styles.text}>Login</Text>
+          <Text style={styles.text}>Enter your Username</Text>
         </View> 
         {errorMessage && <Text style={styles.errorText}>{errorMessage}</Text>}
         <View style={styles.inputContainer}>
@@ -193,22 +152,6 @@ const ForgetUser = ({ navigation }) => {
             style={styles.icon}
           /> 
         </View>
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.input}
-            placeholder="Password"
-            secureTextEntry={!showPassword}
-            onChangeText={(text) => setPassword(text)}
-          />
-          <TouchableOpacity onPress={togglePasswordVisibility}>
-            <FontAwesomeIcon
-              icon={showPassword ? faEyeSlash : faEye}
-              size={20}
-              color="black"
-              style={styles.icon}
-            />
-          </TouchableOpacity>
-        </View>
         <View
           style={{
             flexDirection: "row",
@@ -217,41 +160,19 @@ const ForgetUser = ({ navigation }) => {
             marginTop: 20,
           }}
         >
-          <TouchableOpacity onPress={handleRememberPassword}>
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "space-evenly",
-              }}
-            >
-              <Icon
-                name={rememberPassword ? "check-square" : "square-o"}
-                size={20}
-              />
-              <Text style={{ marginLeft: 5, color: "#6B5E5E" }}>
-                Remember Password
-              </Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={navreset}>
-            <Text style={{ color: "#1977F3" }}>Forget Password</Text>
-          </TouchableOpacity>
+    
         </View>
-        <TouchableOpacity onPress={LoginReq} style={styles.loginButton}>
-          <Text style={styles.loginButtonText}>Login</Text>
+        <TouchableOpacity onPress={navreset} style={styles.loginButton}>
+          <Text style={styles.loginButtonText}>verify</Text>
         </TouchableOpacity>
         <View
-          onPress={navSignup}
           style={{
             alignItems: "center",
             justifyContent: "center",
             marginTop: 20,
           }}
         >
-          <Text onPress={navSignup} style={{ color: "#1977F3" }}>
-            Create New Account
-          </Text>
+      
         </View>
       </View>
       <StatusBar style="auto" />
