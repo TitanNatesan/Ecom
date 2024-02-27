@@ -1,21 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useSyncExternalStore } from "react";
 import {
   StyleSheet,
   View,
   Text,
   StatusBar,
   ScrollView,
-  TextInput,
   Image,
   Platform,
   KeyboardAvoidingView,
   TouchableOpacity,
 } from "react-native";
-import {
-  faMagnifyingGlass,
-  faUsersViewfinder,
-} from "@fortawesome/free-solid-svg-icons";
-import FontAwesomeIcon from "react-native-vector-icons/FontAwesome";
 import BottomBar from "./BottomBar";
 import { useRoute } from "@react-navigation/native";
 import axios from "axios";
@@ -65,11 +59,28 @@ const PaymentPage4 = ({ navigation }) => {
         total: cdata.cart_total,
       };
 
+      if (selectedDeliveryOption === "Instant Delivery") {
+        proDetailsData.total += 100;
+      }
+
+      proDetailsData.total += proDetails.total > 200 ? 0 : 40;
       setProDetails(proDetailsData);
     };
 
     fetchData();
   }, [product_ids, cdata]);
+
+  const [dc,setdc]=useState(0);
+
+  var deliveryCost = proDetails.total > 200 ? 0 : 40;
+  useEffect(()=>{
+    if (selectedDeliveryOption==="Instant Delivery"){
+      deliveryCost+=100;
+    }
+    console.log(deliveryCost)
+    setdc(deliveryCost)
+  },[]) 
+
 
   const fetchProducts = async (product_ids) => {
     try {
@@ -89,8 +100,6 @@ const PaymentPage4 = ({ navigation }) => {
       return null;
     }
   };
-
-  const deliveryCost = proDetails.total > 200 ? 0 : 40;
 
   const postData = async () => {
     if (selectedPaymentOption == "Paytm" || "Net Banking") {
@@ -174,19 +183,21 @@ const PaymentPage4 = ({ navigation }) => {
                 ))}
                 <Text style={{ fontSize: 18 }}>Delivery Charge:</Text>
                 <Text style={{ fontSize: 18 }}>Discount:</Text>
+               
                 <Text style={{ fontSize: 18 }}>Total:</Text>
               </View>
 
               <View style={styles.orderDetailsRight}>
-              {proDetails.products.map((product) => (
+                {proDetails.products.map((product) => (
                   <Text key={product.product_id} style={{ fontSize: 18 }}>
-                    +{product.quantity*product.mrp}₹
+                    +{product.quantity * product.mrp}₹
                   </Text>
                 ))}
-                <Text style={{ fontSize: 18 }}>{deliveryCost}₹</Text>
+                <Text style={{ fontSize: 18 }}>{dc}₹</Text>
                 <Text style={{ fontSize: 18 }}>
                   -{proDetails.discount}₹
                 </Text>
+               
                 <Text style={{ fontSize: 18 }}>
                   {proDetails.total}₹
                 </Text>

@@ -336,6 +336,8 @@ def placeOrder(request):
         order.status = "Placed"
         order.payment_method = request.data['pay_method']
         order.expected_delivery = add_working_days(str(datetime.now().date()), 7)
+        if request.data['delivery_type']:
+            order.total_cost+=100
         order.save()
         each.delete()
 
@@ -376,6 +378,7 @@ def placeOrders(request):
             user = Users.objects.get(username=request.data['user'])
         except Users.DoesNotExist:
             return Response({"detail": "User Not Found"})
+        print(request.data['delivery_type'])
         
         order = Orders.objects.create(
             user=user, 
@@ -387,6 +390,8 @@ def placeOrders(request):
             payment_method=request.data['pay_method'],
             expected_delivery=add_working_days(str(datetime.now().date()), 7),
         )
+        if request.data['delivery_type']:
+            order.total_cost+=100
         
         for product_id in product_ids:
             try:
@@ -395,8 +400,8 @@ def placeOrders(request):
 
                 order.ordered_product.add(product)
                 order.quantity += each.quantity
-                order.total_cost += each.quantity * product.sellingPrice
                 order.delivery_charges = 0 if order.total_cost > 200 else 40
+                order.total_cost += each.quantity * product.sellingPrice + (order.delivery_charges)  
                 order.save()
                 each.delete()
 
