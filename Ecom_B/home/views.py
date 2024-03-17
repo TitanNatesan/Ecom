@@ -1,7 +1,11 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework import viewsets
+from rest_framework import filters as drf_filters 
+from django_filters.rest_framework import DjangoFilterBackend  # Correct import  
 from .serializer import Signup,ProductSerial, AddressSerial,UserSerial,OrderSerializer,OrderDetailSerializer
 from .models import Users, Products, Address,EachItem,Cart,Orders
+from .filters import ProductFilter
 from rest_framework import status,generics
 from django.db.models import Q
 import base64
@@ -378,11 +382,10 @@ def placeOrders(request):
             user = Users.objects.get(username=request.data['user'])
         except Users.DoesNotExist:
             return Response({"detail": "User Not Found"})
-        print(request.data['delivery_type'])
         
         order = Orders.objects.create(
             user=user, 
-            order_id=str(user.username) + getDateAndTime(),
+            order_id=str(user.username) + getDateAndTime()+str(product_ids),
             delivery_type = request.data['delivery_type'],
             status='Placed',
             quantity=0,
@@ -530,11 +533,18 @@ class ProductsSearchView(generics.ListAPIView):
             Q(name__icontains=query) |
             Q(description__icontains=query) |
             Q(tag__icontains=query) |
-            Q(specification__contains=[{"label": query}]) |  # Assuming specification is a list of dictionaries
+            Q(specification__contains=[{"label": query}]) | 
             Q(specification_list__contains=[query])
         )
 
-        
+class ProductViewSet(viewsets.ModelViewSet):
+    queryset = Products.objects.all()
+    serializer_class = ProductSerial
+    filter_backends = [drf_filters.OrderingFilter, drf_filters.SearchFilter, DjangoFilterBackend]
+    filterset_class = ProductFilter
+    ordering_fields = '__all__'
+    search_fields = ['name', 'description', 'tag']
+
 @api_view(["GET"])
 def viewProduct(request, pi):
     if request.method == "GET":

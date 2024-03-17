@@ -1,9 +1,14 @@
 from home import views
-from django.urls import path
+from django.urls import path,include
 from django.conf import settings
 from django.conf.urls.static import static
+from rest_framework.routers import DefaultRouter
+
+router = DefaultRouter()
+router.register(r'products', views.ProductViewSet)
 
 urlpatterns = [
+    path('filter/',include(router.urls)),
     path("signup1/",views.signup1, name="signup1"),  
     path("signup/",views.signup, name="signup"),  
     path("login/",views.login, name= 'login'), 

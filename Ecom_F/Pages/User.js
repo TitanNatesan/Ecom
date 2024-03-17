@@ -121,7 +121,7 @@ const User = ({ navigation }) => {
   }, []);
 
   const updateUserData = async () => {
-    if (userData.phone.length !== 13) {
+    if (userData.phone.length !== 10) {
       setError("Phone number should be 10 digits");
       return;
     }
@@ -130,7 +130,7 @@ const User = ({ navigation }) => {
       console.log({
         user: {
           name: userData.name,
-          phone: userData.phone,
+          phone: "+91"+userData.phone,
           email: userData.email,
           username: userID,
         },
@@ -149,7 +149,7 @@ const User = ({ navigation }) => {
         {
           user: {
             name: userData.name,
-            phone: userData.phone,
+            phone: "+91"+userData.phone,
             email: userData.email,
             username: userID,
           },
@@ -273,18 +273,10 @@ const User = ({ navigation }) => {
           <View style={styles.userDetailsContainer}>
             <View style={styles.detailsBox}>
               {renderEditableField("Name", userData.name, "name")}
-              {renderEditableField("Phone", userData.phone, "phone")}
+              {renderEditableField("Phone", userData.phone.slice(-10), "phone")}
               {renderEditableField("Email", userData.email, "email")}
-              {renderEditableField(
-                "Door Number",
-                userData.doorNumber,
-                "doorNumber"
-              )}
-              {renderEditableField(
-                "Address Line 1",
-                userData.addressLine1,
-                "addressLine1"
-              )}
+              {renderEditableField("Door Number",userData.doorNumber,"doorNumber")}
+              {renderEditableField("Address Line 1",userData.addressLine1,"addressLine1")}
               {renderEditableField(
                 "Address Line 2",
                 userData.addressLine2,
