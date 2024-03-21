@@ -1,3 +1,4 @@
+import re
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import viewsets
@@ -50,7 +51,11 @@ def signup1(request):   # {"username":"natesan","password":"12345678","referal":
         except Users.DoesNotExist:
             return Response({'message':"Referal Dosent Exist"})
         if data['username'].strip() and data['password'].strip() and data['referal'].strip():
-            return Response(1)
+            is_val, message = validate_password(data['password'])
+            if is_val:
+                return Response(1)
+            else:
+                return Response({"error":message})
         return Response({'message':"All Fields are Required to fill"})
 
 @api_view(['POST'])
@@ -103,12 +108,17 @@ def signup(request):
 
 from datetime import timedelta
 
-@api_view(['POST'])
+@api_view(['POST']) 
 def verifyOTP(request):
     if request.method == 'POST':
         data = request.data
+        print(data)
         try:
-            user = Users.objects.get(username=data['username'])
+            try:
+                user = Users.objects.get(username=data['username'])
+            except:
+                user = Users.objects.get(email=data['username'])
+            
         except Users.DoesNotExist:
             return Response({"message":"User not found"})
 
@@ -612,44 +622,6 @@ def get_base64_encoded_image(img_path):
 def generate_otp():
     return ''.join(random.choices('0123456789', k=4))
 
-
-# @api_view(["POST"])
-# def getOrder(request):
-#     if request.method == "POST":
-#         try:
-#             user = Users.objects.get(username=request.data['username'])
-#             orders = Orders.objects.filter(user=user)
-#             products = [i.ordered_product for i in orders]
-
-#             order_data = []
-#             for order, product in zip(orders, products):
-#                 order_dict = {
-#                     "order_id": order.order_id,
-#                     "quantity": order.quantity,
-#                     "delivery_charges": order.delivery_charges,
-#                     "total_cost": order.total_cost,
-#                     "ordered_date": order.ordered_date,
-#                     "delivery_type": order.delivery_type,
-#                     "status": order.status,
-#                     "payment_method": order.payment_method,
-#                     "expected_delivery": order.expected_delivery,
-#                     "name": order.order_id,
-#                     "description": order.ordered_product,
-#                     "images": product.images.url if product.images else None,  # Adjust based on your model
-#                     "mrp": product.mrp,
-#                     "discount": product.discount,
-#                     "sellingPrice": product.sellingPrice,
-#                 }
-#                 order_data.append(order_dict)
-
-#             return Response(order_data)
-#         except Users.DoesNotExist:
-#             return Response("User not found")
-#         except Orders.DoesNotExist:
-#             return Response({"message": "No Order Placed"})
-        
-
-
 @api_view(["POST"])
 def getOrder(request):
     if request.method == "POST":
@@ -722,9 +694,15 @@ def reset_password(request):
             new_password = data['new_password']
             old_password = data['old_password']
             if user.password==old_password:
-                user.password = new_password
-                user.save()
-                return Response(1)
+                is_val, message = validate_password(new_password)
+                if is_val:
+                    if user.password == new_password:
+                        return Response({"error":"New Password Can't be the old password"})
+                    user.password = new_password
+                    user.save()
+                    return Response(1)
+                else:
+                    return Response({"error":message})
             else:
                 return Response({"message":"Check Your Current Password"})
         except Users.DoesNotExist:
@@ -736,11 +714,21 @@ def resetpass(request):
     if request.method == "POST":
         data = request.data
         try:
-            user = Users.objects.get(username=data['username'])
+            try:
+                user = Users.objects.get(username=data['username'])
+            except:
+                user = Users.objects.get(email=data['username'])
             new_password = data['new_password']
-            user.password = new_password
-            user.save()
-            return Response(1)
+            is_val, message = validate_password(new_password)
+            if is_val:
+                if user.password == new_password:
+                    return Response({"error":"New Password Can't be the old password"})
+                user.password = new_password
+                user.save()
+                return Response(1)
+            else:
+                return Response({"error":message})
+            
         except Users.DoesNotExist:
             return Response({"message":"User not found"})
     return Response("Invalid request")
@@ -749,7 +737,10 @@ def resetpass(request):
 def forgetPass(request):
     if request.method=='POST':
         try:
-            user = Users.objects.get(username=request.data['username'])
+            try:
+                user = Users.objects.get(username=request.data['username'])
+            except:
+                user = Users.objects.get(email=request.data['email'])
             otp = generate_otp()
             send_email(user.email, 'Your OTP', f'Your OTP is: {otp}\n Do not share this OTP\n The above OTP will expire in 5 mins')
             user.last_OTP = otp
@@ -757,3 +748,24 @@ def forgetPass(request):
             return Response("Sent")
         except Users.DoesNotExist:
             return Response("Invalid Username")
+
+
+def validate_password(password):
+    # Define regex patterns for different criteria
+    length_regex = r'.{8,}'  # At least 8 characters long
+    uppercase_regex = r'[A-Z]'  # At least one uppercase letter
+    lowercase_regex = r'[a-z]'  # At least one lowercase letter
+    digit_regex = r'\d'  # At least one digit
+    special_char_regex = r'[!@#$%^&*(),.?":{}|<>]'  # At least one special character
+
+    # Check each criterion using regex
+    if not re.search(length_regex, password):
+        return False, "Password must be at least 8 characters long"
+    if not re.search(uppercase_regex, password):
+        return False, "Password must contain at least one uppercase letter"
+    if not re.search(lowercase_regex, password):
+        return False, "Password must contain at least one lowercase letter"
+    if not re.search(digit_regex, password):
+        return False, "Password must contain at least one digit"
+    
+    return True, "Password is valid"

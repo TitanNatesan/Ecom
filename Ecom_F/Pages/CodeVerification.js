@@ -15,6 +15,8 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useUserContext } from "./UserContext";
 import axios from "axios";
+import { useRoute } from "@react-navigation/native";
+
 
 const CodeVerify = require("../Streetmall/2OTP/Group351.png");
 library.add(faCircleRight, faUser, faLock);
@@ -24,6 +26,7 @@ const CodeVerification = ({ navigation }) => {
   const [error, setError] = useState(null);
   const [inputOTP, setInputOTP] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const [resendSuccessMessage, setResendSuccessMessage] = useState("");
 
   const inputs = Array(4).fill(null);
   const refs = inputs.map(() => useRef(null));
@@ -61,11 +64,17 @@ const CodeVerification = ({ navigation }) => {
       console.error("Error during OTP verification: ", error);
     }
   };
-  useEffect(() => {
-    resendOTP();
-  }, []);
+
+  const [resendButtonText, setResendButtonText] = useState("Resend");
+
   const resendOTP = async () => {
     try {
+      setResendButtonText("OTP Sent Successfully!✨");
+
+      setTimeout(() => {
+        setResendButtonText("Resend");
+      }, 4000);
+
       const response = await axios.post(
         `${BASE_URL}/api/resend/`,
         {
@@ -77,17 +86,10 @@ const CodeVerification = ({ navigation }) => {
           },
         }
       );
-      if (response.data === "Sent") {
-        setSuccessMessage("OTP sent successfully");
-        setTimeout(() => {
-          setSuccessMessage("");
-        }, 3000);
-      }
     } catch (error) {
       console.log("otp poga matitu browwww", error);
     }
   };
-
   useEffect(() => {
     return () => {
       setSuccessMessage("");
@@ -96,6 +98,11 @@ const CodeVerification = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
+      {resendSuccessMessage !== "" && (
+        <View style={styles.successMessageContainer}>
+          <Text style={styles.successMessageText}>{resendSuccessMessage}</Text>
+        </View>
+      )}
       {successMessage !== "" && (
         <View style={styles.successMessageContainer}>
           <Text style={styles.successMessageText}>{successMessage}</Text>
@@ -134,12 +141,12 @@ const CodeVerification = ({ navigation }) => {
           <TouchableOpacity style={styles.loginButton} onPress={verifyOTP}>
             <Text style={styles.loginButtonText}>Verify</Text>
           </TouchableOpacity>
-          <Text
+          <TouchableOpacity
             onPress={resendOTP}
             style={{ textAlign: "center", fontSize: 17, marginTop: 25 }}
           >
-            Resend
-          </Text>
+            <Text style={{ textAlign: "center" }}>{resendButtonText}</Text>
+          </TouchableOpacity>
         </View>
       </View>
       <Text style={styles.errorText}>{error}</Text>
@@ -159,20 +166,19 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 30,
   },
   successMessageContainer: {
-    backgroundColor: "green",
+    backgroundColor: "green", 
     padding: 10,
+    marginVertical: 10,
     borderRadius: 5,
-    margin: 10,
   },
   successMessageText: {
-    color: "white",
+    color: "black", 
     textAlign: "center",
   },
   errorText: {
     color: "red",
     textAlign: "center",
-    marginTop: 10,
-    marginBottom: 1,
+    marginTop: -100,
   },
   last: {
     position: "absolute",
@@ -221,8 +227,8 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   tinyLogo: {
-    width: "100%", // occupy the entire width of the screen
-    height: "50%", // adjust the height as needed
+    width: "100%",
+    height: "50%",
     top: 0,
     position: "absolute",
   },

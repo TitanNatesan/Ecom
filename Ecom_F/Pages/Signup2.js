@@ -10,7 +10,7 @@ import { useUserContext } from './UserContext';
 library.add(faCircleRight, faUser);
 
 const Signup2Screen = ({ navigation }) => {
-    const { userID, updateUserID,BASE_URL,setLogin } = useUserContext();
+    const { userID, updateUserID, BASE_URL, setLogin } = useUserContext();
 
     const route = useRoute();
     const { referal, username, password } = route.params;
@@ -26,9 +26,18 @@ const Signup2Screen = ({ navigation }) => {
 
 
     const navLogin = () => {
-        updateUserID(username); 
+        updateUserID(username);
         setLogin(true);
         navigation.navigate("Home");
+    };
+
+    const saveCredentialsToCache = async (username, password) => {
+        try {
+            await AsyncStorage.setItem("username", username);
+            await AsyncStorage.setItem("password", password);
+        } catch (error) {
+            console.error("Error saving credentials to cache:", error);
+        }
     };
 
     const reqData = {
@@ -39,7 +48,7 @@ const Signup2Screen = ({ navigation }) => {
         phone: "+91" + mobileNumber,
         email: email,
         'address': {
-            door_number: door_number, 
+            door_number: door_number,
             address_line1: addressLine1,
             address_line2: addressLine2,
             city: cityName,
@@ -47,55 +56,57 @@ const Signup2Screen = ({ navigation }) => {
             postal_code: pincode,
             country: "India (default)",
             landmark: "null",
-        }, 
+        },
     };
     const handleSignup2 = async () => {
-      console.log("buttonTapped");
-      if (
-        !name ||
-        !email ||
-        !mobileNumber ||
-        !door_number ||
-        !addressLine1 ||
-        !addressLine2 ||
-        !cityName ||
-        !pincode
-      ) {
-        setErrorMessage("All Fields are Required to fill");
-        return;
-      }
-      if (mobileNumber.length !== 10) {
-        setErrorMessage("Phone number should be 10 digits");
-        return;
-      }
-
-      // Validate email
-      if (!email.includes("@gmail.com")) {
-        setErrorMessage("Email should be a Gmail address");
-        return;
-      }
-      // Validate email
-      if (!email.includes("@gmail.com")) {
-        setErrorMessage("Email should be a Gmail address");
-        return;
-      }
-
-      try {
-        const response = await axios.post(`${BASE_URL}/api/signup/`, reqData, {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-        console.log("Request Sent:", response.data);
-        if (response.data == "1") {
-          navLogin();
-        } else {
-          setErrorMessage(response.data["message"]);
+        console.log("buttonTapped");
+        if (
+            !name ||
+            !email ||
+            !mobileNumber ||
+            !door_number ||
+            !addressLine1 ||
+            !addressLine2 ||
+            !cityName ||
+            !pincode
+        ) {
+            setErrorMessage("All Fields are Required to fill");
+            return;
         }
-      } catch (error) {
-        console.error("Signup failed:", error.message);
-        setErrorMessage(error.message);
-      }
+        if (mobileNumber.length !== 10) {
+            setErrorMessage("Phone number should be 10 digits");
+            return;
+        }
+
+        // Validate email
+        if (!email.includes("@gmail.com")) {
+            setErrorMessage("Email should be a Gmail address");
+            return;
+        }
+        // Validate email
+        if (!email.includes("@gmail.com")) {
+            setErrorMessage("Email should be a Gmail address");
+            return;
+        }
+
+        try {
+            const response = await axios.post(`${BASE_URL}/api/signup/`, reqData, {
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+            console.log("Request Sent:", response.data);
+            if (response.data == "1") {
+                saveCredentialsToCache(username, password);
+                updateUserID(username);
+                navLogin();
+            } else {
+                setErrorMessage(response.data["message"]);
+            }
+        } catch (error) {
+            console.error("Signup failed:", error.message);
+            setErrorMessage(error.message);
+        }
     };
 
     return (
@@ -165,7 +176,7 @@ const Signup2Screen = ({ navigation }) => {
                 <View style={styles.inputContainer}>
                     <Text>City :</Text>
                     <TextInput
-                        style={styles.input} 
+                        style={styles.input}
                         value={cityName}
                         onChangeText={text => setCityName(text)}
                     />

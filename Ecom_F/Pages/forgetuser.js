@@ -1,4 +1,3 @@
-//Login.js
 import React, { useState, useEffect } from "react";
 import { StatusBar } from "react-native";
 import {
@@ -37,9 +36,7 @@ library.add(
 );
 
 const ForgetUser = ({ navigation }) => {
-  const [password, setPassword] = useState("");
-  const [username, setUserName] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
+  const [input, setInput] = useState("");
   const [errorMessage, setErrorMessage] = useState(null);
   const [rememberPassword, setRememberPassword] = useState(false);
   const { updateUserID, BASE_URL } = useUserContext();
@@ -60,74 +57,41 @@ const ForgetUser = ({ navigation }) => {
     navigation.navigate("Home", { username });
     updateUserID(username);
   };
-  
-  const navreset = async () => {
 
-    if (username) {
-      // Username is empty, show a message
+  const isValidEmail = (email) => {
+    // Regular expression for validating email addresses
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const navreset = async () => {
+    if (input) {
+      console.log("Input value:", input); // Log the input value
+      const isEmail = isValidEmail(input);
+      console.log(isEmail);
+
+      const data = {
+        [isEmail ? "email" : "username"]: input,
+      };
+      
+
+      console.log(data);
       try {
-        const response = await axios.post(`${BASE_URL}/api/forgetpass/`, {
-          username: username,
-        })
-        if (response.data == 'Sent') {
-          updateUserID(username)
+        const response = await axios.post(`${BASE_URL}/api/forgetpass/`, data);
+        if (response.data === "Sent") {
+          updateUserID(input);
           navigation.navigate("CodeVerification");
-        }
-        else {
+        } else {
           setErrorMessage(response.data);
         }
-      }
-      catch (error) {
-        console.error(error)
+      } catch (error) {
+        console.error(error);
       }
     } else {
-      // Username is not empty, navigate to the Resetpass screen
-      setErrorMessage("Enter username for OTP verification");
+      setErrorMessage("Enter username or email for OTP verification");
     }
   };
 
-  const saveCredentialsToCache = async (username, password) => {
-    try {
-      await AsyncStorage.setItem("username", username);
-      await AsyncStorage.setItem("password", password);
-    } catch (error) {
-      console.error("Error saving credentials to cache:", error);
-    }
-  };
-
-  const LoginReq = async () => {
-    try {
-      const response = await axios.post(
-        `${BASE_URL}/api/login/`,
-        {
-          username: username,  
-          password: password, 
-        },
-        {    
-          headers: { 
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      console.log(username);
-      console.log(password);
-      console.log("Login Response:", response.data);
-
-      if (response.data === 1) {
-        updateUserID(username)
-        if (rememberPassword) { saveCredentialsToCache(username, password); }else{updateUserID(username)}
-        saveCredentialsToCache(username, password)
-        setErrorMessage(null)
-        navHome();
-
-      } else { 
-        setErrorMessage(response.data["message"]);
-      }
-    } catch (error) {
-      console.error("Login failed:", error.message);
-    }
-  };
- 
   return (
     <View style={styles.container}>
       <Text style={styles.welcome}>Welcome</Text>
@@ -136,21 +100,21 @@ const ForgetUser = ({ navigation }) => {
       <Image style={styles.tinyLogo} source={signInImage} />
       <View style={styles.allsignIn}>
         <View style={styles.rowContainer}>
-          <Text style={styles.text}>Enter your Username</Text>
-        </View> 
+          <Text style={styles.text}>Enter your Username or Email</Text>
+        </View>
         {errorMessage && <Text style={styles.errorText}>{errorMessage}</Text>}
         <View style={styles.inputContainer}>
-          <TextInput 
+          <TextInput
             style={styles.input}
-            placeholder="Username"
-            onChangeText={(text) => setUserName(text)}
+            placeholder="Username or Email"
+            onChangeText={(text) => setInput(text)}
           />
           <FontAwesomeIcon
-            icon={faUser} 
-            size={20} 
+            icon={faUser}
+            size={20}
             color="black"
             style={styles.icon}
-          /> 
+          />
         </View>
         <View
           style={{
@@ -159,9 +123,7 @@ const ForgetUser = ({ navigation }) => {
             alignItems: "center",
             marginTop: 20,
           }}
-        >
-    
-        </View>
+        ></View>
         <TouchableOpacity onPress={navreset} style={styles.loginButton}>
           <Text style={styles.loginButtonText}>verify</Text>
         </TouchableOpacity>
@@ -171,9 +133,7 @@ const ForgetUser = ({ navigation }) => {
             justifyContent: "center",
             marginTop: 20,
           }}
-        >
-      
-        </View>
+        ></View>
       </View>
       <StatusBar style="auto" />
     </View>
@@ -196,9 +156,9 @@ const styles = StyleSheet.create({
     height: 200,
     position: "absolute",
     top: 0,
-    zIndex: 10, 
+    zIndex: 10,
   },
-  
+
   forgetPassword: {
     color: "#1977F3",
     fontSize: 16,
@@ -233,7 +193,7 @@ const styles = StyleSheet.create({
   checkbox: {
     borderRadius: 5,
     padding: 8,
-    marginRight: 10, 
+    marginRight: 10,
   },
   rememberText: {
     color: "#1977F3",

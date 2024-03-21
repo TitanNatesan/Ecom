@@ -74,7 +74,10 @@ const SignupScreen = ({ navigation }) => {
       console.log("Signup1 successful:", response.data);
       if (response.data === 1) {
         handleSignup2(referal, username, password);
-      } else {
+      } else if (response.data['error']){
+        setErrorMessage(response.data['error'])
+      }
+      else {
         navigation.navigate("Signup");
         setErrorMessage(response.data["message"]);
       }

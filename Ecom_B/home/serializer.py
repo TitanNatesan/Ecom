@@ -5,7 +5,7 @@ from .models import Users, Products, Address,Orders,EachItem
 
 class UserSerial(serializers.ModelSerializer):
     class Meta(object):
-        model = Users
+        model = Users 
         fields = [
             'name',
             'email',
