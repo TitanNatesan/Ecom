@@ -15,7 +15,6 @@ import random,os
 from django.shortcuts import get_object_or_404
 from datetime import datetime, timedelta
 from django.utils import timezone
-from django.core.mail import send_mail
 from django.conf import settings
 from decimal import Decimal
 import smtplib
@@ -767,5 +766,7 @@ def validate_password(password):
         return False, "Password must contain at least one lowercase letter"
     if not re.search(digit_regex, password):
         return False, "Password must contain at least one digit"
+    if not re.search(special_char_regex,password):
+        return False, "Password must contain at least one special character"
     
     return True, "Password is valid"
