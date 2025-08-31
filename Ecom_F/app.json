@@ -28,6 +28,7 @@
       "favicon": "./assets/favicon.png"
     },
     "extra": {
+      "API_BASE_URL": "http://10.207.140.11:8000",
       "eas": {
         "projectId": "89c55038-e929-4bf6-8c87-089618c215b8"
       }

@@ -11,6 +11,7 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
+  SafeAreaView,
 } from "react-native";
 import {
   faMagnifyingGlass,
@@ -30,8 +31,9 @@ import {
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
-import BottomBar from "./BottomBar";
-const backl = require("../Streetmall/1Home/lg.png");
+import { CommonStyles, Colors, Spacing, FontSizes, BorderRadius } from "../styles/CommonStyles";
+import Header from "../components/Header";
+import BottomNavigation from "../components/BottomNavigation";
 import {
   faHome,
   faBars,
@@ -69,280 +71,180 @@ const Category = ({ navigation }) => {
   ];
 
   return (
-    <View style={styles.containerw}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={{ flex: 1 }}
+    <SafeAreaView style={CommonStyles.container}>
+      <StatusBar barStyle="light-content" backgroundColor={Colors.primary} />
+
+      <Header
+        title="Categories"
+        navigation={navigation}
+        onSearchPress={() => navigation.navigate("AProduct")}
+      />
+
+      <ScrollView
+        style={CommonStyles.screenContainer}
+        showsVerticalScrollIndicator={false}
       >
-        <ScrollView
-          style={styles.all}
-          vertical
-          showsVerticalScrollIndicator={false}
-        >
-          <View style={styles.container}>
-            <Text
-              style={{
-                fontSize: 30,
-                color: "#fff",
-                textAlign: "center",
-                alignItems: "center",
-                display: "flex",
-                marginTop: -10,
-                marginBottom: 10,
-              }}
-            >
-              StreetMall
-            </Text>
-
-            <View style={styles.topbarinput}>
-              <FontAwesomeIcon
-                icon={faMagnifyingGlass}
-                size={20}
-                color="black"
-              />
-              <TextInput
-                placeholder="Search streetmall.com"
-                style={styles.inputBox}
-              />
-              {/* <FontAwesomeIcon icon={faUsersViewfinder} size={20} color="black" /> */}
-            </View>
-            <StatusBar barStyle="dark-content" />
-          </View>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            <View style={styles.productsbar}>
-              {carouselItems.map((item, index) =>
-                item.text === "Special Products" ? (
-                  <View
-                    key={index}
-                    style={[
-                      styles.productcont,
-                      { color: "#fff", backgroundColor: "#FF7272" },
-                    ]}
-                  >
-                    <TouchableOpacity
-                      onPress={() => navigation.navigate("Gifts", { item })}
-                    >
-                      <Image
-                        style={styles.productImagegt}
-                        source={item.image}
-                      />
-                      <Text style={styles.protxtgt}>{item.text}</Text>
-                    </TouchableOpacity>
-                  </View>
-                ) : (
-                  <TouchableOpacity
-                    onPress={() => navigation.navigate("AProduct", { item })}
-                  >
-                    <View key={index} style={styles.product}>
-                      <Image style={styles.productImage} source={item.image} />
-                      <Text>{item.text}</Text>
-                    </View>
-                  </TouchableOpacity>
-                )
-              )}
-            </View>
+        {/* Quick Access Categories */}
+        <View style={styles.quickAccessSection}>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.quickAccessContainer}
+          >
+            {carouselItems.map((item, index) => (
+              <TouchableOpacity
+                key={index}
+                style={[
+                  styles.quickAccessItem,
+                  item.text === "Special Products" && styles.specialQuickAccess
+                ]}
+                onPress={() => {
+                  if (item.text === "Special Products") {
+                    navigation.navigate("Gifts");
+                  } else {
+                    navigation.navigate("AProduct");
+                  }
+                }}
+                activeOpacity={0.8}
+              >
+                <Image style={styles.quickAccessImage} source={item.image} />
+                <Text style={styles.quickAccessText} numberOfLines={2}>
+                  {item.text}
+                </Text>
+              </TouchableOpacity>
+            ))}
           </ScrollView>
+        </View>
 
-          <Text style={styles.category}>Shop by Category</Text>
-          <View style={styles.categoryContainer}>
+        {/* Categories List */}
+        <View style={styles.categoriesListSection}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Shop by Category</Text>
+          </View>
+
+          <View style={styles.categoriesContainer}>
             {data.map((item, index) => (
               <TouchableOpacity
                 key={index}
-                style={styles.categoryItem}
-                onPress={() => {
-                  navigation.navigate("AProduct", { item });
-                }}
+                style={styles.categoryCard}
+                onPress={() => navigation.navigate("AProduct")}
+                activeOpacity={0.8}
               >
-                <FontAwesomeIcon icon={item.icon} size={20} color="black" />
+                <View style={styles.categoryIconContainer}>
+                  <FontAwesomeIcon icon={item.icon} size={24} color={Colors.primary} />
+                </View>
                 <Text style={styles.categoryLabel}>{item.text}</Text>
                 <FontAwesomeIcon
                   icon={faChevronRight}
-                  size={20}
-                  color="black"
+                  size={16}
+                  color={Colors.textLight}
                 />
               </TouchableOpacity>
             ))}
           </View>
-          <Text> {"\n"} </Text>
-          <Text> {"\n"} </Text>
-          <Text> {"\n"} </Text>
-        </ScrollView>
-      </KeyboardAvoidingView>
-      <View style={styles.blueBar}></View>
-      <View style={styles.navbar}>
-        <TouchableOpacity onPress={() => navigation.navigate("Home")}>
-          <View style={[styles.navbarIcon, styles.navbarIconHome1]}>
-            <FontAwesomeIcon icon={faHome} size={25} color={"#1977F3"} />
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate("Category")}>
-          <View style={[styles.navbarIcon, styles.navbarIconHome]}>
-            <FontAwesomeIcon icon={faBars} size={20} color={"white"} />
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate("Cart")}>
-          <View style={[styles.navbarIcon, styles.navbarIconHome1]}>
-            <FontAwesomeIcon
-              icon={faShoppingCart}
-              size={20}
-              color={"#1977F3"}
-            />
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate("User")}>
-          <View style={[styles.navbarIcon, styles.navbarIconHome1]}>
-            <FontAwesomeIcon icon={faUser} size={20} color={"#1977F3"} />
-          </View>
-        </TouchableOpacity>
-      </View>
-    </View>
+        </View>
+
+        <View style={{ height: 100 }} />
+      </ScrollView>
+
+      <BottomNavigation navigation={navigation} activeRoute="Category" />
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  containerw: {
-    flex: 1,
-    backgroundColor: "#ffffff",
+  // Quick Access Section
+  quickAccessSection: {
+    backgroundColor: Colors.backgroundLight,
+    paddingVertical: Spacing.md,
   },
-  container: {
-    paddingTop: 100,
-    backgroundColor: "#1977F3",
-    paddingBottom: 15,
+
+  quickAccessContainer: {
+    paddingHorizontal: Spacing.md,
   },
-  blueBar: {
-    backgroundColor: "#1977F3",
-    height: 15,
-    position: "sticky",
-    bottom: 0,
-    left: 0,
-    right: 0,
-  },
-  all: {
-    backgroundColor: "#D3E6FD",
-  },
-  navbar: {
-    position: "sticky",
-    width: "100%",
-    height: "8%",
-    flexDirection: "row",
-    justifyContent: "space-around",
-    alignItems: "center",
-    backgroundColor: "white",
-    paddingBottom: "5%",
-    elevation: 10,
-  },
-  navbarIcon: {
-    width: 15,
-    height: 15,
-    tintColor: "#1977F3",
-  },
-  navbarIconHome: {
-    backgroundColor: "#1977F3",
-    width: 60,
-    height: 60,
-    justifyContent: "center",
-    alignItems: "center",
-    borderTopLeftRadius: -10,
-    borderBottomRightRadius: 21,
-    borderBottomLeftRadius: 21,
-    elevation: 5,
-  },
-  navbarIconHome1: {
-    width: 60,
-    height: 60,
-    justifyContent: "center",
-    alignItems: "center",
-    borderTopLeftRadius: -10,
-    borderBottomRightRadius: 21,
-    borderBottomLeftRadius: 21,
-  },
-  category: {
-    backgroundColor: "#FFAC2F",
-    padding: 5,
-    borderBottomRightRadius: 10,
-    borderTopRightRadius: 10,
-    maxWidth: 150,
-  },
-  topbarinput: {
-    justifyContent: "center",
-    marginHorizontal: 20,
-    borderRadius: 10,
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "white",
-    padding: 10,
-  },
-  inputBox: {
-    flex: 1,
-    color: "#1977F3",
-    marginLeft: 10,
-  },
-  productsbar: {
-    flexDirection: "row",
-    marginTop: 10,
-    paddingVertical: 10,
-    backgroundColor: "#1977F33A",
-    color: "#fff",
-  },
-  product: {
-    marginRight: 25,
-    alignItems: "center",
-  },
-  productcont: {
-    marginRight: 25,
-    alignItems: "center",
-    paddingRight: 10,
-    borderTopRightRadius: 10,
-    borderBottomRightRadius: 10,
-  },
-  backgroundImage: {
-    width: "115%",
-    height: 90,
-    alignItems: "center",
-  },
-  productImagegt: {
-    width: 65,
-    height: 60,
-    borderRadius: 10,
-    left: "10%",
-    objectFit: "contain",
-  },
-  protxtgt: {
-    color: "black",
-    alignSelf: "center",
-    margin: "auto",
-    fontSize: 11,
-    justifyContent: "center",
-    display: "flex",
-    marginLeft: 5,
+
+  quickAccessItem: {
+    alignItems: 'center',
+    marginRight: Spacing.lg,
     width: 80,
-    textAlign: "center",
+    backgroundColor: Colors.white,
+    borderRadius: BorderRadius.lg,
+    padding: Spacing.sm,
+    ...CommonStyles.card.shadowColor && CommonStyles.card,
   },
-  productImage: {
-    width: 65,
-    height: 70,
-    borderRadius: 10,
-    objectFit: "contain",
+
+  specialQuickAccess: {
+    backgroundColor: Colors.accent,
   },
-  categoryContainer: {
-    flexDirection: "column",
-    justifyContent: "space-around",
-    alignItems: "center",
-    marginHorizontal: 20,
-    marginTop: 10,
+
+  quickAccessImage: {
+    width: 50,
+    height: 50,
+    borderRadius: BorderRadius.md,
+    marginBottom: Spacing.xs,
+    resizeMode: 'contain',
   },
-  categoryItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "white",
-    padding: 15,
-    borderRadius: 8,
-    marginBottom: 10,
-    width: "98%",
+
+  quickAccessText: {
+    fontSize: FontSizes.xs,
+    color: Colors.text,
+    textAlign: 'center',
+    lineHeight: 14,
+    fontWeight: '500',
   },
-  categoryLabel: {
-    marginLeft: 10,
+
+  // Categories List Section
+  categoriesListSection: {
     flex: 1,
+    paddingHorizontal: Spacing.md,
+    paddingTop: Spacing.lg,
+  },
+
+  sectionHeader: {
+    backgroundColor: Colors.secondary,
+    borderTopRightRadius: BorderRadius.md,
+    borderBottomRightRadius: BorderRadius.md,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
+    alignSelf: 'flex-start',
+    marginBottom: Spacing.lg,
+  },
+
+  sectionTitle: {
+    fontSize: FontSizes.lg,
+    fontWeight: '600',
+    color: Colors.white,
+  },
+
+  categoriesContainer: {
+    gap: Spacing.sm,
+  },
+
+  categoryCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Colors.white,
+    borderRadius: BorderRadius.lg,
+    padding: Spacing.md,
+    marginBottom: Spacing.sm,
+    ...CommonStyles.card.shadowColor && CommonStyles.card,
+  },
+
+  categoryIconContainer: {
+    width: 50,
+    height: 50,
+    borderRadius: BorderRadius.round,
+    backgroundColor: Colors.backgroundLight,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: Spacing.md,
+  },
+
+  categoryLabel: {
+    flex: 1,
+    fontSize: FontSizes.md,
+    fontWeight: '500',
+    color: Colors.text,
   },
 });
 

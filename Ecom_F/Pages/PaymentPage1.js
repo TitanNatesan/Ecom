@@ -17,7 +17,8 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import Trackbar from "../Streetmall/14_Checkout_page/step.png";
-import BottomBar from "./BottomBar";
+import BottomNavigation from "../components/BottomNavigation";
+import { Layout } from "../styles/CommonStyles";
 import { useEffect } from "react";
 import axios from "axios";
 import { useRoute } from "@react-navigation/native";
@@ -25,10 +26,10 @@ import { useUserContext } from "./UserContext";
 
 const PaymentPage = ({ navigation }) => {
   const route = useRoute();
-  const { product_ids,cdata } = route.params;
+  const { product_ids, cdata } = route.params;
   const { userID, BASE_URL } = useUserContext();
   const goToPaymentPage2 = () => {
-    navigation.navigate("Payment2", { userData, product_ids,cdata });
+    navigation.navigate("Payment2", { userData, product_ids, cdata });
   };
 
   const handleEditPress = () => {
@@ -66,6 +67,7 @@ const PaymentPage = ({ navigation }) => {
         <ScrollView
           style={styles.containerw}
           showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: Layout.bottomNavHeight }}
         >
           <View style={styles.container}>
             <Text
@@ -136,8 +138,7 @@ const PaymentPage = ({ navigation }) => {
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
-      <BottomBar navigation={navigation} />
-      <View style={styles.blueBar}></View>
+      <BottomNavigation navigation={navigation} activeRoute="Cart" />
     </View>
   );
 };
@@ -146,14 +147,6 @@ const styles = StyleSheet.create({
   containerw: {
     flex: 1,
     backgroundColor: "#ffffff",
-  },
-  blueBar: {
-    backgroundColor: "#1977F3",
-    height: 15,
-    position: "sticky",
-    bottom: 60,
-    left: 0,
-    right: 0,
   },
   container: {
     flex: 1,

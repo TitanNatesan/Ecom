@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { StyleSheet, View, ScrollView, Image, Text, Dimensions, TouchableOpacity } from "react-native";
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faCircleUser } from "@fortawesome/free-solid-svg-icons";
-import BottomBar from './BottomBar';
+import BottomNavigation from '../components/BottomNavigation';
+import { CommonStyles, Layout } from '../styles/CommonStyles';
 import { LineChart } from 'react-native-chart-kit';
 
 const screenWidth = Dimensions.get("window").width;
@@ -30,8 +31,8 @@ const Dashboard = ({ navigation }) => {
 
 
     return (
-        <View style={styles.containerw}>
-            <ScrollView style={styles.containerw1} showsVerticalScrollIndicator={false}>
+        <View style={[styles.containerw, CommonStyles.container]}>
+            <ScrollView style={styles.containerw1} showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: Layout.bottomNavHeight }}>
                 <View style={styles.container}>
                     <View style={{ flexDirection: 'row', alignItems: 'center', }}>
                         <FontAwesomeIcon icon={faCircleUser} size={30} style={styles.uicon} />
@@ -96,8 +97,7 @@ const Dashboard = ({ navigation }) => {
 
                 </View>
             </ScrollView>
-            <BottomBar navigation={navigation} />
-            <View style={styles.blueBar}></View>
+            <BottomNavigation navigation={navigation} activeRoute="Dashboard" />
         </View>
     );
 };
@@ -117,12 +117,12 @@ const styles = StyleSheet.create({
         resizeMode: 'contain',
         marginRight: 10,
         marginLeft: 20,
-      },
-      utext: {
+    },
+    utext: {
         color: 'white',
         flex: 1,
         fontSize: 31,
-      },
+    },
     button: {
         width: 80,
         backgroundColor: '#007bff',
@@ -142,14 +142,6 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#ffffff',
         height: '80%',
-    },
-    blueBar: {
-        backgroundColor: '#1977F3',
-        height: 15,
-        position: 'absolute',
-        bottom: 60,
-        left: 0,
-        right: 0,
     },
     container: {
         paddingTop: 100,

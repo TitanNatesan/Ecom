@@ -20,7 +20,8 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import BottomBar from "../Pages/BottomBar";
+import BottomNavigation from "../components/BottomNavigation";
+import { Layout } from "../styles/CommonStyles";
 import GiftProductItem from "../Pages/Giftproductitem";
 import FilterPage from "../Pages/Filter";
 import axios from "axios";
@@ -123,7 +124,7 @@ const Gifts = ({ navigation }) => {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1 }}
       >
-        <ScrollView vertical showsVerticalScrollIndicator={false}>
+        <ScrollView vertical showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: Layout.bottomNavHeight }}>
           <View>
             <View style={styles.container}>
               <Text
@@ -234,8 +235,7 @@ const Gifts = ({ navigation }) => {
           <FilterPage closeModal={handleCloseFilterModal} />
         </Modal>
       </KeyboardAvoidingView>
-      <BottomBar navigation={navigation} initialPage="Home" />
-      <View style={styles.blueBar}></View>
+      <BottomNavigation navigation={navigation} activeRoute="Gifts" />
     </View>
   );
 };
@@ -301,14 +301,6 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 10,
     shadowColor: "#003478",
     elevation: 4,
-  },
-  blueBar: {
-    backgroundColor: "#1977F3",
-    height: 15,
-    position: "sticky",
-    bottom: 60,
-    left: 0,
-    right: 0,
   },
   productsContainer: {
     flexDirection: "row",

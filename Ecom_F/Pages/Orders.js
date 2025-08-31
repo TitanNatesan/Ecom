@@ -16,7 +16,8 @@ import {
   faCheckCircle,
   faMagnifyingGlass,
 } from "@fortawesome/free-solid-svg-icons";
-import BottomBar from "./BottomBar";
+import BottomNavigation from "../components/BottomNavigation";
+import { Layout } from "../styles/CommonStyles";
 import axios from "axios";
 import { useUserContext } from "./UserContext";
 
@@ -46,9 +47,10 @@ const Order = ({ navigation }) => {
       <ScrollView
         style={styles.containery}
         showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: Layout.bottomNavHeight }}
       >
         <View style={styles.container}>
-        <Text style={{fontSize:22,marginLeft:5,textAlign:"center",color:"white",marginTop:-30,    fontWeight: "bold",}}>YOUR ORDERS</Text>
+          <Text style={{ fontSize: 22, marginLeft: 5, textAlign: "center", color: "white", marginTop: -30, fontWeight: "bold", }}>YOUR ORDERS</Text>
         </View>
         <View style={styles.cont}>
           {allProducts.reverse().map((product) => (
@@ -82,8 +84,7 @@ const Order = ({ navigation }) => {
           ))}
         </View>
       </ScrollView>
-      <BottomBar navigation={navigation} />
-      <View style={styles.blueBar}></View>
+      <BottomNavigation navigation={navigation} activeRoute="Orders" />
     </View>
   );
 };
@@ -109,14 +110,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff",
     height: "70%",
     marginBottom: "10%",
-  },
-  blueBar: {
-    backgroundColor: "#1977F3",
-    height: 15,
-    position: "absolute",
-    bottom: 60,
-    left: 0,
-    right: 0,
   },
   container: {
     paddingTop: 100,

@@ -6,89 +6,103 @@ import {
   Text,
   View,
   Image,
-  TextInput,
   TouchableOpacity,
+  SafeAreaView,
+  KeyboardAvoidingView,
+  Platform,
+  Alert,
 } from "react-native";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { library } from "@fortawesome/fontawesome-svg-core";
-import Icon from "react-native-vector-icons/FontAwesome";
-import {
-  faCircleRight,
-  faLock,
-  faUser,
-  faEye,
-  faEyeSlash,
-  faSquare,
-  faCheckSquare,
-} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesome } from "@expo/vector-icons";
 import axios from "axios";
 import { useUserContext } from "./UserContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import {
+  CommonStyles,
+  Colors,
+  Spacing,
+  FontSizes,
+  BorderRadius,
+  Shadows
+} from "../styles/CommonStyles";
+import { Input, Button, LoadingComponent } from "../components";
+import { validation } from "../utils/helpers";
 import Round from "../Streetmall/3_Login/Ellipse391.png";
 import signInImage from "../Streetmall/3_Login/ASSETS.png";
-library.add(
-  faCircleRight,
-  faUser,
-  faLock,
-  faEye,
-  faEyeSlash,
-  faSquare,
-  faCheckSquare
-);
 
 const SignInScreen = ({ navigation }) => {
   const [password, setPassword] = useState("");
   const [username, setUserName] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
   const [rememberPassword, setRememberPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
+  const [formErrors, setFormErrors] = useState({});
   const { updateUserID, BASE_URL } = useUserContext();
 
   useEffect(() => {
-    const checkAutoLogin = async () => {
-      try { 
-        const storedUsername = await AsyncStorage.getItem("username");
-        const storedPassword = await AsyncStorage.getItem("password");
-
-        if (storedUsername && storedPassword) {
-          setUserName(storedUsername);
-          updateUserID(storedUsername);
-          setPassword(storedPassword);
-          try {
-            const response = await axios.post(
-              `${BASE_URL}/api/login/`,
-              {
-                username: storedUsername,
-                password: storedPassword, 
-              },
-              {
-                headers: {
-                  "Content-Type": "application/json",
-                }, 
-              }
-            );
-            console.log("Login Response:", response.data);
-
-            if (response.data === 1) {
-              setUserName(storedUsername);
-              updateUserID(storedUsername);
-              setPassword(storedPassword);
-              navHome();
-            }
-          } catch (error) {
-            console.error("Login failed:", error.message);
-          }
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
     checkAutoLogin();
   }, []);
 
-  const togglePasswordVisibility = () => {
-    setShowPassword((prevShowPassword) => !prevShowPassword);
+  const checkAutoLogin = async () => {
+    try {
+      const storedUsername = await AsyncStorage.getItem("username");
+      const storedPassword = await AsyncStorage.getItem("password");
+
+      if (storedUsername && storedPassword) {
+        setUserName(storedUsername);
+        setPassword(storedPassword);
+        setRememberPassword(true);
+
+        try {
+          const response = await axios.post(
+            `${BASE_URL}/api/login/`,
+            {
+              username: storedUsername,
+              password: storedPassword,
+            },
+            {
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          );
+
+          if (response.data === 1) {
+            updateUserID(storedUsername);
+            navHome();
+            return;
+          }
+        } catch (error) {
+          console.error("Auto-login failed:", error.message);
+          // Clear invalid credentials
+          await AsyncStorage.removeItem("username");
+          await AsyncStorage.removeItem("password");
+        }
+      }
+    } catch (error) {
+      console.error("Error checking auto-login:", error);
+    } finally {
+      setInitialLoading(false);
+    }
+  };
+
+  const validateForm = () => {
+    const errors = {};
+
+    // Validate username
+    const usernameError = validation.required(username);
+    if (usernameError) {
+      errors.username = usernameError;
+    }
+
+    // Validate password
+    const passwordError = validation.required(password);
+    if (passwordError) {
+      errors.password = passwordError;
+    }
+
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
   };
 
   const handleRememberPassword = () => {
@@ -101,326 +115,344 @@ const SignInScreen = ({ navigation }) => {
 
   const navHome = () => {
     navigation.navigate("Home", { username });
-    updateUserID(username);
   };
-  
-  const navreset = async () => {
 
-    if (username) {
-      // Username is empty, show a message
-      try {
-        const response = await axios.post(`${BASE_URL}/api/forgetpass/`, {
-          username: username,
-        })
-        if (response.data == 'Sent') {
-          updateUserID(username)
-          navigation.navigate("CodeVerification");
-        }
-        else {
-          setErrorMessage(response.data);
-        }
+  const navForgetPassword = async () => {
+    if (!username.trim()) {
+      setErrorMessage("Please enter your username first for OTP verification");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const response = await axios.post(`${BASE_URL}/api/forgetpass/`, {
+        username: username.trim(),
+      });
+
+      if (response.data === 'Sent') {
+        updateUserID(username);
+        navigation.navigate("CodeVerification");
+      } else {
+        setErrorMessage(response.data);
       }
-      catch (error) {
-        console.error(error)
-      }
-    } else {
-      // Username is not empty, navigate to the Resetpass screen
-      setErrorMessage("Enter username for OTP verification");
+    } catch (error) {
+      console.error("Forgot password error:", error);
+      setErrorMessage("Failed to send reset code. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
   const saveCredentialsToCache = async (username, password) => {
     try {
-      await AsyncStorage.setItem("username", username);
-      await AsyncStorage.setItem("password", password);
+      if (rememberPassword) {
+        await AsyncStorage.setItem("username", username);
+        await AsyncStorage.setItem("password", password);
+      } else {
+        await AsyncStorage.removeItem("username");
+        await AsyncStorage.removeItem("password");
+      }
     } catch (error) {
       console.error("Error saving credentials to cache:", error);
     }
   };
 
   const LoginReq = async () => {
+    if (!validateForm()) {
+      return;
+    }
+
     try {
+      setLoading(true);
+      setErrorMessage(null);
+
       const response = await axios.post(
         `${BASE_URL}/api/login/`,
         {
-          username: username,  
-          password: password, 
+          username: username.trim(),
+          password: password,
         },
-        {    
-          headers: { 
+        {
+          headers: {
             "Content-Type": "application/json",
           },
         }
       );
-      console.log(username);
-      console.log(password);
-      console.log("Login Response:", response.data);
 
       if (response.data === 1) {
-        updateUserID(username)
-        if (rememberPassword) { saveCredentialsToCache(username, password); }else{updateUserID(username)}
-        saveCredentialsToCache(username, password)
-        setErrorMessage(null)
+        updateUserID(username);
+        await saveCredentialsToCache(username, password);
         navHome();
-
-      } else { 
-        setErrorMessage(response.data["message"]);
+      } else {
+        setErrorMessage(response.data?.message || "Login failed. Please check your credentials.");
       }
     } catch (error) {
-      console.error("Login failed:", error.message);
+      console.error("Login failed:", error);
+      if (error.response?.status === 401) {
+        setErrorMessage("Invalid username or password");
+      } else if (error.response?.status >= 500) {
+        setErrorMessage("Server error. Please try again later.");
+      } else {
+        setErrorMessage("Network error. Please check your connection.");
+      }
+    } finally {
+      setLoading(false);
     }
   };
- 
+
+  if (initialLoading) {
+    return <LoadingComponent />;
+  }
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.welcome}>Welcome</Text>
-      <Text style={styles.back}>back!</Text>
-      <Image style={styles.round} source={Round} />
-      <Image style={styles.tinyLogo} source={signInImage} />
-      <View style={styles.allsignIn}>
-        <View style={styles.rowContainer}>
-          <Text style={styles.text}>Login</Text>
-        </View> 
-        {errorMessage && <Text style={styles.errorText}>{errorMessage}</Text>}
-        <View style={styles.inputContainer}>
-          <TextInput 
-            style={styles.input}
-            placeholder="Username"
-            onChangeText={(text) => setUserName(text)}
-          />
-          <FontAwesomeIcon
-            icon={faUser} 
-            size={20} 
-            color="black"
-            style={styles.icon}
-          /> 
+    <SafeAreaView style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor={Colors.primary} />
+
+      <KeyboardAvoidingView
+        style={styles.keyboardAvoidingView}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+      >
+        {/* Background Image */}
+        <Image style={styles.round} source={Round} />
+        <Image style={styles.backgroundImage} source={signInImage} />
+
+        {/* Welcome Text */}
+        <View style={styles.welcomeContainer}>
+          <Text style={styles.welcomeText}>Welcome</Text>
+          <Text style={styles.backText}>back!</Text>
         </View>
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.input}
-            placeholder="Password"
-            secureTextEntry={!showPassword}
-            onChangeText={(text) => setPassword(text)}
-          />
-          <TouchableOpacity onPress={togglePasswordVisibility}>
-            <FontAwesomeIcon
-              icon={showPassword ? faEyeSlash : faEye}
-              size={20}
-              color="black"
-              style={styles.icon}
-            />
-          </TouchableOpacity>
-        </View>
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-around",
-            alignItems: "center",
-            marginTop: 20,
-          }}
-        >
-          <TouchableOpacity onPress={handleRememberPassword}>
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "space-evenly",
-              }}
-            >
-              <Icon
-                name={rememberPassword ? "check-square" : "square-o"}
-                size={20}
-              />
-              <Text style={{ marginLeft: 5, color: "#6B5E5E" }}>
-                Remember Password
-              </Text> 
+
+        {/* Login Form */}
+        <View style={styles.formContainer}>
+          <View style={styles.formHeader}>
+            <Text style={styles.formTitle}>Login</Text>
+          </View>
+
+          {errorMessage && (
+            <View style={styles.errorContainer}>
+              <Text style={styles.errorText}>{errorMessage}</Text>
             </View>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={()=>navigation.navigate('forgetuser')}>
-            <Text style={{ color: "#1977F3" }}>Forget Password</Text>
-          </TouchableOpacity>
+          )}
+
+          {/* Username Input */}
+          <Input
+            label="Username"
+            value={username}
+            onChangeText={setUserName}
+            placeholder="Enter your username"
+            leftIcon="user"
+            autoCapitalize="none"
+            error={formErrors.username}
+            editable={!loading}
+            containerStyle={styles.inputContainer}
+          />
+
+          {/* Password Input */}
+          <Input
+            label="Password"
+            value={password}
+            onChangeText={setPassword}
+            placeholder="Enter your password"
+            secureTextEntry={true}
+            showPasswordToggle={true}
+            leftIcon="lock"
+            error={formErrors.password}
+            editable={!loading}
+            containerStyle={styles.inputContainer}
+          />
+
+          {/* Remember & Forgot Password */}
+          <View style={styles.optionsContainer}>
+            <TouchableOpacity
+              onPress={handleRememberPassword}
+              style={styles.rememberContainer}
+              disabled={loading}
+            >
+              <FontAwesome
+                name={rememberPassword ? "check-square" : "square-o"}
+                size={18}
+                color={Colors.primary}
+              />
+              <Text style={styles.rememberText}>Remember Password</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={navForgetPassword}
+              disabled={loading}
+            >
+              <Text style={styles.forgotText}>Forgot Password?</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Login Button */}
+          <Button
+            title="Login"
+            onPress={LoginReq}
+            loading={loading}
+            variant="primary"
+            size="large"
+            style={styles.loginButton}
+          />
+
+          {/* Create Account Link */}
+          <View style={styles.signupContainer}>
+            <Text style={styles.signupText}>Don't have an account? </Text>
+            <TouchableOpacity onPress={navSignup} disabled={loading}>
+              <Text style={styles.signupLink}>Create New Account</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-        <TouchableOpacity onPress={LoginReq} style={styles.loginButton}>
-          <Text style={styles.loginButtonText}>Login</Text>
-        </TouchableOpacity>
-        <View
-          onPress={navSignup}
-          style={{
-            alignItems: "center",
-            justifyContent: "center",
-            marginTop: 20,
-          }}
-        >
-          <Text onPress={navSignup} style={{ color: "#1977F3" }}>
-            Create New Account
-          </Text>
-        </View>
-      </View>
-      <StatusBar style="auto" />
-    </View>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  allsignIn: {
-    backgroundColor: "white",
-    paddingTop: 30,
-    position: "absolute",
-    width: "100%",
-    bottom: 0,
-    paddingBottom: 100,
-    marginBottom: 0,
-    borderRadius: 30,
+  container: {
+    flex: 1,
+    backgroundColor: Colors.primary,
   },
+
+  keyboardAvoidingView: {
+    flex: 1,
+  },
+
   round: {
     width: 200,
     height: 200,
     position: "absolute",
     top: 0,
-    zIndex: 10, 
-  },
-  
-  forgetPassword: {
-    color: "#1977F3",
-    fontSize: 16,
-  },
-  center: {
-    alignItems: "center",
-    marginBottom: 10,
+    left: 0,
+    zIndex: 1,
   },
 
-  welcome: {
-    position: "absolute",
-    top: 50,
-    left: 20,
-    fontSize: 40,
-    fontWeight: "bold",
-    color: "white",
-  },
-  back: {
+  backgroundImage: {
+    width: 280,
+    height: 300,
     position: "absolute",
     top: 100,
-    left: 20,
-    fontSize: 30,
-    fontWeight: "bold",
-    color: "#1977F3",
-  },
-  checkboxContainer: {
-    flexDirection: "row",
-    alignSelf: "center", // Center horizontally
-    alignItems: "center", // Center vertically
-    marginBottom: 10, // Adjusted spacing
-  },
-  checkbox: {
-    borderRadius: 5,
-    padding: 8,
-    marginRight: 10, 
-  },
-  rememberText: {
-    color: "#1977F3",
-    fontSize: 16,
-  },
-  buttons: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    marginTop: 10,
-  },
-  loginButton: {
-    backgroundColor: "#1977F3",
-    padding: 10,
-    borderRadius: 10,
-    width: 120,
-    alignSelf: "center",
-    marginTop: 20,
-  },
-
-  flexibleButton: {
-    flex: 1,
-    marginHorizontal: 10,
-  },
-  loginButtonText: {
-    color: "white",
-    fontSize: 16,
-    fontWeight: "bold",
-    textAlign: "center",
-  },
-  loginButton2: {
-    backgroundColor: "white",
-    padding: 10,
-    borderRadius: 10,
-    width: "80%",
-    alignSelf: "center",
-    marginTop: 10,
-  },
-
-  loginButtonText2: {
-    color: "#1977F3",
-    fontSize: 16,
-    fontWeight: "900",
-    textAlign: "center",
-  },
-  containerremember: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    marginLeft: 50,
-  },
-  forget: {
-    color: "#1977F3",
-    flex: 1,
-    alignSelf: "center",
-    top: 20,
-    bottom: 20,
-  },
-  container: {
-    flex: 1,
-    backgroundColor: "#1977F3",
-    justifyContent: "center",
-  },
-  errorText: {
-    color: "red",
-    fontSize: 16,
-    textAlign: "center",
-    marginTop: 10,
-  },
-  rowContainer: {
-    flexDirection: "row",
-    marginTop: 20,
-    alignItems: "center",
-    justifyContent: "space-around",
-    paddingBottom: 20,
-  },
-  tinyLogo: {
-    width: 230,
-    height: 250,
-    top: 120,
     right: 0,
+    zIndex: 1,
+    resizeMode: 'contain',
+  },
+
+  welcomeContainer: {
     position: "absolute",
+    top: 80,
+    left: Spacing.lg,
+    zIndex: 2,
   },
-  text: {
-    fontSize: 24,
+
+  welcomeText: {
+    fontSize: FontSizes.display + 8,
     fontWeight: "bold",
-    marginRight: 10,
+    color: Colors.white,
+    marginBottom: -8,
   },
+
+  backText: {
+    fontSize: FontSizes.heading,
+    fontWeight: "bold",
+    color: Colors.secondary,
+  },
+
+  formContainer: {
+    backgroundColor: Colors.white,
+    borderTopLeftRadius: BorderRadius.xxl,
+    borderTopRightRadius: BorderRadius.xxl,
+    paddingTop: Spacing.xl,
+    paddingHorizontal: Spacing.lg,
+    paddingBottom: 40,
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    minHeight: '55%',
+    ...Shadows.heavy,
+  },
+
+  formHeader: {
+    alignItems: "center",
+    marginBottom: Spacing.lg,
+  },
+
+  formTitle: {
+    fontSize: FontSizes.title,
+    fontWeight: "bold",
+    color: Colors.text,
+  },
+
+  errorContainer: {
+    backgroundColor: Colors.error + '20',
+    borderRadius: BorderRadius.md,
+    padding: Spacing.md,
+    marginBottom: Spacing.md,
+    borderLeftWidth: 4,
+    borderLeftColor: Colors.error,
+  },
+
+  errorText: {
+    color: Colors.error,
+    fontSize: FontSizes.sm,
+    textAlign: "center",
+    fontWeight: '500',
+  },
+
   inputContainer: {
+    marginBottom: Spacing.md,
+  },
+
+  optionsContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    borderWidth: 0,
-    borderBottomWidth: 1,
-    borderColor: "gray",
-    borderRadius: 6,
-    margin: 5,
-    marginHorizontal: 25,
-    padding: 5,
+    marginVertical: Spacing.lg,
   },
-  input: {
-    flex: 1,
-    height: 40,
-    padding: 5,
+
+  rememberContainer: {
+    flexDirection: "row",
+    alignItems: "center",
   },
-  icon: {
-    marginRight: 10,
+
+  rememberText: {
+    marginLeft: Spacing.sm,
+    fontSize: FontSizes.sm,
+    color: Colors.textLight,
+    fontWeight: '500',
+  },
+
+  forgotText: {
+    fontSize: FontSizes.sm,
+    color: Colors.primary,
+    fontWeight: '600',
+    textDecorationLine: 'underline',
+  },
+
+  loginButton: {
+    marginTop: Spacing.md,
+  },
+
+  signupContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: Spacing.xl,
+    paddingTop: Spacing.md,
+    borderTopWidth: 1,
+    borderTopColor: Colors.borderLight,
+  },
+
+  signupText: {
+    fontSize: FontSizes.md,
+    color: Colors.textLight,
+    fontWeight: '400',
+  },
+
+  signupLink: {
+    fontSize: FontSizes.md,
+    color: Colors.primary,
+    fontWeight: '600',
+    textDecorationLine: 'underline',
   },
 });
 

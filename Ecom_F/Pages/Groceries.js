@@ -15,7 +15,8 @@ import {
   faUsersViewfinder,
 } from "@fortawesome/free-solid-svg-icons";
 import { library } from "@fortawesome/fontawesome-svg-core";
-import BottomBar from "./BottomBar";
+import BottomNavigation from "../components/BottomNavigation";
+import { Layout } from "../styles/CommonStyles";
 
 const giftbox = require("../Streetmall/1Home/gift.gif");
 const laptop = require("../Streetmall/1Home/Laptop.png");
@@ -61,6 +62,7 @@ const Groceries = ({ navigation }) => {
         style={styles.all}
         vertical
         showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: Layout.bottomNavHeight }}
       >
         <View style={styles.container}>
           <Text
@@ -120,8 +122,7 @@ const Groceries = ({ navigation }) => {
         <Text>{"\n"}</Text>
         <Text>{"\n"}</Text>
       </ScrollView>
-      <BottomBar navigation={navigation} />
-      <View style={styles.blueBar}></View>
+      <BottomNavigation navigation={navigation} activeRoute="Groceries" />
     </View>
   );
 };
@@ -135,14 +136,6 @@ const styles = StyleSheet.create({
   containerw: {
     flex: 1,
     backgroundColor: "#ffffff",
-  },
-  blueBar: {
-    backgroundColor: "#1977F3",
-    height: 15,
-    position: "absolute",
-    bottom: 60,
-    left: 0,
-    right: 0,
   },
   bannerImage: {
     width: "70%",

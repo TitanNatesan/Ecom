@@ -1,202 +1,485 @@
-import React from "react";
+import React, { useState, useEffect } from 'react';
 import {
-  StyleSheet,
   View,
-  Image,
   Text,
-  TextInput,
-  StatusBar,
   ScrollView,
-  Platform,
-  KeyboardAvoidingView,
   TouchableOpacity,
-} from "react-native";
+  Image,
+  FlatList,
+  RefreshControl,
+  Alert
+} from 'react-native';
+import { FontAwesome } from '@expo/vector-icons';
+import axios from 'axios';
 import {
-  faMagnifyingGlass,
-  faUsersViewfinder,
-} from "@fortawesome/free-solid-svg-icons";
-import { library } from "@fortawesome/fontawesome-svg-core";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import BottomBar from "./BottomBar";
-
-const giftbox = require("../Streetmall/1Home/gift.gif");
-const laptop = require("../Streetmall/1Home/Laptop.png");
-const mobile = require("../Streetmall/1Home/Mobiles.png");
-const car = require("../Streetmall/1Home/car.png");
-const watch = require("../Streetmall/1Home/Watch.png");
-
-const Offer = require("../assets/offer.png");
-const dress = require("../assets/dress.jpg");
-const shoe = require("../assets/shoe799.jpg");
-
-library.add(faMagnifyingGlass, faUsersViewfinder);
+  Header,
+  BottomNavigation,
+  ProductCard,
+  LoadingComponent,
+  SearchBar,
+  Badge
+} from '../components';
+import {
+  CommonStyles,
+  Colors,
+  Spacing,
+  FontSizes,
+  BorderRadius,
+  Shadows,
+  Layout,
+} from '../styles/CommonStyles';
+import { formatCurrency, calculateDiscount } from '../utils/helpers';
 
 const Deals = ({ navigation }) => {
-  const carouselItems = [
-    { image: giftbox, text: "Special Products" },
-    { image: mobile, text: "Mobiles" },
-    { image: watch, text: "Watches" },
-    { image: laptop, text: "Laptops" },
-    { image: car, text: "Car" },
+  const [deals, setDeals] = useState([]);
+  const [featuredDeals, setFeaturedDeals] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('all');
+
+  const categories = [
+    { id: 'all', name: 'All Deals', icon: 'star' },
+    { id: 'flash', name: 'Flash Sale', icon: 'bolt' },
+    { id: 'daily', name: 'Daily Deals', icon: 'calendar' },
+    { id: 'clearance', name: 'Clearance', icon: 'tag' },
+    { id: 'bundle', name: 'Bundle Offers', icon: 'gift' },
   ];
 
-  return (
-    <View style={styles.containerw}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={{ flex: 1 }}
+  // Sample deals data - replace with actual API call
+  const sampleDeals = [
+    {
+      id: 1,
+      name: 'Wireless Headphones',
+      image: require('../assets/mobile-app.png'),
+      originalPrice: 2999,
+      salePrice: 1999,
+      category: 'electronics',
+      flashSale: true,
+      dailyDeal: false,
+      clearance: false,
+      bundleOffer: false,
+    },
+    {
+      id: 2,
+      name: 'Summer Dress',
+      image: require('../assets/dress.jpg'),
+      originalPrice: 1599,
+      salePrice: 999,
+      category: 'fashion',
+      flashSale: false,
+      dailyDeal: true,
+      clearance: false,
+      bundleOffer: false,
+    },
+    {
+      id: 3,
+      name: 'Running Shoes',
+      image: require('../assets/shoe799.jpg'),
+      originalPrice: 3999,
+      salePrice: 2799,
+      category: 'footwear',
+      flashSale: false,
+      dailyDeal: false,
+      clearance: true,
+      bundleOffer: false,
+    },
+    {
+      id: 4,
+      name: 'Gaming Laptop',
+      image: require('../assets/laptop.png'),
+      originalPrice: 65999,
+      salePrice: 54999,
+      category: 'electronics',
+      flashSale: false,
+      dailyDeal: false,
+      clearance: false,
+      bundleOffer: true,
+    },
+    {
+      id: 5,
+      name: 'Washing Machine',
+      image: require('../assets/washingmachine.jpg'),
+      originalPrice: 25999,
+      salePrice: 19999,
+      category: 'appliances',
+      flashSale: true,
+      dailyDeal: false,
+      clearance: false,
+      bundleOffer: false,
+    },
+  ];
+
+  useEffect(() => {
+    fetchDeals();
+  }, []);
+
+  const fetchDeals = async () => {
+    try {
+      setLoading(true);
+
+      // For now, using sample data. Replace with actual API call:
+      // const response = await axios.get('http://your-api-url/deals');
+
+      // Simulate API delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      setDeals(sampleDeals);
+      setFeaturedDeals(sampleDeals.slice(0, 3));
+
+    } catch (error) {
+      console.error('Error fetching deals:', error);
+      Alert.alert('Error', 'Failed to load deals. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await fetchDeals();
+    setRefreshing(false);
+  };
+
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+  };
+
+  const handleProductPress = (product) => {
+    navigation.navigate('Singleproduct', { product });
+  };
+
+  const handleCategoryPress = (categoryId) => {
+    setSelectedCategory(categoryId);
+  };
+
+  const getFilteredDeals = () => {
+    let filtered = deals;
+
+    // Filter by search query
+    if (searchQuery.trim()) {
+      filtered = filtered.filter(item =>
+        item.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.category?.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+
+    // Filter by category
+    if (selectedCategory !== 'all') {
+      filtered = filtered.filter(item => {
+        switch (selectedCategory) {
+          case 'flash':
+            return item.flashSale === true;
+          case 'daily':
+            return item.dailyDeal === true;
+          case 'clearance':
+            return item.clearance === true;
+          case 'bundle':
+            return item.bundleOffer === true;
+          default:
+            return true;
+        }
+      });
+    }
+
+    return filtered;
+  };
+
+  const renderCategoryItem = ({ item }) => (
+    <TouchableOpacity
+      style={[
+        styles.categoryItem,
+        selectedCategory === item.id && styles.categoryItemActive
+      ]}
+      onPress={() => handleCategoryPress(item.id)}
+    >
+      <FontAwesome
+        name={item.icon}
+        size={16}
+        color={selectedCategory === item.id ? Colors.white : Colors.primary}
+      />
+      <Text
+        style={[
+          styles.categoryText,
+          selectedCategory === item.id && styles.categoryTextActive
+        ]}
       >
-        <ScrollView vertical showsVerticalScrollIndicator={false}>
-          <View style={styles.container}>
-            <View style={styles.topbarinput}>
-              <FontAwesomeIcon
-                icon={faMagnifyingGlass}
-                size={20}
-                color="black"
-              />
-              <TextInput
-                placeholder="Search streetmall.com"
-                style={styles.inputBox}
-              />
-            </View>
-            <StatusBar style="dark-content" />
+        {item.name}
+      </Text>
+    </TouchableOpacity>
+  );
+
+  const renderFeaturedDeal = ({ item, index }) => (
+    <TouchableOpacity
+      style={styles.featuredDealCard}
+      onPress={() => handleProductPress(item)}
+    >
+      <Image
+        source={item.image}
+        style={styles.featuredDealImage}
+        resizeMode="cover"
+      />
+      <View style={styles.featuredDealContent}>
+        <Badge
+          text={`${calculateDiscount(item.originalPrice, item.salePrice)}% OFF`}
+          variant="error"
+          size="small"
+          style={styles.discountBadge}
+        />
+        <Text style={styles.featuredDealTitle} numberOfLines={2}>
+          {item.name}
+        </Text>
+        <View style={styles.priceContainer}>
+          <Text style={styles.salePrice}>
+            {formatCurrency(item.salePrice)}
+          </Text>
+          <Text style={styles.originalPrice}>
+            {formatCurrency(item.originalPrice)}
+          </Text>
+        </View>
+      </View>
+    </TouchableOpacity>
+  );
+
+  const renderDealItem = ({ item }) => (
+    <ProductCard
+      product={item}
+      onPress={() => handleProductPress(item)}
+      showDiscount={true}
+      style={styles.dealCard}
+    />
+  );
+
+  if (loading) {
+    return <LoadingComponent />;
+  }
+
+  const filteredDeals = getFilteredDeals();
+
+  return (
+    <View style={CommonStyles.safeArea}>
+      <Header
+        title="Deals & Offers"
+        subtitle="Save big on your favorite products"
+      />
+
+      <ScrollView
+        style={CommonStyles.screenContainer}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: Layout.bottomNavHeight }}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={[Colors.primary]}
+            tintColor={Colors.primary}
+          />
+        }
+      >
+        {/* Search Bar */}
+        <View style={styles.searchSection}>
+          <SearchBar
+            value={searchQuery}
+            onSearch={handleSearch}
+            placeholder="Search deals and offers..."
+          />
+        </View>
+
+        {/* Categories */}
+        <View style={styles.categoriesSection}>
+          <Text style={styles.sectionTitle}>Categories</Text>
+          <FlatList
+            data={categories}
+            renderItem={renderCategoryItem}
+            keyExtractor={(item) => item.id}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.categoriesList}
+          />
+        </View>
+
+        {/* Featured Deals */}
+        {featuredDeals.length > 0 && (
+          <View style={styles.featuredSection}>
+            <Text style={styles.sectionTitle}>Featured Deals</Text>
+            <FlatList
+              data={featuredDeals}
+              renderItem={renderFeaturedDeal}
+              keyExtractor={(item) => item.id?.toString()}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.featuredList}
+            />
           </View>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            <View style={styles.productsbar}>
-              {carouselItems.map((item, index) =>
-                item.text === "Special Products" ? (
-                  <View key={index} style={styles.productcont}>
-                    <TouchableOpacity
-                      onPress={() => navigation.navigate("Gifts", { item })}
-                    >
-                      <Image
-                        style={styles.productImagegt}
-                        source={item.image}
-                      />
-                      <Text style={styles.protxtgt}>{item.text}</Text>
-                    </TouchableOpacity>
-                  </View>
-                ) : (
-                  <TouchableOpacity
-                    key={index}
-                    onPress={() => navigation.navigate("AProduct", { item })}
-                  >
-                    <View style={styles.product}>
-                      <Image style={styles.productImage} source={item.image} />
-                      <Text>{item.text}</Text>
-                    </View>
-                  </TouchableOpacity>
-                )
-              )}
-            </View>
-          </ScrollView>
-          <View style={styles.deals}>
-            <Image style={styles.pic} source={dress} />
-            <Image style={styles.pic} source={Offer} />
-            <Image style={styles.pic} source={shoe} />
+        )}
+
+        {/* All Deals */}
+        <View style={styles.dealsSection}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>All Deals</Text>
+            <Text style={styles.dealCount}>
+              {filteredDeals.length} deals
+            </Text>
           </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
-      <BottomBar navigation={navigation} />
-      <View style={styles.blueBar}></View>
+
+          {filteredDeals.length > 0 ? (
+            <FlatList
+              data={filteredDeals}
+              renderItem={renderDealItem}
+              keyExtractor={(item) => item.id?.toString()}
+              numColumns={2}
+              scrollEnabled={false}
+              contentContainerStyle={styles.dealsList}
+            />
+          ) : (
+            <View style={styles.emptyState}>
+              <FontAwesome name="search" size={50} color={Colors.textLight} />
+              <Text style={styles.emptyText}>No deals found</Text>
+              <Text style={styles.emptySubtext}>
+                Try adjusting your search or category filter
+              </Text>
+            </View>
+          )}
+        </View>
+      </ScrollView>
+
+      <BottomNavigation navigation={navigation} activeRoute="Home" />
     </View>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    paddingTop: 120,
-    backgroundColor: "#1977F3",
-    paddingBottom: 15,
+const styles = {
+  searchSection: {
+    paddingHorizontal: Spacing.md,
+    paddingTop: Spacing.md,
   },
-  containerw: {
-    flex: 1,
-    backgroundColor: "#ffffff",
+  categoriesSection: {
+    paddingTop: Spacing.lg,
   },
-  blueBar: {
-    backgroundColor: "#1977F3",
-    height: 15,
-    position: "absolute",
-    bottom: 60,
-    left: 0,
-    right: 0,
+  sectionTitle: {
+    ...CommonStyles.heading3,
+    paddingHorizontal: Spacing.md,
+    marginBottom: Spacing.sm,
   },
-  deals: {
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
-    marginVertical: 10,
+  categoriesList: {
+    paddingHorizontal: Spacing.sm,
   },
-  horizontalBar: {
-    backgroundColor: "#1977F3",
-    height: 15,
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
+  categoryItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Colors.white,
+    borderWidth: 1,
+    borderColor: Colors.primary,
+    borderRadius: BorderRadius.xl,
+    paddingVertical: Spacing.sm,
+    paddingHorizontal: Spacing.md,
+    marginHorizontal: Spacing.xs,
+    ...Shadows.light,
   },
-  pic: {
-    margin: 5,
-    width: "90%",
-    height: 150,
-    borderRadius: 16,
-    resizeMode: "contain",
+  categoryItemActive: {
+    backgroundColor: Colors.primary,
   },
-  topbarinput: {
-    justifyContent: "center",
-    marginHorizontal: 20,
-    borderRadius: 10,
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "white",
-    padding: 10,
+  categoryText: {
+    marginLeft: Spacing.xs,
+    fontSize: FontSizes.sm,
+    fontWeight: '500',
+    color: Colors.primary,
   },
-  inputBox: {
-    flex: 1,
-    color: "#1977F3",
-    marginLeft: 10,
+  categoryTextActive: {
+    color: Colors.white,
   },
-  productsbar: {
-    flexDirection: "row",
-    marginTop: 10,
-    paddingVertical: 10,
-    backgroundColor: "rgba(25, 119, 243, 0.4)",
+  featuredSection: {
+    paddingTop: Spacing.lg,
   },
-  product: {
-    marginRight: 25,
-    alignItems: "center",
+  featuredList: {
+    paddingHorizontal: Spacing.sm,
   },
-  productImage: {
-    width: 65,
-    height: 70,
-    borderRadius: 10,
-    objectFit: "contain",
+  featuredDealCard: {
+    backgroundColor: Colors.white,
+    borderRadius: BorderRadius.lg,
+    marginHorizontal: Spacing.sm,
+    width: 200,
+    ...Shadows.medium,
   },
-  productcont: {
-    marginRight: 25,
-    paddingEnd: 10,
-    width: 70,
-    alignItems: "center",
-    backgroundColor: "#FF7272",
-    borderTopEndRadius: 10,
-    borderBottomEndRadius: 10,
+  featuredDealImage: {
+    width: '100%',
+    height: 120,
+    borderTopLeftRadius: BorderRadius.lg,
+    borderTopRightRadius: BorderRadius.lg,
   },
-  productImagegt: {
-    width: 65,
-    height: 60,
-    borderRadius: 10,
-    left: "10%",
-    objectFit: "contain",
+  featuredDealContent: {
+    padding: Spacing.md,
   },
-  protxtgt: {
-    color: "black",
-    alignSelf: "center",
-    margin: "auto",
-    fontSize: 11,
-    justifyContent: "center",
-    display: "flex",
-    marginLeft: 5,
+  discountBadge: {
+    position: 'absolute',
+    top: -Spacing.xs,
+    right: Spacing.md,
+    zIndex: 1,
   },
-});
+  featuredDealTitle: {
+    fontSize: FontSizes.md,
+    fontWeight: '600',
+    color: Colors.text,
+    marginBottom: Spacing.sm,
+    marginTop: Spacing.sm,
+  },
+  priceContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  salePrice: {
+    fontSize: FontSizes.lg,
+    fontWeight: 'bold',
+    color: Colors.primary,
+    marginRight: Spacing.sm,
+  },
+  originalPrice: {
+    fontSize: FontSizes.sm,
+    color: Colors.textLight,
+    textDecorationLine: 'line-through',
+  },
+  dealsSection: {
+    paddingTop: Spacing.lg,
+    paddingBottom: Spacing.xxl,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: Spacing.md,
+    marginBottom: Spacing.md,
+  },
+  dealCount: {
+    fontSize: FontSizes.sm,
+    color: Colors.textLight,
+    fontWeight: '500',
+  },
+  dealsList: {
+    paddingHorizontal: Spacing.sm,
+  },
+  dealCard: {
+    width: '48%',
+    marginHorizontal: '1%',
+    marginBottom: Spacing.md,
+  },
+  emptyState: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: Spacing.xxl,
+    paddingHorizontal: Spacing.lg,
+  },
+  emptyText: {
+    fontSize: FontSizes.lg,
+    fontWeight: '600',
+    color: Colors.text,
+    marginTop: Spacing.md,
+  },
+  emptySubtext: {
+    fontSize: FontSizes.sm,
+    color: Colors.textLight,
+    textAlign: 'center',
+    marginTop: Spacing.sm,
+  },
+};
 
 export default Deals;

@@ -16,7 +16,7 @@ import {
 import { useUserContext } from "./UserContext";
 import axios from "axios";
 import { useRoute } from "@react-navigation/native";
-
+import { Colors, Spacing, FontSizes, BorderRadius } from "../styles/CommonStyles";
 
 const CodeVerify = require("../Streetmall/2OTP/Group351.png");
 library.add(faCircleRight, faUser, faLock);
@@ -87,7 +87,7 @@ const CodeVerification = ({ navigation }) => {
         }
       );
     } catch (error) {
-      console.log("otp poga matitu browwww", error);
+      console.log("otp resend error", error);
     }
   };
   useEffect(() => {
@@ -145,7 +145,7 @@ const CodeVerification = ({ navigation }) => {
             onPress={resendOTP}
             style={{ textAlign: "center", fontSize: 17, marginTop: 25 }}
           >
-            <Text style={{ textAlign: "center" }}>{resendButtonText}</Text>
+            <Text style={{ textAlign: "center", color: Colors.text }}>{resendButtonText}</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -156,7 +156,7 @@ const CodeVerification = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   allsignIn: {
-    backgroundColor: "white",
+    backgroundColor: Colors.white,
     paddingTop: 50,
     position: "absolute",
     width: "100%",
@@ -166,17 +166,17 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 30,
   },
   successMessageContainer: {
-    backgroundColor: "green", 
+    backgroundColor: "#DFF6DD",
     padding: 10,
     marginVertical: 10,
     borderRadius: 5,
   },
   successMessageText: {
-    color: "black", 
+    color: Colors.text,
     textAlign: "center",
   },
   errorText: {
-    color: "red",
+    color: "#FF6B6B",
     textAlign: "center",
     marginTop: -100,
   },
@@ -186,18 +186,19 @@ const styles = StyleSheet.create({
     left: 20,
     fontSize: 40,
     fontWeight: "bold",
-    color: "white",
+    color: Colors.white,
   },
   description: {
     width: "100%",
     marginLeft: "10%",
+    color: Colors.textLight,
   },
   buttons: {
     flexDirection: "column",
     justifyContent: "space-around",
   },
   loginButton: {
-    backgroundColor: "#1977F3",
+    backgroundColor: Colors.primary,
     padding: 10,
     borderRadius: 10,
     width: 120,
@@ -205,7 +206,7 @@ const styles = StyleSheet.create({
     marginTop: 30,
   },
   loginButtonText: {
-    color: "white",
+    color: Colors.white,
     fontSize: 16,
     fontWeight: "bold",
     textAlign: "center",
@@ -216,7 +217,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: "#1977F3",
+    backgroundColor: Colors.primary,
     justifyContent: "center",
   },
   rowContainer: {
@@ -236,19 +237,20 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     marginRight: 10,
+    color: Colors.text,
   },
   inputContainer: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "center",
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "gray",
-    borderRadius: 6,
+    borderColor: Colors.primary,
+    backgroundColor: "#F7FAFF",
+    borderRadius: 8,
     margin: 5,
     marginHorizontal: 25,
-    paddingLeft: 15,
-    width: 40,
-    height: 40,
+    width: 48,
+    height: 48,
   },
   icon: {
     marginRight: 10,

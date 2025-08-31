@@ -15,7 +15,8 @@ import {
   faUsersViewfinder,
 } from "@fortawesome/free-solid-svg-icons";
 import Trackbar from "../Streetmall/Orderstatement/trackbar.png";
-import BottomBar from "./BottomBar";
+import BottomNavigation from "../components/BottomNavigation";
+import { Layout } from "../styles/CommonStyles";
 
 const products = [
   {
@@ -71,6 +72,7 @@ const OrderTrackingPage = ({ navigation }) => {
       <ScrollView
         style={styles.containerw}
         showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: Layout.bottomNavHeight }}
       >
         <View style={styles.container}>
           <Text
@@ -137,8 +139,7 @@ const OrderTrackingPage = ({ navigation }) => {
         <Text> {"\n"} </Text>
         <Text> {"\n"} </Text>
       </ScrollView>
-      <BottomBar navigation={navigation} />
-      <View style={styles.blueBar}></View>
+      <BottomNavigation navigation={navigation} activeRoute="Orders" />
     </View>
   );
 };
@@ -147,14 +148,6 @@ const styles = StyleSheet.create({
   containerw: {
     flex: 1,
     backgroundColor: "#ffffff",
-  },
-  blueBar: {
-    backgroundColor: "#1977F3",
-    height: 15,
-    position: "absolute",
-    bottom: 60,
-    left: 0,
-    right: 0,
   },
   container: {
     paddingTop: 100,

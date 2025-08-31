@@ -15,9 +15,9 @@ import OrderPage from './Pages/Orderpage';
 import Deals from './Pages/Deals';
 import Category from './Pages/Category';
 import Menswear from './Pages/Menswear';
-import BottomBar from './Pages/BottomBar';
+// Legacy BottomBar removed; using BottomNavigation inside pages
 import Womenswear from './Pages/Womenswear';
-import Groceries from './Pages/Groceries'; 
+import Groceries from './Pages/Groceries';
 import Order from './Pages/Orders';
 import ResetPasswordScreen from './Pages/Resetpassword';
 import Sproduct from './Pages/Singleproduct';
@@ -34,11 +34,12 @@ import { AppRegistry } from 'react-native';
 import { name as appName } from './app.json';
 import { UserProvider } from './Pages/UserContext';
 import React, { useState } from 'react';
-import AsyncStorage from "@react-native-async-storage/async-storage"; 
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect } from 'react';
 import Forgetpassword from './Pages/Forgetpassword';
 import ForgetUser from './Pages/forgetuser';
 import axios from 'axios';
+import { BASE_URL } from './Pages/UserContext';
 
 
 const Stack = createStackNavigator();
@@ -52,7 +53,7 @@ const checkIfLoggedIn = async () => {
     if (storedUsername && storedPassword) {
       try {
         const response = await axios.post(
-          `http://192.168.37.132:8000/api/login/`,
+          `${BASE_URL}/api/login/`,
           {
             username: storedUsername,
             password: storedPassword,
@@ -83,39 +84,39 @@ const checkIfLoggedIn = async () => {
   }
 };
 
-export default function App() { 
+export default function App() {
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
     const checkAutoLogin = async () => {
-      try {            
+      try {
         const storedUsername = await AsyncStorage.getItem("username");
         const storedPassword = await AsyncStorage.getItem("password");
 
         if (storedUsername && storedPassword) {
           try {
             const response = await axios.post(
-              `http://64.227.134.220:8000/api/login/`,
+              `${BASE_URL}/api/login/`,
               {
-                username: storedUsername, 
+                username: storedUsername,
                 password: storedPassword,
-              }, 
+              },
               {
                 headers: {
                   "Content-Type": "application/json",
                 },
-              }  
+              }
             );
 
             console.log("Login Response:", response.data);
-      
+
             if (response.data === 1) {
               setIsLoggedIn(true);
             } else if (response.data['message'] === "Invalid Credentials") {
               setIsLoggedIn(false);
             }
-          } catch (error) {  
+          } catch (error) {
             console.error("Login failed:", error.message);
             setIsLoggedIn(false);
           }
@@ -129,11 +130,11 @@ export default function App() {
     checkAutoLogin();
   }, []);
 
-  return ( 
+  return (
     <UserProvider>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName={isLoggedIn?"Home":"Login"}>
-          <Stack.Screen name="Order" component={Order} options={{headerShown: false}} />
+        <Stack.Navigator initialRouteName={isLoggedIn ? "Home" : "Login"}>
+          <Stack.Screen name="Order" component={Order} options={{ headerShown: false }} />
           <Stack.Screen name="Signup" component={SignUpScreen} options={{ headerShown: false }} />
           <Stack.Screen name="Signup2" component={SignUp2Screen} options={{ headerShown: false }} />
           <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
@@ -151,19 +152,19 @@ export default function App() {
           <Stack.Screen name="Menswear" component={Menswear} options={{ headerShown: false }} />
           <Stack.Screen name="Womenswear" component={Womenswear} options={{ headerShown: false }} />
           <Stack.Screen name="Groceries" component={Groceries} options={{ headerShown: false }} />
-          <Stack.Screen name="SProduct" component={Sproduct} options={{ headerShown: false }} />
+          <Stack.Screen name="Singleproduct" component={Sproduct} options={{ headerShown: false }} />
           <Stack.Screen name="ProductList" component={ProductItem} options={{ headerShown: false }} />
           <Stack.Screen name="AProduct" component={AllProduct} options={{ headerShown: false }} />
           <Stack.Screen name="Filter" component={Filter} options={{ headerShown: false }} />
           <Stack.Screen name="Dashboard" component={Dashboard} options={{ headerShown: false }} />
-          <Stack.Screen name="Cart" component={Cart} options={{ headerShown: false }} />  
+          <Stack.Screen name="Cart" component={Cart} options={{ headerShown: false }} />
           <Stack.Screen name="Gifts" component={Gifts} options={{ headerShown: false }} />
           <Stack.Screen name="User" component={User} options={{ headerShown: false }} />
           <Stack.Screen name="Manager1" component={Manager1} options={{ headerShown: false }} />
           <Stack.Screen name="Manager2" component={Manager2} options={{ headerShown: false }} />
-          <Stack.Screen name="BottomBar" component={BottomBar} />
-          <Stack.Screen name="forgetuser" component={ForgetUser}  options={{headerShown:false}} />
-          <Stack.Screen name="Forget" component={Forgetpassword} options={{headerShown:false}}/>
+          {/* BottomBar route removed; BottomNavigation is embedded in pages */}
+          <Stack.Screen name="forgetuser" component={ForgetUser} options={{ headerShown: false }} />
+          <Stack.Screen name="Forget" component={Forgetpassword} options={{ headerShown: false }} />
           <Stack.Screen name="Resetpass" component={ResetPasswordScreen} options={{ headerShown: false }} />
         </Stack.Navigator>
       </NavigationContainer>

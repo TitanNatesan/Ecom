@@ -15,7 +15,8 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import BottomBar from "./BottomBar";
+import BottomNavigation from "../components/BottomNavigation";
+import { Layout } from "../styles/CommonStyles";
 import ProductItem from "./ProductItem";
 
 const giftbox = require("../Streetmall/1Home/gift.gif");
@@ -117,7 +118,7 @@ const AllProductPage = ({ navigation }) => {
 
   return (
     <View style={styles.containerw}>
-      <ScrollView vertical showsVerticalScrollIndicator={false}>
+      <ScrollView vertical showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: Layout.bottomNavHeight }}>
         <View>
           <View style={styles.container}>
             <View style={styles.topbarinput}>
@@ -181,10 +182,9 @@ const AllProductPage = ({ navigation }) => {
       </ScrollView>
 
       {/* Bottom Bar */}
-      <BottomBar navigation={navigation} initialPage="Home" />
+      <BottomNavigation navigation={navigation} activeRoute="Home" />
 
       {/* Blue Bar */}
-      <View style={styles.blueBar}></View>
     </View>
   );
 };
@@ -195,14 +195,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff",
   },
 
-  blueBar: {
-    backgroundColor: "#1977F3",
-    height: 15,
-    position: "absolute",
-    bottom: 60,
-    left: 0,
-    right: 0,
-  },
   productsContainer: {
     flexDirection: "row",
     flexWrap: "wrap",

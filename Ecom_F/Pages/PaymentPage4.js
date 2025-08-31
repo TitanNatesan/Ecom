@@ -10,7 +10,8 @@ import {
   KeyboardAvoidingView,
   TouchableOpacity,
 } from "react-native";
-import BottomBar from "./BottomBar";
+import BottomNavigation from "../components/BottomNavigation";
+import { Layout } from "../styles/CommonStyles";
 import { useRoute } from "@react-navigation/native";
 import axios from "axios";
 import { useUserContext } from "./UserContext";
@@ -70,16 +71,16 @@ const PaymentPage4 = ({ navigation }) => {
     fetchData();
   }, [product_ids, cdata]);
 
-  const [dc,setdc]=useState(0);
+  const [dc, setdc] = useState(0);
 
   var deliveryCost = proDetails.total > 200 ? 0 : 40;
-  useEffect(()=>{
-    if (selectedDeliveryOption==="Instant Delivery"){
-      deliveryCost+=100;
+  useEffect(() => {
+    if (selectedDeliveryOption === "Instant Delivery") {
+      deliveryCost += 100;
     }
     console.log(deliveryCost)
     setdc(deliveryCost)
-  },[]) 
+  }, [])
 
 
   const fetchProducts = async (product_ids) => {
@@ -147,6 +148,7 @@ const PaymentPage4 = ({ navigation }) => {
         <ScrollView
           style={styles.containerw}
           showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: Layout.bottomNavHeight }}
         >
           <View style={styles.container}>
             <Text
@@ -183,7 +185,7 @@ const PaymentPage4 = ({ navigation }) => {
                 ))}
                 <Text style={{ fontSize: 18 }}>Delivery Charge:</Text>
                 <Text style={{ fontSize: 18 }}>Discount:</Text>
-               
+
                 <Text style={{ fontSize: 18 }}>Total:</Text>
               </View>
 
@@ -197,7 +199,7 @@ const PaymentPage4 = ({ navigation }) => {
                 <Text style={{ fontSize: 18 }}>
                   -{proDetails.discount}₹
                 </Text>
-               
+
                 <Text style={{ fontSize: 18 }}>
                   {proDetails.total}₹
                 </Text>
@@ -227,8 +229,7 @@ const PaymentPage4 = ({ navigation }) => {
           <Text> {"\n"} </Text>
         </ScrollView>
       </KeyboardAvoidingView>
-      <BottomBar navigation={navigation} />
-      <View style={styles.blueBar}></View>
+      <BottomNavigation navigation={navigation} activeRoute="Orders" />
     </View>
   );
 };
@@ -237,14 +238,6 @@ const styles = StyleSheet.create({
   containerw: {
     flex: 1,
     backgroundColor: "#ffffff",
-  },
-  blueBar: {
-    backgroundColor: "#1977F3",
-    height: 15,
-    position: "sticky",
-    bottom: 60,
-    left: 0,
-    right: 0,
   },
   container: {
     flex: 1,

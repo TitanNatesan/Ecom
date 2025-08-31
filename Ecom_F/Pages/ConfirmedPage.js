@@ -16,7 +16,8 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import FontAwesomeIcon from "react-native-vector-icons/FontAwesome";
 const bike = require("../Streetmall/Orderstatement/imagebike.png");
-import BottomBar from "./BottomBar";
+import BottomNavigation from "../components/BottomNavigation";
+import { Layout } from "../styles/CommonStyles";
 import { useUserContext } from "./UserContext";
 import { useEffect } from "react";
 import axios from "axios";
@@ -137,6 +138,7 @@ const PaymentPage4 = ({ navigation }) => {
         <ScrollView
           style={styles.containerw}
           showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: Layout.bottomNavHeight }}
         >
           <View style={styles.container}>
             <View style={styles.topbarinput}>
@@ -176,8 +178,7 @@ const PaymentPage4 = ({ navigation }) => {
           <Text> {"\n"} </Text>
         </ScrollView>
       </KeyboardAvoidingView>
-      <BottomBar navigation={navigation} />
-      <View style={styles.blueBar}></View>
+      <BottomNavigation navigation={navigation} activeRoute="Orders" />
     </View>
   );
 };
@@ -186,14 +187,6 @@ const styles = StyleSheet.create({
   containerw: {
     flex: 1,
     backgroundColor: "#ffffff",
-  },
-  blueBar: {
-    backgroundColor: "#1977F3",
-    height: 15,
-    position: "sticky",
-    bottom: 60,
-    left: 0,
-    right: 0,
   },
   container: {
     paddingTop: 100,

@@ -10,16 +10,11 @@ import {
   TouchableOpacity,
   TextInput,
 } from "react-native";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import axios from "axios";
 import { useUserContext } from "./UserContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import {
-  faHome,
-  faBars,
-  faShoppingCart,
-  faUser,
-} from "@fortawesome/free-solid-svg-icons";
+import BottomNavigation from "../components/BottomNavigation";
+import { Layout } from "../styles/CommonStyles";
 
 const userimg = require("../Streetmall/Dashboard/ICON2.png");
 
@@ -57,7 +52,7 @@ const User = ({ navigation }) => {
         const storedPassword = await AsyncStorage.getItem("password");
 
         if (storedPassword && storedUsername) {
-          console.log("stored"+storedUsername)
+          console.log("stored" + storedUsername)
           updateUserID(storedUsername);
           try {
             const response = await axios.get(`${BASE_URL}/api/user/${storedUsername}/`);
@@ -67,7 +62,7 @@ const User = ({ navigation }) => {
               name: user.name,
               phone: user.phone,
               email: user.email,
-              role: user.role, 
+              role: user.role,
               doorNumber: address.door_number,
               addressLine1: address.address_line1,
               addressLine2: address.address_line2,
@@ -88,7 +83,7 @@ const User = ({ navigation }) => {
         }
       } catch (error) {
         try {
-          console.log("userID: "+userID)
+          console.log("userID: " + userID)
           const response = await axios.get(`${BASE_URL}/api/user/${userID}/`);
           const { user, address } = response.data;
           setUserData({
@@ -130,7 +125,7 @@ const User = ({ navigation }) => {
       console.log({
         user: {
           name: userData.name,
-          phone: "+91"+userData.phone,
+          phone: "+91" + userData.phone,
           email: userData.email,
           username: userID,
         },
@@ -149,7 +144,7 @@ const User = ({ navigation }) => {
         {
           user: {
             name: userData.name,
-            phone: "+91"+userData.phone,
+            phone: "+91" + userData.phone,
             email: userData.email,
             username: userID,
           },
@@ -226,7 +221,7 @@ const User = ({ navigation }) => {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1 }}
       >
-        <ScrollView vertical showsVerticalScrollIndicator={false}>
+        <ScrollView vertical showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: Layout.bottomNavHeight }}>
           <View style={styles.container}>
             <Image source={userimg} style={styles.uicon} />
             <Text style={styles.utext}>Hello, {userData.name}</Text>
@@ -275,8 +270,8 @@ const User = ({ navigation }) => {
               {renderEditableField("Name", userData.name, "name")}
               {renderEditableField("Phone", userData.phone.slice(-10), "phone")}
               {renderEditableField("Email", userData.email, "email")}
-              {renderEditableField("Door Number",userData.doorNumber,"doorNumber")}
-              {renderEditableField("Address Line 1",userData.addressLine1,"addressLine1")}
+              {renderEditableField("Door Number", userData.doorNumber, "doorNumber")}
+              {renderEditableField("Address Line 1", userData.addressLine1, "addressLine1")}
               {renderEditableField(
                 "Address Line 2",
                 userData.addressLine2,
@@ -307,33 +302,7 @@ const User = ({ navigation }) => {
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
-      <View style={styles.navbar}>
-        <TouchableOpacity onPress={() => navigation.navigate("Home")}>
-          <View style={[styles.navbarIcon, styles.navbarIconHome1]}>
-            <FontAwesomeIcon icon={faHome} size={25} color={"#1977F3"} />
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate("Category")}>
-          <View style={[styles.navbarIcon, styles.navbarIconHome1]}>
-            <FontAwesomeIcon icon={faBars} size={20} color={"#1977F3"} />
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate("Cart")}>
-          <View style={[styles.navbarIcon, styles.navbarIconHome1]}>
-            <FontAwesomeIcon
-              icon={faShoppingCart}
-              size={20}
-              color={"#1977F3"}
-            />
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate("User")}>
-          <View style={[styles.navbarIcon, styles.navbarIconHome]}>
-            <FontAwesomeIcon icon={faUser} size={20} color={"white"} />
-          </View>
-        </TouchableOpacity>
-      </View>
-      <View style={styles.blueBar}></View>
+      <BottomNavigation navigation={navigation} activeRoute="User" />
 
 
     </View>
@@ -385,49 +354,6 @@ const styles = StyleSheet.create({
 
   logText: {
     color: "red", // or any color you prefer
-  },
-  navbar: {
-    position: "sticky",
-    bottom: 0,
-    width: "100%",
-    height: "8%",
-    flexDirection: "row",
-    justifyContent: "space-around",
-    alignItems: "center",
-    backgroundColor: "white",
-  },
-  navbarIcon: {
-    width: 15,
-    height: 15,
-    tintColor: "#1977F3",
-  },
-  navbarIconHome: {
-    backgroundColor: "#1977F3",
-    width: 60,
-    height: 60,
-    justifyContent: "center",
-    alignItems: "center",
-    borderTopLeftRadius: -10,
-    borderBottomRightRadius: 21,
-    borderBottomLeftRadius: 21,
-    elevation: 5,
-  },
-  navbarIconHome1: {
-    width: 60,
-    height: 60,
-    justifyContent: "center",
-    alignItems: "center",
-    borderTopLeftRadius: -10,
-    borderBottomRightRadius: 21,
-    borderBottomLeftRadius: 21,
-  },
-  blueBar: {
-    backgroundColor: "#1977F3",
-    height: 15,
-    position: "sticky",
-    bottom: 65,
-    left: 0,
-    right: 0,
   },
   container: {
     flexDirection: "row",
